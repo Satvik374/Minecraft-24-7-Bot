@@ -95,8 +95,17 @@ function getNextUsername() {
     return currentUsername;
 }
 
+const webServer = require('./web-server');
+
+// Start the dashboard
+webServer.start();
+
 function createBot() {
     const username = getNextUsername();
+
+    // Update dashboard
+    webServer.updateBotStatus(username, false, serverHost, serverPort);
+    webServer.addLog(`Initializing bot as ${username}...`);
 
     const botOptions = {
         host: serverHost,
@@ -112,6 +121,8 @@ function createBot() {
     bot = mineflayer.createBot(botOptions);
 
     bot.on('login', () => {
+        webServer.updateBotStatus(bot.username, true, serverHost, serverPort);
+        webServer.addLog('Bot successfully logged in');
         logger.info(`✅ AI Bot logged in successfully!`);
         logger.info(`🌍 Connected to ${serverHost}:${serverPort}`);
         reconnectAttempts = 0;
@@ -125,6 +136,7 @@ function createBot() {
     });
 
     bot.on('spawn', () => {
+        webServer.addLog('Bot spawned in world');
         logger.info(`AI Bot spawned at ${bot.entity.position}`);
 
         // Initialize command system
@@ -201,11 +213,15 @@ function createBot() {
     });
 
     bot.on('end', (reason) => {
+        webServer.updateBotStatus(bot.username, false);
+        webServer.addLog(`Disconnected: ${reason}`);
         logger.warn(`🔌 AI Bot disconnected: ${reason}`);
         scheduleReconnect();
     });
 
     bot.on('kicked', (reason) => {
+        webServer.updateBotStatus(bot.username, false);
+        webServer.addLog(`Kicked: ${JSON.stringify(reason)}`);
         logger.warn(`👢 AI Bot was kicked: ${reason}`);
 
         // Check if it's a ban (common ban keywords)
