@@ -1,7 +1,25 @@
 #!/usr/bin/env node
 
 const mineflayer = require('mineflayer');
+const { pathfinder, Movements, goals } = require('mineflayer-pathfinder');
 const logger = require('./utils/logger');
+
+// Command system imports
+const CommandParser = require('./commands/commandParser');
+const CommandHandler = require('./commands/commandHandler');
+const MinerAbility = require('./abilities/miner');
+const CombatAbility = require('./abilities/combat');
+const NavigationAbility = require('./abilities/navigation');
+const CraftingAbility = require('./abilities/crafting');
+const FarmingAbility = require('./abilities/farming');
+const TaskManager = require('./abilities/taskManager');
+const DoorHandler = require('./utils/doorHandler');
+const HomeManager = require('./abilities/homeManager');
+const Sleeper = require('./abilities/sleeper');
+const AutoEat = require('./abilities/autoEat');
+
+// Mind module for intelligent decision-making
+const BotMind = require('./mind/botMind');
 
 console.log('='.repeat(60));
 console.log('🤖 AI Minecraft Bot - Advanced Player Simulation');
@@ -33,7 +51,14 @@ let bot = null;
 let reconnectAttempts = 0;
 const maxReconnectAttempts = 50; // Increased for ban evasion
 
-// AI Bot State
+// Command system instances
+let commandParser = null;
+let commandHandler = null;
+let taskManager = null;
+let doorHandler = null;
+let botMind = null; // Intelligent mind module
+
+// AI Bot State (global for command access)
 let botState = {
     currentTask: 'exploring',
     inventory: {},
@@ -45,8 +70,12 @@ let botState = {
     lastMined: 0,
     targetPlayer: null,
     isCreativeMode: true, // Creative mode enabled
+    randomBehaviorsEnabled: true, // Random AI behaviors (moving, jumping, chatting)
     goals: ['gather_wood', 'craft_table', 'craft_pickaxe', 'mine_stone']
 };
+
+// Make botState globally accessible for command handlers
+global.botState = botState;
 
 function getNextUsername() {
     // If it's the first attempt, use the base username
@@ -56,19 +85,19 @@ function getNextUsername() {
         // Rotate through username pool
         currentUsernameIndex = (currentUsernameIndex + 1) % usernamePool.length;
         currentUsername = usernamePool[currentUsernameIndex];
-        
+
         // Add random numbers for uniqueness
         const randomSuffix = Math.floor(Math.random() * 999);
         currentUsername = `${currentUsername}${randomSuffix}`;
     }
-    
+
     logger.info(`🔄 Using username: ${currentUsername} (attempt ${reconnectAttempts + 1})`);
     return currentUsername;
 }
 
 function createBot() {
     const username = getNextUsername();
-    
+
     const botOptions = {
         host: serverHost,
         port: serverPort,
@@ -81,12 +110,12 @@ function createBot() {
 
     logger.info('Creating AI bot instance...');
     bot = mineflayer.createBot(botOptions);
-    
+
     bot.on('login', () => {
         logger.info(`✅ AI Bot logged in successfully!`);
         logger.info(`🌍 Connected to ${serverHost}:${serverPort}`);
         reconnectAttempts = 0;
-        
+
         console.log('');
         console.log('🤖 AI Bot is now online and ready to play!');
         console.log('🎮 Bot will behave like a real intelligent player...');
@@ -97,7 +126,10 @@ function createBot() {
 
     bot.on('spawn', () => {
         logger.info(`AI Bot spawned at ${bot.entity.position}`);
-        
+
+        // Initialize command system
+        initializeCommandSystem();
+
         // Try to enable creative mode if possible
         setTimeout(() => {
             if (botState.isCreativeMode) {
@@ -109,7 +141,7 @@ function createBot() {
                 }
             }
         }, 1000);
-        
+
         // Initialize AI behaviors
         setTimeout(() => {
             startAIBehaviors();
@@ -144,6 +176,25 @@ function createBot() {
         }
     });
 
+    // Auto-respawn when bot dies
+    bot.on('death', () => {
+        logger.warn('🔴 Bot died! Auto-respawning...');
+
+        // Wait a moment then respawn
+        setTimeout(() => {
+            try {
+                bot.chat('/respawn');
+            } catch (e) {
+                // Try alternative respawn method
+                try {
+                    bot.respawn();
+                } catch (e2) {
+                    logger.debug('Respawn methods failed, waiting for auto-respawn');
+                }
+            }
+        }, 1000);
+    });
+
     bot.on('error', (err) => {
         logger.error(`❌ AI Bot error: ${err.message}`);
         scheduleReconnect();
@@ -156,50 +207,180 @@ function createBot() {
 
     bot.on('kicked', (reason) => {
         logger.warn(`👢 AI Bot was kicked: ${reason}`);
-        
+
         // Check if it's a ban (common ban keywords)
         const banKeywords = ['ban', 'banned', 'blacklist', 'prohibited', 'blocked', 'suspended'];
-        const isBanned = banKeywords.some(keyword => 
+        const isBanned = banKeywords.some(keyword =>
             reason.toLowerCase().includes(keyword)
         );
-        
+
         if (isBanned) {
             logger.warn(`🚫 Detected ban! Reason: ${reason}`);
             logger.info(`🔄 Will reconnect with different username...`);
         }
-        
+
         scheduleReconnect();
     });
 
     return bot;
 }
 
+/**
+ * Initialize the command system for -bot commands
+ */
+function initializeCommandSystem() {
+    logger.info('🎮 Initializing command system...');
+
+    // Load pathfinder plugin
+    bot.loadPlugin(pathfinder);
+
+    // Setup pathfinder with movements that can open doors
+    const mcData = require('minecraft-data')(bot.version);
+    const defaultMovements = new Movements(bot);
+
+    // Movement configuration
+    defaultMovements.allowSprinting = true;
+    defaultMovements.allowParkour = true;      // Allow jumping gaps
+    defaultMovements.canOpenDoors = true;      // Open doors automatically
+    defaultMovements.canDig = false;           // Don't dig unless necessary (prevents breaking houses)
+    defaultMovements.allow1by1towers = false;  // Don't pillar up
+    defaultMovements.allowFreeMotion = true;   // Allow free motion for better paths
+    defaultMovements.maxDropDown = 4;          // Max fall distance
+
+    // Define openable blocks - these should be passable, not blocked
+    const fenceGates = ['oak_fence_gate', 'spruce_fence_gate', 'birch_fence_gate',
+        'jungle_fence_gate', 'acacia_fence_gate', 'dark_oak_fence_gate',
+        'crimson_fence_gate', 'warped_fence_gate', 'mangrove_fence_gate',
+        'cherry_fence_gate', 'bamboo_fence_gate'];
+    const doors = ['oak_door', 'spruce_door', 'birch_door', 'jungle_door',
+        'acacia_door', 'dark_oak_door', 'crimson_door', 'warped_door',
+        'mangrove_door', 'cherry_door', 'bamboo_door'];
+    const trapdoors = ['oak_trapdoor', 'spruce_trapdoor', 'birch_trapdoor',
+        'jungle_trapdoor', 'acacia_trapdoor', 'dark_oak_trapdoor',
+        'crimson_trapdoor', 'warped_trapdoor', 'mangrove_trapdoor',
+        'cherry_trapdoor', 'bamboo_trapdoor'];
+
+    // Add these to the passable list and ensure they're not avoided
+    [...fenceGates, ...doors, ...trapdoors].forEach(blockName => {
+        const block = mcData.blocksByName[blockName];
+        if (block) {
+            // Don't break these blocks
+            defaultMovements.blocksCantBreak.add(block.id);
+            // Make sure they're not in the avoid list so pathfinder considers them passable
+            defaultMovements.blocksToAvoid.delete(block.id);
+        }
+    });
+
+    bot.pathfinder.setMovements(defaultMovements);
+    logger.info('🗺️ Pathfinder loaded with door/gate support');
+
+    // Create command parser
+    commandParser = new CommandParser();
+
+    // Create command handler
+    commandHandler = new CommandHandler(bot);
+
+    // Create task manager
+    taskManager = new TaskManager(bot);
+
+    // Create pathfinder config object to pass to abilities
+    const pathfinderConfig = {
+        mcData,
+        Movements,
+        goals
+    };
+
+    // Create ability instances with pathfinder
+    const combatAbility = new CombatAbility(bot, pathfinderConfig);
+    const homeManager = new HomeManager(bot, pathfinderConfig);
+
+    // Inject homeManager into navigation for auto-deposit
+    const navigationAbility = new NavigationAbility(bot, pathfinderConfig, homeManager);
+
+    const craftingAbility = new CraftingAbility(bot, pathfinderConfig);
+    const sleeper = new Sleeper(bot, pathfinderConfig);
+
+    // Pass sleeper and homeManager to farming ability
+    const farmingAbility = new FarmingAbility(bot, pathfinderConfig, sleeper, homeManager);
+
+    // Miner needs access to combat (defense) and home (inventory)
+
+    // Miner needs access to combat (defense) and home (inventory)
+    const minerAbility = new MinerAbility(bot, pathfinderConfig, homeManager, combatAbility);
+
+    // Register abilities with command handler
+    commandHandler.registerAbility('mine', minerAbility);
+    commandHandler.registerAbility('kill', combatAbility);
+    commandHandler.registerAbility('come', navigationAbility);
+    commandHandler.registerAbility('go', navigationAbility);
+    commandHandler.registerAbility('make', craftingAbility);
+    commandHandler.registerAbility('farm', farmingAbility);
+    commandHandler.registerAbility('home', homeManager);
+
+    // Register abilities with task manager
+    taskManager.registerAbilities(commandHandler.abilities);
+
+    // Start AutoEat monitor
+    const autoEat = new AutoEat(bot);
+    autoEat.start();
+    taskManager.registerAbilities({
+        mine: minerAbility,
+        kill: combatAbility,
+        come: navigationAbility,
+        go: navigationAbility,
+        make: craftingAbility,
+        farm: farmingAbility,
+        home: homeManager
+    });
+
+    // Initialize door handler for auto-opening doors and gates
+    doorHandler = new DoorHandler(bot);
+    doorHandler.startAutoOpen();
+    logger.info('🚪 Door handler active - will auto-open doors and gates');
+
+    // Initialize BotMind for intelligent natural language understanding
+    botMind = new BotMind(bot, commandHandler);
+    logger.info('🧠 BotMind initialized - natural language understanding active');
+
+    logger.info('✅ Command system ready! Use -bot <command> in chat');
+    logger.info('📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, stop, status');
+    logger.info('💬 Or just tell me naturally what you need (e.g., "get me some iron")');
+
+    // Announce in chat
+    setTimeout(() => {
+        sendIntelligentChat('Ready! You can use -bot commands or just tell me what you need naturally');
+    }, 2000);
+}
+
 function startAIBehaviors() {
     logger.info('🧠 Starting AI behaviors...');
-    
+
     // Main AI loop - makes decisions every 3-8 seconds
     setInterval(aiDecisionLoop, 3000 + Math.random() * 5000);
-    
+
     // Movement and exploration
     setInterval(intelligentMovement, 2000);
-    
+
     // Look around naturally
     setInterval(naturalLooking, 5000 + Math.random() * 10000);
-    
+
     // Chat behavior
     setInterval(randomChatting, 30000 + Math.random() * 60000);
-    
+
     // Inventory management
     setInterval(manageInventory, 15000);
-    
+
     logger.info('🎮 AI behaviors activated!');
 }
 
 function aiDecisionLoop() {
     if (!bot || !bot.entity) return;
-    
+
+    // Skip if random behaviors are disabled
+    if (!botState.randomBehaviorsEnabled) return;
+
     updateBotState();
-    
+
     switch (botState.currentTask) {
         case 'exploring':
             exploreWorld();
@@ -229,15 +410,15 @@ function aiDecisionLoop() {
 
 function updateBotState() {
     if (!bot) return;
-    
+
     const inventory = bot.inventory.items();
-    botState.hasWood = inventory.some(item => 
+    botState.hasWood = inventory.some(item =>
         item.name.includes('log') || item.name.includes('wood'));
-    botState.hasCraftingTable = inventory.some(item => 
+    botState.hasCraftingTable = inventory.some(item =>
         item.name === 'crafting_table');
-    botState.hasPickaxe = inventory.some(item => 
+    botState.hasPickaxe = inventory.some(item =>
         item.name.includes('pickaxe'));
-    
+
     // Update current goal based on progress
     if (!botState.hasWood && !botState.goals.includes('gather_wood')) {
         botState.currentTask = 'gather_wood';
@@ -252,7 +433,7 @@ function updateBotState() {
 
 async function gatherWood() {
     logger.debug('🌳 Looking for wood to gather...');
-    
+
     const trees = bot.findBlocks({
         matching: [
             bot.registry.blocksByName.oak_log?.id,
@@ -263,18 +444,18 @@ async function gatherWood() {
         maxDistance: 32,
         count: 10
     });
-    
+
     if (trees.length > 0) {
         const targetLog = trees[0];
         logger.info(`🔨 Punching tree at ${targetLog}`);
-        
+
         try {
             await bot.lookAt(targetLog);
             const block = bot.blockAt(targetLog);
             if (block) {
                 await bot.dig(block);
                 sendIntelligentChat('getting some wood for crafting');
-                
+
                 // Look for more logs nearby
                 setTimeout(() => {
                     if (Math.random() < 0.7) {
@@ -293,9 +474,9 @@ async function gatherWood() {
 
 async function craftCraftingTable() {
     if (!botState.hasWood || botState.hasCraftingTable) return;
-    
+
     logger.info('🔨 Crafting crafting table...');
-    
+
     try {
         // First convert logs to planks if needed
         const logs = bot.inventory.items().filter(item => item.name.includes('log'));
@@ -306,7 +487,7 @@ async function craftCraftingTable() {
                 logger.info('🪵 Converted logs to planks');
             }
         }
-        
+
         // Now craft crafting table
         const planks = bot.inventory.items().filter(item => item.name.includes('planks'));
         if (planks.length >= 4) {
@@ -327,9 +508,9 @@ async function craftCraftingTable() {
 
 async function craftPickaxe() {
     if (!botState.hasCraftingTable) return;
-    
+
     logger.info('⛏️ Trying to craft pickaxe...');
-    
+
     try {
         // First place crafting table if needed
         const craftingTable = bot.inventory.items().find(item => item.name === 'crafting_table');
@@ -338,7 +519,7 @@ async function craftPickaxe() {
             await bot.equip(craftingTable, 'hand');
             await bot.placeBlock(bot.blockAt(position.offset(0, -1, 0)), position.subtract(bot.entity.position));
         }
-        
+
         // Try to craft wooden pickaxe
         const recipe = bot.recipesFor(bot.registry.itemsByName.wooden_pickaxe?.id, null, 1, null);
         if (recipe.length > 0) {
@@ -357,7 +538,7 @@ async function mineStone() {
         intelligentMovement();
         return;
     }
-    
+
     // Return to surface if too deep underground
     if (bot.entity.position.y < 50) {
         logger.info('🔝 Returning to surface...');
@@ -366,9 +547,9 @@ async function mineStone() {
         botState.currentTask = 'exploring';
         return;
     }
-    
+
     logger.debug('⛏️ Looking for stone to mine...');
-    
+
     const stones = bot.findBlocks({
         matching: [
             bot.registry.blocksByName.stone?.id,
@@ -377,10 +558,10 @@ async function mineStone() {
         maxDistance: 8, // Shorter range
         count: 3 // Fewer blocks
     });
-    
+
     if (stones.length > 0 && Math.random() < 0.4) { // Only 40% chance to mine
         const targetStone = stones[0];
-        
+
         try {
             await bot.lookAt(targetStone);
             const block = bot.blockAt(targetStone);
@@ -390,11 +571,11 @@ async function mineStone() {
                 if (pickaxe) {
                     await bot.equip(pickaxe, 'hand');
                 }
-                
+
                 await bot.dig(block);
                 logger.info(`⛏️ Mined ${block.name}`);
                 botState.lastMined = Date.now();
-                
+
                 // Much less chat spam
                 if (Math.random() < 0.1) {
                     const miningMessages = [
@@ -405,7 +586,7 @@ async function mineStone() {
                     ];
                     sendIntelligentChat(miningMessages[Math.floor(Math.random() * miningMessages.length)]);
                 }
-                
+
                 // Often switch to exploring after mining
                 if (Math.random() < 0.6) {
                     botState.currentTask = 'exploring';
@@ -424,7 +605,7 @@ function exploreWorld() {
     if (Math.random() < 0.4) {
         intelligentMovement();
     }
-    
+
     // Random chance to start specific tasks
     if (Math.random() < 0.1) {
         const tasks = ['gather_wood', 'mine_stone'];
@@ -434,9 +615,12 @@ function exploreWorld() {
 
 function intelligentMovement() {
     if (botState.isMoving) return;
-    
+
+    // Skip if random behaviors are disabled
+    if (!botState.randomBehaviorsEnabled) return;
+
     botState.isMoving = true;
-    
+
     // More natural movement patterns
     const movements = [
         () => {
@@ -480,7 +664,7 @@ function intelligentMovement() {
             if (bot.entity.onGround) {
                 bot.setControlState('jump', true);
                 setTimeout(() => bot.setControlState('jump', false), 100);
-                
+
                 // Sometimes double jump
                 if (Math.random() < 0.3) {
                     setTimeout(() => {
@@ -491,10 +675,10 @@ function intelligentMovement() {
             }
         }
     ];
-    
+
     const movement = movements[Math.floor(Math.random() * movements.length)];
     movement();
-    
+
     setTimeout(() => {
         botState.isMoving = false;
     }, 2000 + Math.random() * 2000);
@@ -502,14 +686,17 @@ function intelligentMovement() {
 
 function naturalLooking() {
     if (!bot || !bot.entity) return;
-    
+
+    // Skip if random behaviors are disabled
+    if (!botState.randomBehaviorsEnabled) return;
+
     // Look at nearby players sometimes
-    const nearbyPlayers = Object.values(bot.entities).filter(entity => 
-        entity.type === 'player' && 
+    const nearbyPlayers = Object.values(bot.entities).filter(entity =>
+        entity.type === 'player' &&
         entity.username !== bot.username &&
         entity.position.distanceTo(bot.entity.position) < 10
     );
-    
+
     if (nearbyPlayers.length > 0 && Math.random() < 0.4) {
         const targetPlayer = nearbyPlayers[0];
         bot.lookAt(targetPlayer.position.offset(0, 1.6, 0));
@@ -523,21 +710,68 @@ function naturalLooking() {
 }
 
 function handlePlayerChat(username, message) {
-    // Skip if bot is the sender
+    // Skip if bot is the sender (check exact username AND username pool)
     if (username === bot.username) return;
-    
+
+    // Also check if the username is from our bot's username pool (we might be responding to our old self)
+    const botUsernames = ['AIPlayer', 'BotHelper', 'AutoCrafter', 'MineBot', 'PlayerAI',
+        'CraftBot', 'ExploreBot', 'BuildHelper', 'GameBot', 'ServerBot',
+        'FriendlyAI', 'HelpBot', 'ChatBot', 'WorkBot', 'PlayBot',
+        'SmartBot', 'QuickBot', 'FastBot', 'CoolBot', 'NiceBot'];
+    const isBotMessage = botUsernames.some(name => username.startsWith(name));
+    logger.debug(`Username check: ${username}, isBotMessage: ${isBotMessage}`);
+    if (isBotMessage) {
+        logger.info(`🚫 Skipping message from bot username: ${username}`);
+        return;
+    }
+
     const lowerMessage = message.toLowerCase();
     const currentTime = Date.now();
-    
+
     // Log all player messages for debugging
     logger.info(`📢 Player message from ${username}: "${message}"`);
-    
-    // Reduce chat cooldown to be more responsive
-    if (currentTime - botState.lastChatTime < 1500) {
+
+    // Check for bot commands first (-bot prefix)
+    if (lowerMessage.startsWith('-bot') && commandParser && commandHandler) {
+        const command = commandParser.parse(message, username);
+        if (command) {
+            logger.info(`🎮 Command detected: ${JSON.stringify(command)}`);
+            commandHandler.execute(command);
+            return; // Don't process as regular chat
+        }
+    }
+
+    // Try BotMind for natural language understanding
+    if (botMind) {
+        botMind.process(message, username).then(result => {
+            if (result.handled && result.message) {
+                logger.info(`🧠 BotMind handled: ${result.action} -> ${result.message}`);
+                sendIntelligentChat(result.message);
+                botState.lastChatTime = Date.now();
+            }
+        }).catch(error => {
+            logger.debug(`BotMind error: ${error.message}`);
+        });
+
+        // If BotMind will handle this, skip ALL other responses to prevent spam
+        const intent = botMind.understand(message, username);
+        if (intent && intent.confidence >= 0.5) {
+            return; // BotMind will handle this, don't do keyword responses
+        }
+    }
+
+    // Skip responses entirely if we're currently executing a command
+    if (commandHandler && commandHandler.isTaskRunning()) {
+        logger.debug('Task running, skipping chat responses');
+        return;
+    }
+
+    // Increased chat cooldown to prevent spam (3 seconds)
+    if (currentTime - botState.lastChatTime < 3000) {
         logger.debug('Chat cooldown active, skipping response');
         return;
     }
-    
+
     // More natural and human-like responses
     const responses = {
         'hello': () => {
@@ -631,12 +865,12 @@ function handlePlayerChat(username, message) {
             bot.setControlState('jump', true);
             setTimeout(() => bot.setControlState('jump', false), 100);
             setTimeout(() => {
-                bot.look(bot.entity.yaw + Math.PI/2, bot.entity.pitch);
+                bot.look(bot.entity.yaw + Math.PI / 2, bot.entity.pitch);
             }, 200);
             return `dancing time! this is fun ${username}!`;
         }
     };
-    
+
     // Check if bot is mentioned by name
     if (lowerMessage.includes(bot.username.toLowerCase())) {
         setTimeout(() => {
@@ -650,12 +884,12 @@ function handlePlayerChat(username, message) {
         }, 800 + Math.random() * 1500);
         return;
     }
-    
+
     // Check for keyword responses with higher response rate
     let foundKeywordResponse = false;
     for (const [keyword, responseFunc] of Object.entries(responses)) {
         if (lowerMessage.includes(keyword)) {
-            if (Math.random() < 0.90) { // 90% chance to respond to keyword messages
+            if (Math.random() < 0.50) { // 50% chance to respond to keyword messages (reduced for spam prevention)
                 setTimeout(() => {
                     sendIntelligentChat(responseFunc());
                     botState.lastChatTime = Date.now();
@@ -665,9 +899,9 @@ function handlePlayerChat(username, message) {
             break;
         }
     }
-    
-    // If no keyword match, respond to ANY player message (70% chance)
-    if (!foundKeywordResponse && Math.random() < 0.7) {
+
+    // If no keyword match, respond to player message (only 15% chance to reduce spam)
+    if (!foundKeywordResponse && Math.random() < 0.15) {
         const genericReplies = [
             `interesting ${username}! tell me more`,
             `i see what you mean ${username}`,
@@ -696,13 +930,16 @@ function getActivityResponse() {
         'exploring': 'just exploring the world and having fun',
         'follow_player': `following ${botState.targetPlayer} around`
     };
-    
+
     return activities[botState.currentTask] || 'just playing minecraft like a normal player!';
 }
 
 function randomChatting() {
     if (!bot || Date.now() - botState.lastChatTime < 15000) return;
-    
+
+    // Skip if random behaviors are disabled
+    if (!botState.randomBehaviorsEnabled) return;
+
     if (Math.random() < 0.4) { // 40% chance for more active chatting
         const randomMessages = [
             'hey everyone! how is everyone doing today?',
@@ -718,7 +955,7 @@ function randomChatting() {
             'love meeting new players here!',
             'anyone need help with anything? i am happy to assist!'
         ];
-        
+
         const message = randomMessages[Math.floor(Math.random() * randomMessages.length)];
         sendIntelligentChat(message);
     }
@@ -726,10 +963,10 @@ function randomChatting() {
 
 function sendIntelligentChat(message) {
     if (!bot || !message) return;
-    
+
     const currentTime = Date.now();
     if (currentTime - botState.lastChatTime < 3000) return; // Prevent spam
-    
+
     try {
         bot.chat(message);
         botState.lastChatTime = currentTime;
@@ -744,25 +981,25 @@ function followTargetPlayer() {
         botState.currentTask = 'exploring';
         return;
     }
-    
-    const targetEntity = Object.values(bot.entities).find(entity => 
+
+    const targetEntity = Object.values(bot.entities).find(entity =>
         entity.username === botState.targetPlayer
     );
-    
+
     if (targetEntity) {
         const distance = bot.entity.position.distanceTo(targetEntity.position);
-        
+
         if (distance > 5) {
             // Move towards the player
             logger.debug(`Following ${botState.targetPlayer}, distance: ${distance.toFixed(1)}`);
             bot.lookAt(targetEntity.position);
             bot.setControlState('forward', true);
-            
+
             // Sprint if far away
             if (distance > 8) {
                 bot.setControlState('sprint', true);
             }
-            
+
             setTimeout(() => {
                 bot.setControlState('forward', false);
                 bot.setControlState('sprint', false);
@@ -782,7 +1019,7 @@ function followTargetPlayer() {
 
 function seekFood() {
     // Look for food in inventory first
-    const food = bot.inventory.items().find(item => 
+    const food = bot.inventory.items().find(item =>
         item.name.includes('bread') ||
         item.name.includes('apple') ||
         item.name.includes('carrot') ||
@@ -790,7 +1027,7 @@ function seekFood() {
         item.name.includes('meat') ||
         item.name.includes('fish')
     );
-    
+
     if (food) {
         try {
             bot.equip(food, 'hand').then(() => {
@@ -812,17 +1049,17 @@ function seekFood() {
 
 function manageInventory() {
     if (!bot) return;
-    
+
     const inventory = bot.inventory.items();
     logger.debug(`Inventory: ${inventory.length} items`);
-    
+
     // Drop useless items if inventory is full
     if (inventory.length > 30) {
-        const uselessItems = inventory.filter(item => 
-            item.name.includes('dirt') || 
+        const uselessItems = inventory.filter(item =>
+            item.name.includes('dirt') ||
             item.name.includes('cobblestone') && inventory.filter(i => i.name === item.name).length > 32
         );
-        
+
         if (uselessItems.length > 0) {
             try {
                 bot.toss(uselessItems[0].type, null, uselessItems[0].count);
@@ -842,19 +1079,19 @@ function scheduleReconnect() {
     }
 
     reconnectAttempts++;
-    
+
     // Different delays for potential bans vs normal disconnections
     let delay;
     if (reconnectAttempts > 1) {
         // After first reconnect, assume potential ban - use longer delays
         delay = Math.min(120000, 30000 + (reconnectAttempts * 15000)); // 30s to 2min
-        logger.info(`🔄 Reconnecting with new username in ${delay/1000}s (attempt ${reconnectAttempts}/${maxReconnectAttempts})`);
+        logger.info(`🔄 Reconnecting with new username in ${delay / 1000}s (attempt ${reconnectAttempts}/${maxReconnectAttempts})`);
     } else {
         // First reconnect - quick retry
         delay = 5000;
-        logger.info(`🔄 Quick reconnect in ${delay/1000}s (attempt ${reconnectAttempts}/${maxReconnectAttempts})`);
+        logger.info(`🔄 Quick reconnect in ${delay / 1000}s (attempt ${reconnectAttempts}/${maxReconnectAttempts})`);
     }
-    
+
     setTimeout(() => {
         try {
             if (bot) {
@@ -873,11 +1110,11 @@ process.on('SIGINT', () => {
     console.log('\n');
     logger.info('🛑 Shutting down AI bot...');
     console.log('AI Bot shutting down gracefully...');
-    
+
     if (bot) {
         bot.quit();
     }
-    
+
     setTimeout(() => {
         console.log('✅ AI Bot shutdown complete. Goodbye!');
         process.exit(0);

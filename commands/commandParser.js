@@ -1,0 +1,285 @@
+/**
+ * Command Parser for Bot Chat Commands
+ * Parses messages in format: -bot <action> <target>
+ */
+
+const logger = require('../utils/logger');
+
+class CommandParser {
+    constructor() {
+        this.prefix = '-bot';
+        this.validActions = ['mine', 'kill', 'come', 'go', 'make', 'drop', 'stop', 'start', 'status', 'help', 'sethome', 'home', 'mine_all', 'collect'];
+    }
+
+    /**
+     * Parse a chat message for bot commands
+     * @param {string} message - The chat message
+     * @param {string} username - The player who sent the message
+     * @returns {object|null} - Parsed command object or null if not a valid command
+     */
+    parse(message, username) {
+        const trimmedMessage = message.trim().toLowerCase();
+
+        // Check if message starts with bot prefix
+        if (!trimmedMessage.startsWith(this.prefix)) {
+            return null;
+        }
+
+        // Remove prefix and split into parts
+        const commandPart = trimmedMessage.substring(this.prefix.length).trim();
+        const parts = commandPart.split(/\s+/);
+
+        if (parts.length === 0 || parts[0] === '') {
+            return {
+                valid: false,
+                error: 'No command specified. Use: -bot help',
+                username
+            };
+        }
+
+        const action = parts[0];
+        const args = parts.slice(1);
+
+        // Validate action
+        if (!this.validActions.includes(action)) {
+            return {
+                valid: false,
+                error: `Unknown command: ${action}. Valid commands: ${this.validActions.join(', ')}`,
+                username
+            };
+        }
+
+        // Parse based on action type
+        return this.parseAction(action, args, username, message);
+    }
+
+    /**
+     * Parse specific action with its arguments
+     */
+    parseAction(action, args, username, originalMessage) {
+        switch (action) {
+            case 'mine':
+                return this.parseMineCommand(args, username);
+            case 'kill':
+                return this.parseKillCommand(args, username);
+            case 'come':
+                return this.parseComeCommand(args, username);
+            case 'go':
+                return this.parseGoCommand(args, username);
+            case 'make':
+                return this.parseMakeCommand(args, username);
+            case 'drop':
+                return this.parseDropCommand(args, username);
+            case 'stop':
+                return this.parseStopCommand(args, username);
+            case 'start':
+                return this.parseStartCommand(args, username);
+            case 'sethome':
+                return { valid: true, action: 'sethome', username };
+            case 'home':
+                if (args.length > 0 && args[0] === 'deposit') {
+                    return { valid: true, action: 'home', target: 'deposit', username };
+                }
+                return { valid: true, action: 'home', username };
+            case 'mine_all':
+                return { valid: true, action: 'mine_all', username };
+            case 'collect':
+                return { valid: true, action: 'collect', username };
+            case 'status':
+                return { valid: true, action: 'status', username };
+            case 'help':
+                return { valid: true, action: 'help', username };
+            default:
+                return { valid: false, error: `Unknown action: ${action}`, username };
+        }
+    }
+
+    /**
+     * Parse stop command: -bot stop [random|farm]
+     */
+    parseStopCommand(args, username) {
+        if (args.length > 0 && args[0] === 'random') {
+            return { valid: true, action: 'stop_random', username };
+        }
+        if (args.length > 0 && args[0] === 'farm') {
+            return { valid: true, action: 'stop_farm', username };
+        }
+        return { valid: true, action: 'stop', username };
+    }
+
+    /**
+     * Parse start command: -bot start [random|farm]
+     */
+    parseStartCommand(args, username) {
+        if (args.length > 0 && args[0] === 'random') {
+            return { valid: true, action: 'start_random', username };
+        }
+        if (args.length > 0 && args[0] === 'farm') {
+            return { valid: true, action: 'start_farm', username };
+        }
+        return {
+            valid: false,
+            error: 'Use: -bot start random OR -bot start farm',
+            username
+        };
+    }
+
+    /**
+     * Parse mine command: -bot mine <block_type> [count]
+     */
+    parseMineCommand(args, username) {
+        if (args.length === 0) {
+            return {
+                valid: false,
+                error: 'Specify what to mine. Example: -bot mine diamond_ore',
+                username
+            };
+        }
+
+        const blockType = args[0].replace(/-/g, '_');
+        const count = args.length > 1 ? parseInt(args[1]) || 64 : 64;
+
+        return {
+            valid: true,
+            action: 'mine',
+            target: blockType,
+            count: Math.min(count, 256), // Cap at 256
+            username
+        };
+    }
+
+    /**
+     * Parse kill command: -bot kill <mob_type>
+     */
+    parseKillCommand(args, username) {
+        if (args.length === 0) {
+            return {
+                valid: false,
+                error: 'Specify what to kill. Example: -bot kill zombie',
+                username
+            };
+        }
+
+        const mobType = args[0].replace(/-/g, '_');
+
+        return {
+            valid: true,
+            action: 'kill',
+            target: mobType,
+            username
+        };
+    }
+
+    /**
+     * Parse come command: -bot come [player_name]
+     */
+    parseComeCommand(args, username) {
+        // If no player specified, come to the player who issued the command
+        const targetPlayer = args.length > 0 ? args[0] : username;
+
+        return {
+            valid: true,
+            action: 'come',
+            target: targetPlayer,
+            username
+        };
+    }
+
+    /**
+     * Parse go command: -bot go <x> <y> <z>
+     */
+    parseGoCommand(args, username) {
+        if (args.length < 3) {
+            return {
+                valid: false,
+                error: 'Specify coordinates. Example: -bot go 100 64 -200',
+                username
+            };
+        }
+
+        const x = parseFloat(args[0]);
+        const y = parseFloat(args[1]);
+        const z = parseFloat(args[2]);
+
+        if (isNaN(x) || isNaN(y) || isNaN(z)) {
+            return {
+                valid: false,
+                error: 'Invalid coordinates. Use numbers only.',
+                username
+            };
+        }
+
+        return {
+            valid: true,
+            action: 'go',
+            target: { x, y, z },
+            username
+        };
+    }
+
+    /**
+     * Parse make command: -bot make <item> [count]
+     */
+    parseMakeCommand(args, username) {
+        if (args.length === 0) {
+            return {
+                valid: false,
+                error: 'Specify what to make. Example: -bot make diamond_pickaxe',
+                username
+            };
+        }
+
+        const itemName = args[0].replace(/-/g, '_');
+        const count = args.length > 1 ? parseInt(args[1]) || 1 : 1;
+
+        return {
+            valid: true,
+            action: 'make',
+            target: itemName,
+            count: Math.min(count, 64), // Cap at 64
+            username
+        };
+    }
+
+    /**
+     * Parse drop command: -bot drop <item> [count]
+     */
+    parseDropCommand(args, username) {
+        if (args.length === 0) {
+            return {
+                valid: false,
+                error: 'Specify what to drop. Example: -bot drop dirt 32',
+                username
+            };
+        }
+
+        const itemName = args[0].replace(/-/g, '_');
+        const count = args.length > 1 ? parseInt(args[1]) || 1 : 1;
+
+        return {
+            valid: true,
+            action: 'drop',
+            target: itemName,
+            count: Math.min(count, 64), // Cap at 64
+            username
+        };
+    }
+
+    /**
+     * Get help text for all commands
+     */
+    getHelpText() {
+        return [
+            '=== Bot Commands ===',
+            '-bot mine <block> [count] - Mine blocks (e.g., -bot mine iron_ore 32)',
+            '-bot kill <mob> - Kill mobs (e.g., -bot kill zombie)',
+            '-bot come [player] - Come to player (e.g., -bot come)',
+            '-bot go <x> <y> <z> - Go to coordinates',
+            '-bot make <item> [count] - Craft item (e.g., -bot make diamond_pickaxe)',
+            '-bot stop - Stop current task',
+            '-bot status - Show current task status'
+        ];
+    }
+}
+
+module.exports = CommandParser;

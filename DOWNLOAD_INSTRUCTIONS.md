@@ -27,7 +27,7 @@ Your AI bot is working perfectly! To run it 24/7 without keeping this website op
 node ai-bot.js
 
 # With your server details
-MINECRAFT_HOST=GANG_WARS.aternos.me MINECRAFT_PORT=50466 MINECRAFT_USERNAME=AIPlayer node ai-bot.js
+MINECRAFT_HOST=chiku99.aternos.me MINECRAFT_PORT=50044 MINECRAFT_USERNAME=AIPlayer node ai-bot.js
 
 # Keep running even if you close terminal (Windows)
 start /min node ai-bot.js

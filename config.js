@@ -1,22 +1,22 @@
 module.exports = {
     defaultServer: {
-        host: 'GANG_WARS.aternos.me',
-        port: 50466
+        host: 'chiku99.aternos.me',
+        port: 50044
     },
-    
+
     bot: {
         username: 'AutoBot',
         version: '1.20.1',
         auth: 'offline'
     },
-    
+
     connection: {
         maxReconnectAttempts: 10,
         reconnectDelay: 5000,
         maxReconnectDelay: 60000,
         checkTimeoutInterval: 30000
     },
-    
+
     behavior: {
         movement: {
             enabled: true,
@@ -25,7 +25,7 @@ module.exports = {
             stopMovementChance: 0.1,
             stopDuration: { min: 2000, max: 8000 }
         },
-        
+
         blockBreaking: {
             enabled: true,
             breakChance: 0.15,
@@ -33,7 +33,7 @@ module.exports = {
             maxReach: 4.5,
             preferredBlocks: ['dirt', 'grass_block', 'stone', 'cobblestone', 'oak_log', 'birch_log']
         },
-        
+
         chat: {
             enabled: true,
             messageChance: 0.05,
@@ -51,7 +51,7 @@ module.exports = {
                 'having a great time'
             ]
         },
-        
+
         antiIdle: {
             enabled: true,
             jumpInterval: { min: 60000, max: 120000 },
@@ -59,7 +59,7 @@ module.exports = {
             inventoryCheckInterval: { min: 45000, max: 90000 }
         }
     },
-    
+
     safety: {
         avoidLava: true,
         avoidVoid: true,
