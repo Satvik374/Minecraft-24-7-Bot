@@ -139,6 +139,18 @@ function createBot() {
         webServer.addLog('Bot spawned in world');
         logger.info(`AI Bot spawned at ${bot.entity.position}`);
 
+        // Start stats sync loop
+        setInterval(() => {
+            if (bot && bot.entity) {
+                webServer.updateStats({
+                    health: bot.health,
+                    food: bot.food,
+                    position: bot.entity.position,
+                    task: (botState && botState.currentTask) ? botState.currentTask : 'Idle'
+                });
+            }
+        }, 1000);
+
         // Initialize command system
         initializeCommandSystem();
 
