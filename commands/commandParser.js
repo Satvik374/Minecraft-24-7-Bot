@@ -8,7 +8,7 @@ const logger = require('../utils/logger');
 class CommandParser {
     constructor() {
         this.prefix = '-bot';
-        this.validActions = ['mine', 'kill', 'come', 'go', 'make', 'drop', 'stop', 'start', 'status', 'help', 'sethome', 'home', 'mine_all', 'collect'];
+        this.validActions = ['mine', 'kill', 'come', 'go', 'make', 'drop', 'stop', 'start', 'status', 'help', 'sethome', 'home', 'mine_all', 'collect', 'sort'];
     }
 
     /**
@@ -70,6 +70,8 @@ class CommandParser {
                 return this.parseMakeCommand(args, username);
             case 'drop':
                 return this.parseDropCommand(args, username);
+            case 'sort':
+                return this.parseSortCommand(args, username);
             case 'stop':
                 return this.parseStopCommand(args, username);
             case 'start':
@@ -95,7 +97,69 @@ class CommandParser {
     }
 
     /**
-     * Parse stop command: -bot stop [random|farm]
+     * Parse sort command: -bot sort chests [sourceX sourceY sourceZ destX destY destZ]
+     */
+    parseSortCommand(args, username) {
+        // Default sort without subcommand
+        if (args.length === 0) {
+            return {
+                valid: true,
+                action: 'sort',
+                subAction: 'inventory',
+                username
+            };
+        }
+
+        const subAction = args[0];
+
+        // -bot sort chests - sort and consolidate all nearby chests
+        if (subAction === 'chests') {
+            // Check if coordinates provided for chest-to-chest transfer
+            if (args.length >= 7) {
+                const sourceX = parseFloat(args[1]);
+                const sourceY = parseFloat(args[2]);
+                const sourceZ = parseFloat(args[3]);
+                const destX = parseFloat(args[4]);
+                const destY = parseFloat(args[5]);
+                const destZ = parseFloat(args[6]);
+
+                if (isNaN(sourceX) || isNaN(sourceY) || isNaN(sourceZ) ||
+                    isNaN(destX) || isNaN(destY) || isNaN(destZ)) {
+                    return {
+                        valid: false,
+                        error: 'Invalid coordinates. Use: -bot sort chests <srcX> <srcY> <srcZ> <destX> <destY> <destZ>',
+                        username
+                    };
+                }
+
+                return {
+                    valid: true,
+                    action: 'sort',
+                    subAction: 'transfer',
+                    source: { x: sourceX, y: sourceY, z: sourceZ },
+                    destination: { x: destX, y: destY, z: destZ },
+                    username
+                };
+            }
+
+            // Just sort all nearby chests
+            return {
+                valid: true,
+                action: 'sort',
+                subAction: 'chests',
+                username
+            };
+        }
+
+        return {
+            valid: false,
+            error: 'Use: -bot sort chests OR -bot sort chests <srcX> <srcY> <srcZ> <destX> <destY> <destZ>',
+            username
+        };
+    }
+
+    /**
+     * Parse stop command: -bot stop [action]
      */
     parseStopCommand(args, username) {
         if (args.length > 0 && args[0] === 'random') {

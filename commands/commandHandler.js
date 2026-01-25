@@ -103,6 +103,15 @@ class CommandHandler {
                         this.sendChat('Home ability not initialized');
                     }
                     break;
+                case 'sort':
+                    // Route to sort ability (homeManager handles sort)
+                    const sortAbility = this.abilities['sort'];
+                    if (sortAbility) {
+                        await sortAbility.execute(command);
+                    } else {
+                        this.sendChat('Sort ability not initialized');
+                    }
+                    break;
                 case 'mine_all':
                     // Route to miner
                     if (this.abilities['mine']) {
