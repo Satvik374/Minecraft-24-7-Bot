@@ -344,6 +344,7 @@ function initializeCommandSystem() {
     commandHandler.registerAbility('make', craftingAbility);
     commandHandler.registerAbility('farm', farmingAbility);
     commandHandler.registerAbility('home', homeManager);
+    commandHandler.registerAbility('sort', homeManager);
 
     // Register abilities with task manager
     taskManager.registerAbilities(commandHandler.abilities);
@@ -365,6 +366,10 @@ function initializeCommandSystem() {
     doorHandler = new DoorHandler(bot);
     doorHandler.startAutoOpen();
     logger.info('🚪 Door handler active - will auto-open doors and gates');
+
+    // Start auto-defense against hostile mobs (24/7)
+    combatAbility.startAutoDefense();
+    logger.info('🛡️ Auto-defense active - will defend against hostile mobs');
 
     // Initialize BotMind for intelligent natural language understanding
     botMind = new BotMind(bot, commandHandler);

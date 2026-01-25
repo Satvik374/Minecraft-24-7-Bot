@@ -14,6 +14,21 @@ class CombatAbility {
         this.targetMobType = null;
         this.currentTarget = null;
         this.attackInterval = null;
+
+        // Auto-defense properties
+        this.autoDefenseEnabled = false;
+        this.autoDefenseInterval = null;
+        this.isDefending = false;
+
+        // List of hostile mobs to defend against
+        this.hostileMobs = [
+            'zombie', 'skeleton', 'creeper', 'spider', 'cave_spider',
+            'enderman', 'witch', 'slime', 'magma_cube', 'blaze',
+            'ghast', 'zombie_villager', 'husk', 'stray', 'drowned',
+            'phantom', 'pillager', 'vindicator', 'ravager', 'vex',
+            'evoker', 'wither_skeleton', 'piglin_brute', 'hoglin',
+            'zoglin', 'warden', 'endermite', 'silverfish'
+        ];
     }
 
     /**
@@ -334,6 +349,166 @@ class CombatAbility {
      */
     delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    /**
+     * Start auto-defense - continuously checks for and attacks hostile mobs
+     */
+    startAutoDefense() {
+        if (this.autoDefenseEnabled) {
+            logger.info('Auto-defense already running');
+            return;
+        }
+
+        this.autoDefenseEnabled = true;
+        logger.info('🛡️ Auto-defense activated! Will defend against hostile mobs 24/7');
+        this.sendChat('Auto-defense activated! I will protect myself from hostile mobs.');
+
+        // Check for hostile mobs every 500ms
+        this.autoDefenseInterval = setInterval(() => {
+            this.checkForHostileMobs();
+        }, 500);
+    }
+
+    /**
+     * Stop auto-defense
+     */
+    stopAutoDefense() {
+        this.autoDefenseEnabled = false;
+        this.isDefending = false;
+
+        if (this.autoDefenseInterval) {
+            clearInterval(this.autoDefenseInterval);
+            this.autoDefenseInterval = null;
+        }
+
+        logger.info('🛡️ Auto-defense deactivated');
+        this.sendChat('Auto-defense deactivated.');
+    }
+
+    /**
+     * Check for nearby hostile mobs and attack if found
+     */
+    async checkForHostileMobs() {
+        // Skip if already defending or manual combat is active
+        if (this.isDefending || this.isActive) return;
+        if (!this.bot || !this.bot.entity) return;
+
+        // Find nearest hostile mob
+        const hostileMob = this.findNearestHostileMob();
+
+        if (hostileMob) {
+            const distance = this.bot.entity.position.distanceTo(hostileMob.position);
+
+            // Only react if mob is within 16 blocks (aggro range)
+            if (distance <= 16) {
+                this.isDefending = true;
+                logger.info(`🛡️ Hostile mob detected: ${hostileMob.name || hostileMob.mobType} at ${distance.toFixed(1)} blocks`);
+
+                try {
+                    await this.defendAgainstMob(hostileMob);
+                } catch (error) {
+                    logger.debug(`Defense error: ${error.message}`);
+                }
+
+                this.isDefending = false;
+            }
+        }
+    }
+
+    /**
+     * Find nearest hostile mob
+     */
+    findNearestHostileMob() {
+        const entities = Object.values(this.bot.entities);
+
+        let nearestMob = null;
+        let nearestDistance = Infinity;
+
+        for (const entity of entities) {
+            if (!entity || entity === this.bot.entity) continue;
+            if (!entity.position) continue;
+
+            const entityName = (entity.name || entity.mobType || '').toLowerCase();
+            if (!entityName || entity.type === 'player') continue;
+
+            // Check if it's a hostile mob
+            const isHostile = this.hostileMobs.some(mob =>
+                entityName === mob || entityName.includes(mob)
+            );
+
+            if (!isHostile) continue;
+
+            const distance = this.bot.entity.position.distanceTo(entity.position);
+
+            if (distance < nearestDistance && distance < 32) {
+                nearestDistance = distance;
+                nearestMob = entity;
+            }
+        }
+
+        return nearestMob;
+    }
+
+    /**
+     * Defend against a specific hostile mob
+     */
+    async defendAgainstMob(target) {
+        const maxTime = 15000; // 15 seconds max per defense
+        const startTime = Date.now();
+        let lastKnownPosition = target.position ? target.position.clone() : this.bot.entity.position;
+
+        // Equip best weapon
+        await this.equipBestWeapon();
+
+        while (this.autoDefenseEnabled && Date.now() - startTime < maxTime) {
+            const currentTarget = this.bot.entities[target.id];
+
+            // Target eliminated
+            if (!currentTarget) {
+                logger.info(`🛡️ Threat eliminated: ${target.name || target.mobType}`);
+                await this.collectDrops(lastKnownPosition);
+                return true;
+            }
+
+            // Update last known position
+            if (currentTarget.position) {
+                lastKnownPosition = currentTarget.position.clone();
+            }
+
+            // Check if target is dead
+            if (currentTarget.health !== undefined && currentTarget.health <= 0) {
+                logger.info(`🛡️ Threat killed: ${target.name || target.mobType}`);
+                await this.collectDrops(lastKnownPosition);
+                return true;
+            }
+
+            const distance = this.bot.entity.position.distanceTo(currentTarget.position);
+
+            // Target escaped
+            if (distance > 24) {
+                logger.debug(`Threat escaped: ${target.name || target.mobType}`);
+                return false;
+            }
+
+            // Look at target
+            await this.bot.lookAt(currentTarget.position.offset(0, currentTarget.height * 0.5, 0));
+
+            if (distance <= 3.5) {
+                // Attack!
+                this.stopMovement();
+                await this.attack(currentTarget);
+                await this.delay(400); // Attack cooldown
+            } else {
+                // Move towards target
+                await this.moveTowards(currentTarget.position);
+            }
+
+            await this.delay(50);
+        }
+
+        this.stopMovement();
+        return false;
     }
 }
 
