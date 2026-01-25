@@ -310,10 +310,11 @@ class HomeManager {
     }
 
     /**
-     * Sort all nearby chests by categorizing items
+     * Sort all nearby chests by categorizing items and moving them between chests
+     * Each chest gets assigned to specific categories, then items are redistributed
      */
     async sortAllChests() {
-        this.sendChat('Starting chest sorting...');
+        this.sendChat('Starting smart chest sorting...');
 
         const mcData = require('minecraft-data')(this.bot.version);
         const chestId = mcData.blocksByName['chest']?.id;
@@ -339,130 +340,200 @@ class HomeManager {
             return;
         }
 
-        this.sendChat(`Found ${chestBlocks.length} chest(s). Collecting and sorting items...`);
+        this.sendChat(`Found ${chestBlocks.length} chest(s). Analyzing contents...`);
 
-        // Collect all items from all chests
-        const allItems = [];
-        const chestPositions = [];
+        // Define all possible categories and assign to chests
+        const allCategories = ['ores', 'tools', 'combat', 'food', 'blocks', 'farming', 'misc'];
 
+        // Map categories to chest indices (cycle if more categories than chests)
+        const categoryToChest = {};
+        const chestToCategories = {};
+
+        for (let i = 0; i < allCategories.length; i++) {
+            const chestIdx = i % chestBlocks.length;
+            categoryToChest[allCategories[i]] = chestIdx;
+
+            if (!chestToCategories[chestIdx]) {
+                chestToCategories[chestIdx] = [];
+            }
+            chestToCategories[chestIdx].push(allCategories[i]);
+        }
+
+        // Build a list of chest data with positions and blocks
+        const chestData = [];
         for (const pos of chestBlocks) {
             const block = this.bot.blockAt(pos);
-            if (!block) continue;
+            if (block) {
+                chestData.push({ position: pos, block });
+            }
+        }
+
+        // Announce category assignments
+        for (let i = 0; i < chestData.length; i++) {
+            const categories = chestToCategories[i] || ['misc'];
+            const pos = chestData[i].position;
+            logger.info(`Chest ${i} at (${Math.floor(pos.x)}, ${Math.floor(pos.y)}, ${Math.floor(pos.z)}): ${categories.join(', ')}`);
+        }
+
+        this.sendChat(`Assigned categories to ${chestData.length} chests. Now sorting items...`);
+
+        // Phase 1: Scan all chests and collect misplaced items
+        const itemsToMove = []; // {item, fromChestIdx, toChestIdx}
+
+        for (let chestIdx = 0; chestIdx < chestData.length; chestIdx++) {
+            const { position, block } = chestData[chestIdx];
+            const assignedCategories = chestToCategories[chestIdx] || ['misc'];
 
             try {
-                // Go to chest
-                await this.goToPosition(pos.x, pos.y, pos.z, 2);
-
+                await this.goToPosition(position.x, position.y, position.z, 2);
                 const chest = await this.bot.openChest(block);
-                chestPositions.push({ position: pos, block });
-
-                // Collect all items from this chest
                 const items = chest.containerItems();
+
                 for (const item of items) {
-                    allItems.push({
-                        type: item.type,
-                        name: item.name,
-                        count: item.count,
-                        metadata: item.metadata,
-                        nbt: item.nbt,
-                        category: this.categorizeItem(item)
-                    });
-                    // Withdraw item to bot's inventory
-                    try {
-                        await chest.withdraw(item.type, null, item.count);
-                    } catch (e) {
-                        logger.debug(`Could not withdraw ${item.name}: ${e.message}`);
+                    const itemCategory = this.categorizeItem(item);
+
+                    // Check if this item belongs in this chest
+                    if (!assignedCategories.includes(itemCategory)) {
+                        // Item is misplaced - mark for moving
+                        const correctChestIdx = categoryToChest[itemCategory];
+                        itemsToMove.push({
+                            type: item.type,
+                            name: item.name,
+                            count: item.count,
+                            category: itemCategory,
+                            fromChestIdx: chestIdx,
+                            toChestIdx: correctChestIdx
+                        });
                     }
                 }
 
                 await chest.close();
-                await new Promise(r => setTimeout(r, 300)); // Small delay
+                await new Promise(r => setTimeout(r, 200));
 
             } catch (error) {
-                logger.debug(`Error accessing chest at ${pos}: ${error.message}`);
+                logger.debug(`Error scanning chest ${chestIdx}: ${error.message}`);
             }
         }
 
-        if (allItems.length === 0) {
-            this.sendChat('No items found in chests!');
+        if (itemsToMove.length === 0) {
+            this.sendChat('All items are already sorted correctly!');
             return;
         }
 
-        this.sendChat(`Collected ${allItems.length} item stacks. Sorting by category...`);
+        this.sendChat(`Found ${itemsToMove.length} misplaced item stacks. Moving items between chests...`);
 
-        // Group items by category
-        const categorizedItems = {};
-        for (const item of allItems) {
-            if (!categorizedItems[item.category]) {
-                categorizedItems[item.category] = [];
+        // Phase 2: Move items from wrong chests to correct chests
+        // Group by source chest to minimize trips
+        const movesBySource = {};
+        for (const move of itemsToMove) {
+            if (!movesBySource[move.fromChestIdx]) {
+                movesBySource[move.fromChestIdx] = [];
             }
-            categorizedItems[item.category].push(item);
+            movesBySource[move.fromChestIdx].push(move);
         }
 
-        // Distribute items back to chests - one category per chest (if possible)
-        const categories = Object.keys(categorizedItems);
-        let chestIndex = 0;
+        let totalMoved = 0;
 
-        for (const category of categories) {
-            if (chestIndex >= chestPositions.length) {
-                chestIndex = 0; // Wrap around if more categories than chests
-            }
+        for (const sourceIdx of Object.keys(movesBySource)) {
+            const moves = movesBySource[sourceIdx];
+            const sourceChest = chestData[parseInt(sourceIdx)];
 
-            const targetChest = chestPositions[chestIndex];
-            const items = categorizedItems[category];
-
+            // Go to source chest and withdraw misplaced items
             try {
-                await this.goToPosition(targetChest.position.x, targetChest.position.y, targetChest.position.z, 2);
+                await this.goToPosition(sourceChest.position.x, sourceChest.position.y, sourceChest.position.z, 2);
+                const chest = await this.bot.openChest(sourceChest.block);
 
-                const chest = await this.bot.openChest(targetChest.block);
-
-                for (const item of items) {
-                    // Find item in bot's inventory
-                    const invItem = this.bot.inventory.items().find(i =>
-                        i.type === item.type && i.name === item.name
-                    );
-
-                    if (invItem) {
-                        try {
-                            await chest.deposit(invItem.type, null, Math.min(invItem.count, item.count));
-                        } catch (e) {
-                            logger.debug(`Could not deposit ${item.name}: ${e.message}`);
-                        }
+                for (const move of moves) {
+                    try {
+                        await chest.withdraw(move.type, null, move.count);
+                        logger.info(`Withdrew ${move.name} x${move.count} from chest ${sourceIdx}`);
+                    } catch (e) {
+                        logger.debug(`Could not withdraw ${move.name}: ${e.message}`);
                     }
                 }
 
                 await chest.close();
-                logger.info(`Deposited ${category} items to chest at ${targetChest.position}`);
+                await new Promise(r => setTimeout(r, 200));
 
             } catch (error) {
-                logger.debug(`Error depositing to chest: ${error.message}`);
+                logger.debug(`Error withdrawing from chest ${sourceIdx}: ${error.message}`);
+                continue;
             }
 
-            chestIndex++;
+            // Group items in inventory by destination chest
+            const itemsByDest = {};
+            for (const move of moves) {
+                if (!itemsByDest[move.toChestIdx]) {
+                    itemsByDest[move.toChestIdx] = [];
+                }
+                itemsByDest[move.toChestIdx].push(move);
+            }
+
+            // Deposit to each destination chest
+            for (const destIdx of Object.keys(itemsByDest)) {
+                const destMoves = itemsByDest[destIdx];
+                const destChest = chestData[parseInt(destIdx)];
+
+                try {
+                    await this.goToPosition(destChest.position.x, destChest.position.y, destChest.position.z, 2);
+                    const chest = await this.bot.openChest(destChest.block);
+
+                    for (const move of destMoves) {
+                        // Find matching item in inventory
+                        const invItem = this.bot.inventory.items().find(i =>
+                            i.type === move.type && i.name === move.name
+                        );
+
+                        if (invItem) {
+                            try {
+                                await chest.deposit(invItem.type, null, Math.min(invItem.count, move.count));
+                                totalMoved++;
+                                logger.info(`Deposited ${move.name} to chest ${destIdx} (${move.category})`);
+                            } catch (e) {
+                                logger.debug(`Could not deposit ${move.name}: ${e.message}`);
+                            }
+                        }
+                    }
+
+                    await chest.close();
+                    await new Promise(r => setTimeout(r, 200));
+
+                } catch (error) {
+                    logger.debug(`Error depositing to chest ${destIdx}: ${error.message}`);
+                }
+            }
         }
 
-        // Deposit any remaining items in bot's inventory to the first chest
+        // Deposit any remaining items in bot's inventory
         const remainingItems = this.bot.inventory.items();
-        if (remainingItems.length > 0 && chestPositions.length > 0) {
-            try {
-                const firstChest = chestPositions[0];
-                await this.goToPosition(firstChest.position.x, firstChest.position.y, firstChest.position.z, 2);
+        if (remainingItems.length > 0 && chestData.length > 0) {
+            this.sendChat('Depositing remaining items...');
 
-                const chest = await this.bot.openChest(firstChest.block);
-                for (const item of remainingItems) {
+            for (const item of remainingItems) {
+                const category = this.categorizeItem(item);
+                const targetChestIdx = categoryToChest[category];
+                const targetChest = chestData[targetChestIdx];
+
+                try {
+                    await this.goToPosition(targetChest.position.x, targetChest.position.y, targetChest.position.z, 2);
+                    const chest = await this.bot.openChest(targetChest.block);
+
                     try {
                         await chest.deposit(item.type, null, item.count);
+                        totalMoved++;
                     } catch (e) {
-                        // Ignore - chest might be full
+                        // Try first chest as fallback
+                        logger.debug(`Could not deposit ${item.name}: ${e.message}`);
                     }
+
+                    await chest.close();
+                } catch (e) {
+                    logger.debug(`Error depositing remaining item: ${e.message}`);
                 }
-                await chest.close();
-            } catch (e) {
-                logger.debug(`Could not deposit remaining items: ${e.message}`);
             }
         }
 
-        this.sendChat('Chest sorting complete!');
+        this.sendChat(`Chest sorting complete! Moved ${totalMoved} item stacks to correct chests.`);
     }
 
     /**
