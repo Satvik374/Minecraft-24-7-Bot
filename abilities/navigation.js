@@ -91,7 +91,7 @@ class NavigationAbility {
      * Navigate to a target position
      */
     async navigateTo(position, followTarget = null) {
-        const maxTime = 60000; // 1 minute max
+        const maxTime = 120000; // 2 minutes max for distant locations
         const startTime = Date.now();
 
         logger.info(`[Navigation] Starting navigation to ${position}`);
@@ -100,13 +100,41 @@ class NavigationAbility {
         if (this.pathfinder && this.pathfinder.goals && this.bot.pathfinder) {
             logger.info(`[Navigation] Using pathfinder...`);
             try {
-                const goal = new this.pathfinder.goals.GoalNear(position.x, position.y, position.z, 2);
+                // Configure movements for better navigation
+                const mcData = require('minecraft-data')(this.bot.version);
+                const { Movements } = require('mineflayer-pathfinder');
+                const movements = new Movements(this.bot);
+
+                // Allow digging for path clearing
+                movements.canDig = true;
+                movements.allowSprinting = true;
+                movements.allowParkour = true;
+                movements.canOpenDoors = true;
+                movements.maxDropDown = 4;
+                movements.allow1by1towers = true; // Allow pillaring up
+
+                this.bot.pathfinder.setMovements(movements);
+
+                // Calculate distance to determine goal type
+                const distance = this.bot.entity.position.distanceTo(position);
+                let goal;
+
+                if (distance > 100) {
+                    // For very distant targets, just get to the XZ coordinates
+                    goal = new this.pathfinder.goals.GoalXZ(position.x, position.z);
+                    logger.info(`[Navigation] Using GoalXZ for distant target (${Math.round(distance)} blocks)`);
+                } else {
+                    // For closer targets, get near the exact position
+                    goal = new this.pathfinder.goals.GoalNear(position.x, position.y, position.z, 3);
+                }
+
                 await this.bot.pathfinder.goto(goal);
                 this.sendChat(`Arrived!`);
                 logger.info(`[Navigation] Pathfinder finished successfully`);
                 return;
             } catch (error) {
                 logger.warn(`[Navigation] Pathfinder error: ${error.message}, falling back to simple movement`);
+                // Don't return - fall through to simple movement
             }
         } else {
             logger.warn(`[Navigation] Pathfinder NOT available (pathfinder=${!!this.pathfinder}, goals=${!!this.pathfinder?.goals}, bot.pathfinder=${!!this.bot.pathfinder})`);
@@ -126,8 +154,8 @@ class NavigationAbility {
 
             const distance = this.bot.entity.position.distanceTo(position);
 
-            // Check if arrived
-            if (distance <= 3) {
+            // Check if arrived (more lenient for long distances)
+            if (distance <= 5) {
                 this.stopMovement();
                 this.sendChat(`Arrived!`);
                 logger.info(`[Navigation] Arrived at target (distance: ${distance})`);
@@ -227,7 +255,7 @@ class NavigationAbility {
     /**
      * Collect all dropped items in radius
      */
-    async collectAllItems(radius = 50) {
+    async collectAllItems(radius = 256) {
         this.isActive = true;
         this.sendChat(`Scanning for dropped items in ${radius} blocks...`);
         logger.info(`[Navigation] Starting collect all (radius ${radius})`);
@@ -327,6 +355,56 @@ class NavigationAbility {
      */
     delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+
+    /**
+     * Follow a player continuously
+     */
+    async follow(playerName) {
+        this.targetPlayer = playerName;
+        this.isActive = true;
+
+        const player = this.findPlayer(playerName);
+        if (!player) {
+            this.sendChat(`Player ${playerName} not found`);
+            return;
+        }
+
+        this.sendChat(`Following ${playerName}...`);
+        logger.info(`[Navigation] Started following ${playerName}`);
+
+        // Use GoalFollow for dynamic following
+        if (this.pathfinder && this.bot.pathfinder) {
+            const { goals } = require('mineflayer-pathfinder');
+
+            try {
+                // Follow at distance of 2 blocks
+                const goal = new goals.GoalFollow(player, 2);
+                this.bot.pathfinder.setGoal(goal, true); // true = dynamic goal
+
+                // Monitor loop to stop if command cancelled
+                while (this.isActive && this.targetPlayer === playerName) {
+                    await this.delay(1000);
+
+                    // Specific check if player is too far (teleported?)
+                    const currentPlayer = this.findPlayer(playerName);
+                    if (!currentPlayer) {
+                        this.sendChat(`Lost sight of ${playerName}`);
+                        break;
+                    }
+                }
+            } catch (error) {
+                logger.error(`[Navigation] Follow error: ${error.message}`);
+                this.sendChat(`Cannot follow: ${error.message}`);
+            } finally {
+                if (this.bot.pathfinder) this.bot.pathfinder.setGoal(null);
+            }
+        } else {
+            // Fallback simple follow
+            this.sendChat('Pathfinder not available, using simple follow');
+            await this.navigateTo(player.position, playerName);
+        }
     }
 }
 

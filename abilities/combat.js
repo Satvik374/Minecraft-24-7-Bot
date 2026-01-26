@@ -29,6 +29,27 @@ class CombatAbility {
             'evoker', 'wither_skeleton', 'piglin_brute', 'hoglin',
             'zoglin', 'warden', 'endermite', 'silverfish'
         ];
+
+        // PVP State
+        this.pvpEnabled = false;
+    }
+
+    /**
+     * Enable PVP mode
+     */
+    enablePvp() {
+        this.pvpEnabled = true;
+        this.sendChat('PVP Mode STARTED! I will now attack other players.');
+        logger.info('⚔️ PVP Mode Enabled');
+    }
+
+    /**
+     * Disable PVP mode
+     */
+    disablePvp() {
+        this.pvpEnabled = false;
+        this.sendChat('PVP Mode STOPPED. I am peaceful towards players again.');
+        logger.info('🕊️ PVP Mode Disabled');
     }
 
     /**
@@ -196,15 +217,26 @@ class CombatAbility {
     }
 
     /**
-     * Move towards a position
+     * Move towards a position or entity
+     * @param {object} target - Position {x,y,z} or Entity
      */
-    async moveTowards(position) {
+    async moveTowards(target) {
         // Use pathfinder if available
         if (this.pathfinder && this.bot.pathfinder) {
             try {
                 const { goals } = require('mineflayer-pathfinder');
-                const goal = new goals.GoalNear(position.x, position.y, position.z, 2);
-                this.bot.pathfinder.setGoal(goal);
+                let goal;
+
+                if (target.type === 'player' || target.type === 'mob' || target.entity) {
+                    // Dynamic follow for entities
+                    goal = new goals.GoalFollow(target, 2);
+                    this.bot.pathfinder.setGoal(goal, true); // true = dynamic
+                } else {
+                    // Static position
+                    const pos = target.position || target;
+                    goal = new goals.GoalNear(pos.x, pos.y, pos.z, 2);
+                    this.bot.pathfinder.setGoal(goal);
+                }
                 return;
             } catch (error) {
                 // Fall through to simple movement
@@ -212,6 +244,7 @@ class CombatAbility {
         }
 
         // Simple movement fallback
+        const position = target.position || target;
         await this.bot.lookAt(position);
         this.bot.setControlState('forward', true);
         this.bot.setControlState('sprint', true);
@@ -394,6 +427,13 @@ class CombatAbility {
         if (this.isDefending || this.isActive) return;
         if (!this.bot || !this.bot.entity) return;
 
+        // Skip if bot is currently pathfinding/moving (navigation priority)
+        if (this.bot.pathfinder && this.bot.pathfinder.isMoving()) {
+            // Optional: only interrupt if health is low or threat is extremely close (< 3 blocks)
+            // For now, prioritize navigation stability
+            return;
+        }
+
         // Find nearest hostile mob
         const hostileMob = this.findNearestHostileMob();
 
@@ -430,14 +470,21 @@ class CombatAbility {
             if (!entity.position) continue;
 
             const entityName = (entity.name || entity.mobType || '').toLowerCase();
-            if (!entityName || entity.type === 'player') continue;
+            if (!entityName) continue;
 
-            // Check if it's a hostile mob
-            const isHostile = this.hostileMobs.some(mob =>
-                entityName === mob || entityName.includes(mob)
-            );
+            // Check if player (PVP Mode)
+            if (entity.type === 'player') {
+                if (!this.pvpEnabled) continue;
+                // Don't attack self
+                if (entity.username === this.bot.username) continue;
+            } else {
+                // Check if it's a hostile mob
+                const isHostile = this.hostileMobs.some(mob =>
+                    entityName === mob || entityName.includes(mob)
+                );
 
-            if (!isHostile) continue;
+                if (!isHostile) continue;
+            }
 
             const distance = this.bot.entity.position.distanceTo(entity.position);
 
@@ -501,7 +548,7 @@ class CombatAbility {
                 await this.delay(400); // Attack cooldown
             } else {
                 // Move towards target
-                await this.moveTowards(currentTarget.position);
+                await this.moveTowards(currentTarget);
             }
 
             await this.delay(50);

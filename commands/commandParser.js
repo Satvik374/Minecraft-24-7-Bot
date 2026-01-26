@@ -8,7 +8,7 @@ const logger = require('../utils/logger');
 class CommandParser {
     constructor() {
         this.prefix = '-bot';
-        this.validActions = ['mine', 'kill', 'come', 'go', 'make', 'drop', 'stop', 'start', 'status', 'help', 'sethome', 'home', 'mine_all', 'collect', 'sort'];
+        this.validActions = ['mine', 'kill', 'come', 'go', 'make', 'drop', 'stop', 'start', 'status', 'help', 'sethome', 'home', 'mine_all', 'collect', 'sort', 'equip', 'set', 'enable', 'disable', 'follow', 'location', 'loc', 'pos', 'where', 'inventory', 'inv', 'nether'];
     }
 
     /**
@@ -76,6 +76,16 @@ class CommandParser {
                 return this.parseStopCommand(args, username);
             case 'start':
                 return this.parseStartCommand(args, username);
+            case 'equip':
+                return this.parseEquipCommand(args, username);
+            case 'set':
+                return this.parseSetCommand(args, username);
+            case 'enable':
+                return this.parseEnableCommand(args, username);
+            case 'disable':
+                return this.parseDisableCommand(args, username);
+            case 'follow':
+                return this.parseFollowCommand(args, username);
             case 'sethome':
                 return { valid: true, action: 'sethome', username };
             case 'home':
@@ -89,6 +99,16 @@ class CommandParser {
                 return { valid: true, action: 'collect', username };
             case 'status':
                 return { valid: true, action: 'status', username };
+            case 'location':
+            case 'loc':
+            case 'pos':
+            case 'where':
+                return { valid: true, action: 'location', username };
+            case 'inventory':
+            case 'inv':
+                return { valid: true, action: 'show_inventory', username };
+            case 'nether':
+                return { valid: true, action: 'nether', username };
             case 'help':
                 return { valid: true, action: 'help', username };
             default:
@@ -212,6 +232,147 @@ class CommandParser {
         };
     }
 
+    /**
+     * Parse equip command: -bot equip <item_name>
+     */
+    parseEquipCommand(args, username) {
+        if (args.length === 0) {
+            return {
+                valid: false,
+                error: 'Specify what to equip. Example: -bot equip iron_chestplate',
+                username
+            };
+        }
+
+        const itemName = args[0].replace(/-/g, '_');
+
+        return {
+            valid: true,
+            action: 'equip',
+            target: itemName,
+            username
+        };
+    }
+
+    /**
+     * Parse set command: -bot set <target>
+     */
+    parseSetCommand(args, username) {
+        if (args.length === 0) {
+            return {
+                valid: false,
+                error: 'Specify what to set. Example: -bot set respawn',
+                username
+            };
+        }
+
+        const target = args[0].toLowerCase();
+
+        if (target === 'respawn') {
+            return {
+                valid: true,
+                action: 'set_respawn',
+                username
+            };
+        }
+
+        return {
+            valid: false,
+            error: `Unknown set target: ${target}. Try: -bot set respawn`,
+            username
+        };
+    }
+
+    /**
+     * Parse enable command: -bot enable <feature>
+     */
+    parseEnableCommand(args, username) {
+        if (args.length === 0) {
+            return {
+                valid: false,
+                error: 'Specify what to enable. Example: -bot enable defense',
+                username
+            };
+        }
+
+        const target = args[0].toLowerCase();
+
+        if (target === 'defense') {
+            return {
+                valid: true,
+                action: 'enable_defense',
+                username
+            };
+        }
+
+        if (target === 'pvp') {
+            return {
+                valid: true,
+                action: 'enable_pvp',
+                username
+            };
+        }
+
+        return {
+            valid: false,
+            error: `Unknown enable target: ${target}`,
+            username
+        };
+    }
+
+    /**
+     * Parse follow command: -bot follow [player]
+     */
+    parseFollowCommand(args, username) {
+        let target = username; // Default to sender ("me")
+
+        if (args.length > 0) {
+            const arg = args[0].toLowerCase();
+            if (arg !== 'me') {
+                target = args[0]; // Specific player
+            }
+        }
+
+        return {
+            valid: true,
+            action: 'follow',
+            target: target,
+            username
+        };
+    }
+    parseDisableCommand(args, username) {
+        if (args.length === 0) {
+            return {
+                valid: false,
+                error: 'Specify what to disable. Example: -bot disable defense',
+                username
+            };
+        }
+
+        const target = args[0].toLowerCase();
+
+        if (target === 'defense') {
+            return {
+                valid: true,
+                action: 'disable_defense',
+                username
+            };
+        }
+
+        if (target === 'pvp') {
+            return {
+                valid: true,
+                action: 'disable_pvp',
+                username
+            };
+        }
+
+        return {
+            valid: false,
+            error: `Unknown disable target: ${target}`,
+            username
+        };
+    }
     /**
      * Parse kill command: -bot kill <mob_type>
      */
@@ -340,6 +501,9 @@ class CommandParser {
             '-bot come [player] - Come to player (e.g., -bot come)',
             '-bot go <x> <y> <z> - Go to coordinates',
             '-bot make <item> [count] - Craft item (e.g., -bot make diamond_pickaxe)',
+            '-bot nether - Find and enter nearest Nether portal safely',
+            '-bot location - Show coordinates',
+            '-bot inventory - List items',
             '-bot stop - Stop current task',
             '-bot status - Show current task status'
         ];

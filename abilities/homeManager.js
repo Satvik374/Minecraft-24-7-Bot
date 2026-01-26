@@ -479,19 +479,37 @@ class HomeManager {
                     const chest = await this.bot.openChest(destChest.block);
 
                     for (const move of destMoves) {
-                        // Find matching item in inventory
-                        const invItem = this.bot.inventory.items().find(i =>
-                            i.type === move.type && i.name === move.name
-                        );
+                        let remainingToDeposit = move.count;
+                        let attempts = 0;
 
-                        if (invItem) {
+                        // Loop until we deposited everything or ran out of items (max 5 loops prevent inf loop)
+                        while (remainingToDeposit > 0 && attempts < 10) {
+                            attempts++;
+                            // Find any matching item in inventory
+                            const invItem = this.bot.inventory.items().find(i =>
+                                i.type === move.type && i.name === move.name
+                            );
+
+                            if (!invItem) break; // No more items found
+
                             try {
-                                await chest.deposit(invItem.type, null, Math.min(invItem.count, move.count));
-                                totalMoved++;
-                                logger.info(`Deposited ${move.name} to chest ${destIdx} (${move.category})`);
+                                const splitAmount = Math.min(invItem.count, remainingToDeposit);
+                                await chest.deposit(invItem.type, null, splitAmount);
+                                remainingToDeposit -= splitAmount;
+
+                                if (remainingToDeposit > 0) {
+                                    // Wait a tick for inventory update
+                                    await new Promise(r => setTimeout(r, 50));
+                                }
                             } catch (e) {
                                 logger.debug(`Could not deposit ${move.name}: ${e.message}`);
+                                break; // Stop trying this move if deposit fails
                             }
+                        }
+
+                        if (remainingToDeposit === 0) {
+                            totalMoved++;
+                            logger.info(`Deposited ${move.name} (Total: ${move.count}) to chest ${destIdx}`);
                         }
                     }
 

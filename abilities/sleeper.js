@@ -97,6 +97,43 @@ class Sleeper {
         return true;
     }
 
+    /**
+     * Set respawn point at nearest bed
+     */
+    async setRespawn() {
+        this.sendChat('Setting respawn point...');
+        const mcData = require('minecraft-data')(this.bot.version);
+        const bedIds = ['white_bed', 'orange_bed', 'magenta_bed', 'light_blue_bed', 'yellow_bed', 'lime_bed', 'pink_bed', 'gray_bed', 'light_gray_bed', 'cyan_bed', 'purple_bed', 'blue_bed', 'brown_bed', 'green_bed', 'red_bed', 'black_bed']
+            .map(name => mcData.blocksByName[name]?.id)
+            .filter(id => id);
+
+        const bed = this.bot.findBlock({
+            matching: bedIds,
+            maxDistance: 32
+        });
+
+        if (!bed) {
+            this.sendChat('No bed found nearby! Cannot set respawn.');
+            return false;
+        }
+
+        this.sendChat(`Found bed at ${bed.position}. Going there...`);
+        await this.goToBed(bed);
+
+        // Interact with bed to set spawn
+        try {
+            await this.bot.activateBlock(bed);
+            this.sendChat('Respawn point set!');
+        } catch (err) {
+            if (err.message.includes('safely')) {
+                this.sendChat('Monsters nearby, but tried to set spawn.');
+            } else {
+                logger.debug(`Bed interaction: ${err.message}`);
+            }
+        }
+        return true;
+    }
+
     async goToBed(bedBlock) {
         if (this.bot.pathfinder) {
             const { goals } = require('mineflayer-pathfinder');

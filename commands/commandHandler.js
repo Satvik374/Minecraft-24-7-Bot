@@ -67,6 +67,12 @@ class CommandHandler {
                 case 'help':
                     await this.handleHelp(command);
                     break;
+                case 'location':
+                    await this.handleLocation(command);
+                    break;
+                case 'show_inventory':
+                    await this.handleShowInventory(command);
+                    break;
                 case 'collect':
                     const navigation = this.abilities['come']; // Navigation ability registered as 'come'/'go'
                     if (navigation) {
@@ -86,6 +92,14 @@ class CommandHandler {
                             this.isExecuting = false;
                         });
                         this.sendChat('Started collecting items...');
+                    } else {
+                        this.sendChat('Navigation ability not initialized');
+                    }
+                    break;
+                case 'follow':
+                    const followNav = this.abilities['come'];
+                    if (followNav) {
+                        await followNav.follow(command.target);
                     } else {
                         this.sendChat('Navigation ability not initialized');
                     }
@@ -121,6 +135,50 @@ class CommandHandler {
                         await this.executeAbility(command);
                     } else {
                         this.sendChat('Mining ability not initialized');
+                    }
+                    break;
+                case 'equip':
+                    const inventoryManager = this.abilities['inventory'];
+                    if (inventoryManager) {
+                        await inventoryManager.execute(command);
+                    } else {
+                        this.sendChat('Inventory ability not initialized');
+                    }
+                    break;
+                case 'set_respawn':
+                    const sleeperAbility = this.abilities['sleeper'];
+                    if (sleeperAbility) {
+                        await sleeperAbility.setRespawn();
+                    } else {
+                        this.sendChat('Sleeper ability not initialized');
+                    }
+                    break;
+                case 'enable_defense':
+                    if (this.abilities['kill']) {
+                        await this.abilities['kill'].startAutoDefense();
+                    } else {
+                        this.sendChat('Combat ability not initialized');
+                    }
+                    break;
+                case 'disable_defense':
+                    if (this.abilities['kill']) {
+                        await this.abilities['kill'].stopAutoDefense();
+                    } else {
+                        this.sendChat('Combat ability not initialized');
+                    }
+                    break;
+                case 'enable_pvp':
+                    if (this.abilities['kill']) {
+                        this.abilities['kill'].enablePvp();
+                    } else {
+                        this.sendChat('Combat ability not initialized');
+                    }
+                    break;
+                case 'disable_pvp':
+                    if (this.abilities['kill']) {
+                        this.abilities['kill'].disablePvp();
+                    } else {
+                        this.sendChat('Combat ability not initialized');
                     }
                     break;
                 default:
@@ -298,6 +356,29 @@ class CommandHandler {
         const itemName = command.target;
         const count = command.count || 1;
 
+        // Handle 'drop all' command
+        if (itemName === 'all') {
+            const inventory = this.bot.inventory.items();
+            if (inventory.length === 0) {
+                this.sendChat('Inventory is already empty!');
+                return;
+            }
+
+            this.sendChat(`Dropping all ${inventory.length} stacks from inventory...`);
+
+            for (const item of inventory) {
+                try {
+                    await this.bot.toss(item.type, null, item.count);
+                    await this.delay(100); // Small delay to prevent server kick
+                } catch (error) {
+                    logger.debug(`Failed to drop ${item.name}: ${error.message}`);
+                }
+            }
+
+            this.sendChat('Inventory cleared!');
+            return;
+        }
+
         // Find matching items in inventory
         const inventory = this.bot.inventory.items();
         const matchingItems = inventory.filter(item =>
@@ -344,6 +425,66 @@ class CommandHandler {
             this.sendChat(`Task: ${this.currentTask.action} ${this.currentTask.target || ''} | Running for ${elapsed}s`);
         } else {
             this.sendChat('No task running. Ready for commands!');
+        }
+    }
+
+    /**
+     * Handle location command - report bot's current coordinates
+     */
+    async handleLocation(command) {
+        const pos = this.bot.entity.position;
+        const x = Math.round(pos.x);
+        const y = Math.round(pos.y);
+        const z = Math.round(pos.z);
+        this.sendChat(`My location: X:${x} Y:${y} Z:${z}`);
+    }
+
+    /**
+     * Handle show inventory command - list items in bot's inventory
+     */
+    async handleShowInventory(command) {
+        const items = this.bot.inventory.items();
+
+        if (items.length === 0) {
+            this.sendChat('My inventory is empty');
+            return;
+        }
+
+        // Group items by name and count
+        const itemCounts = {};
+        for (const item of items) {
+            const name = item.name.replace(/_/g, ' ');
+            itemCounts[name] = (itemCounts[name] || 0) + item.count;
+        }
+
+        // Format as compact list
+        const itemList = Object.entries(itemCounts)
+            .map(([name, count]) => `${count}x ${name}`)
+            .join(', ');
+
+        // Split into multiple messages if too long
+        if (itemList.length > 200) {
+            const entries = Object.entries(itemCounts);
+            this.sendChat(`Inventory (${items.length} stacks, ${entries.length} types):`);
+            await this.delay(500);
+
+            // Send in chunks
+            let chunk = '';
+            for (const [name, count] of entries) {
+                const item = `${count}x ${name}, `;
+                if (chunk.length + item.length > 200) {
+                    this.sendChat(chunk.slice(0, -2));
+                    await this.delay(500);
+                    chunk = item;
+                } else {
+                    chunk += item;
+                }
+            }
+            if (chunk.length > 0) {
+                this.sendChat(chunk.slice(0, -2));
+            }
+        } else {
+            this.sendChat(`Inventory: ${itemList}`);
         }
     }
 

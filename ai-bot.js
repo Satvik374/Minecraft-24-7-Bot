@@ -17,6 +17,8 @@ const DoorHandler = require('./utils/doorHandler');
 const HomeManager = require('./abilities/homeManager');
 const Sleeper = require('./abilities/sleeper');
 const AutoEat = require('./abilities/autoEat');
+const InventoryManager = require('./abilities/inventoryManager');
+const NetherAbility = require('./abilities/nether');
 
 // Mind module for intelligent decision-making
 const BotMind = require('./mind/botMind');
@@ -49,6 +51,7 @@ console.log('');
 
 let bot = null;
 let reconnectAttempts = 0;
+let isReconnecting = false; // Flag to prevent reconnection loop
 const maxReconnectAttempts = 50; // Increased for ban evasion
 
 // Command system instances
@@ -154,12 +157,12 @@ function createBot() {
         // Initialize command system
         initializeCommandSystem();
 
-        // Try to enable creative mode if possible
+        // Try to enable creative mode if possible (silently)
         setTimeout(() => {
             if (botState.isCreativeMode) {
                 try {
                     bot.chat('/gamemode creative');
-                    sendIntelligentChat('switching to creative mode for better building!');
+                    // Don't announce creative mode switch to avoid spam
                 } catch (error) {
                     logger.debug('Could not set creative mode');
                 }
@@ -180,17 +183,8 @@ function createBot() {
 
     bot.on('playerJoined', (player) => {
         logger.info(`${player.username} joined the game`);
-        // Greet new players with variety
-        setTimeout(() => {
-            const welcomes = [
-                `welcome to the server ${player.username}! hope you have fun here!`,
-                `hey ${player.username}! welcome! nice to meet you!`,
-                `welcome ${player.username}! this is a great server to play on!`,
-                `hi ${player.username}! welcome to our community!`,
-                `${player.username} welcome! let me know if you need any help!`
-            ];
-            sendIntelligentChat(welcomes[Math.floor(Math.random() * welcomes.length)]);
-        }, 1500 + Math.random() * 2500);
+        // Disabled welcome messages to reduce chat spam
+        // Players can still interact with the bot using commands
     });
 
     bot.on('health', () => {
@@ -228,7 +222,10 @@ function createBot() {
         webServer.updateBotStatus(bot.username, false);
         webServer.addLog(`Disconnected: ${reason}`);
         logger.warn(`🔌 AI Bot disconnected: ${reason}`);
-        scheduleReconnect();
+        // Don't reconnect if this disconnect was triggered by our own reconnection logic
+        if (!isReconnecting && reason !== 'disconnect.quitting') {
+            scheduleReconnect();
+        }
     });
 
     bot.on('kicked', (reason) => {
@@ -327,6 +324,8 @@ function initializeCommandSystem() {
 
     const craftingAbility = new CraftingAbility(bot, pathfinderConfig);
     const sleeper = new Sleeper(bot, pathfinderConfig);
+    const inventoryManager = new InventoryManager(bot);
+    const netherAbility = new NetherAbility(bot, pathfinderConfig);
 
     // Pass sleeper and homeManager to farming ability
     const farmingAbility = new FarmingAbility(bot, pathfinderConfig, sleeper, homeManager);
@@ -345,6 +344,10 @@ function initializeCommandSystem() {
     commandHandler.registerAbility('farm', farmingAbility);
     commandHandler.registerAbility('home', homeManager);
     commandHandler.registerAbility('sort', homeManager);
+    commandHandler.registerAbility('inventory', inventoryManager);
+    commandHandler.registerAbility('equip', inventoryManager);
+    commandHandler.registerAbility('sleeper', sleeper);
+    commandHandler.registerAbility('nether', netherAbility);
 
     // Register abilities with task manager
     taskManager.registerAbilities(commandHandler.abilities);
@@ -366,10 +369,6 @@ function initializeCommandSystem() {
     doorHandler = new DoorHandler(bot);
     doorHandler.startAutoOpen();
     logger.info('🚪 Door handler active - will auto-open doors and gates');
-
-    // Start auto-defense against hostile mobs (24/7)
-    combatAbility.startAutoDefense();
-    logger.info('🛡️ Auto-defense active - will defend against hostile mobs');
 
     // Initialize BotMind for intelligent natural language understanding
     botMind = new BotMind(bot, commandHandler);
@@ -397,8 +396,8 @@ function startAIBehaviors() {
     // Look around naturally
     setInterval(naturalLooking, 5000 + Math.random() * 10000);
 
-    // Chat behavior
-    setInterval(randomChatting, 30000 + Math.random() * 60000);
+    // Random chat behavior DISABLED to reduce spam
+    // setInterval(randomChatting, 30000 + Math.random() * 60000);
 
     // Inventory management
     setInterval(manageInventory, 15000);
@@ -408,6 +407,9 @@ function startAIBehaviors() {
 
 function aiDecisionLoop() {
     if (!bot || !bot.entity) return;
+
+    // Skip if command is running
+    if (commandHandler && commandHandler.isExecuting) return;
 
     // Skip if random behaviors are disabled
     if (!botState.randomBehaviorsEnabled) return;
@@ -646,8 +648,13 @@ function exploreWorld() {
     }
 }
 
+
+
 function intelligentMovement() {
     if (botState.isMoving) return;
+
+    // Skip if command is running
+    if (commandHandler && commandHandler.isExecuting) return;
 
     // Skip if random behaviors are disabled
     if (!botState.randomBehaviorsEnabled) return;
@@ -719,6 +726,9 @@ function intelligentMovement() {
 
 function naturalLooking() {
     if (!bot || !bot.entity) return;
+
+    // Skip if command is running
+    if (commandHandler && commandHandler.isExecuting) return;
 
     // Skip if random behaviors are disabled
     if (!botState.randomBehaviorsEnabled) return;
@@ -998,7 +1008,8 @@ function sendIntelligentChat(message) {
     if (!bot || !message) return;
 
     const currentTime = Date.now();
-    if (currentTime - botState.lastChatTime < 3000) return; // Prevent spam
+    // Increased cooldown from 3s to 10s to prevent spam
+    if (currentTime - botState.lastChatTime < 10000) return;
 
     try {
         bot.chat(message);
@@ -1065,7 +1076,7 @@ function seekFood() {
         try {
             bot.equip(food, 'hand').then(() => {
                 bot.consume();
-                sendIntelligentChat('eating some food to restore health');
+                // Removed chat message to reduce spam
                 botState.currentTask = 'exploring';
             });
         } catch (error) {
@@ -1074,9 +1085,7 @@ function seekFood() {
     } else {
         // Look for food sources
         intelligentMovement();
-        if (Math.random() < 0.2) {
-            sendIntelligentChat('looking for food, getting a bit hungry');
-        }
+        // Removed chat spam about looking for food
     }
 }
 
@@ -1105,12 +1114,19 @@ function manageInventory() {
 }
 
 function scheduleReconnect() {
+    // Prevent duplicate reconnection calls
+    if (isReconnecting) {
+        logger.debug('Already reconnecting, skipping duplicate call');
+        return;
+    }
+
     if (reconnectAttempts >= maxReconnectAttempts) {
         logger.error(`💀 Max reconnection attempts (${maxReconnectAttempts}) reached. Exiting.`);
         console.log('\n❌ AI Bot failed to maintain connection.');
         process.exit(1);
     }
 
+    isReconnecting = true;
     reconnectAttempts++;
 
     // Different delays for potential bans vs normal disconnections
@@ -1131,8 +1147,10 @@ function scheduleReconnect() {
                 bot.quit();
                 bot = null;
             }
+            isReconnecting = false; // Reset flag before creating new bot
             createBot();
         } catch (error) {
+            isReconnecting = false; // Reset flag on error too
             logger.error(`Error during reconnection: ${error.message}`);
         }
     }, delay);

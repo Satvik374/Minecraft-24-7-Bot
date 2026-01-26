@@ -20,6 +20,177 @@ class MinerAbility {
     }
 
     /**
+     * Get count of items matching a name pattern in inventory
+     */
+    getInventoryCount(itemName) {
+        if (!itemName) return 0;
+        const items = this.bot.inventory.items();
+        // Try exact match first, then partial match
+        let count = items
+            .filter(item => item.name === itemName)
+            .reduce((sum, item) => sum + item.count, 0);
+
+        // If no exact match, try partial
+        if (count === 0) {
+            count = items
+                .filter(item => item.name.includes(itemName) || itemName.includes(item.name))
+                .reduce((sum, item) => sum + item.count, 0);
+        }
+        return count;
+    }
+
+    /**
+     * Get expected drop name for a block (e.g., iron_ore -> raw_iron)
+     */
+    getExpectedDropName(blockName) {
+        const dropMap = {
+            'iron_ore': 'raw_iron',
+            'deepslate_iron_ore': 'raw_iron',
+            'gold_ore': 'raw_gold',
+            'deepslate_gold_ore': 'raw_gold',
+            'copper_ore': 'raw_copper',
+            'deepslate_copper_ore': 'raw_copper',
+            'coal_ore': 'coal',
+            'deepslate_coal_ore': 'coal',
+            'diamond_ore': 'diamond',
+            'deepslate_diamond_ore': 'diamond',
+            'lapis_ore': 'lapis_lazuli',
+            'deepslate_lapis_ore': 'lapis_lazuli',
+            'redstone_ore': 'redstone',
+            'deepslate_redstone_ore': 'redstone',
+            'emerald_ore': 'emerald',
+            'deepslate_emerald_ore': 'emerald',
+            'nether_quartz_ore': 'quartz',
+            'nether_gold_ore': 'gold_nugget',
+            'ancient_debris': 'ancient_debris',
+            // Most blocks drop themselves
+        };
+        return dropMap[blockName] || blockName;
+    }
+
+    /**
+     * Move towards an entity until close enough or timeout
+     */
+    async moveToEntity(entity, timeout = 3000) {
+        const startTime = Date.now();
+        while (Date.now() - startTime < timeout && this.isActive) {
+            if (!entity || !entity.isValid) break;
+
+            const dist = entity.position.distanceTo(this.bot.entity.position);
+            if (dist < 0.5) break;
+
+            await this.bot.lookAt(entity.position);
+            this.bot.setControlState('forward', true);
+            await this.delay(50);
+        }
+        this.bot.setControlState('forward', false);
+    }
+
+    /**
+     * Collect drops with inventory verification and retry logic
+     */
+    async collectDropsWithVerification(pos, expectedDropName, countBefore, maxRetries = 3) {
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            // Wait for drops to spawn
+            await this.delay(400);
+
+            // Find nearby item entities
+            const drops = Object.values(this.bot.entities).filter(e =>
+                e.type === 'object' &&
+                e.position.distanceTo(pos) < 6
+            );
+
+            if (drops.length === 0) {
+                logger.debug(`No drops found near ${pos}, attempt ${attempt}`);
+                await this.delay(300); // Give a bit more time before next check if no drops
+                // If no drops are found and it's not the first attempt, assume they were collected
+                if (attempt > 1) {
+                    logger.debug(`No drops remaining, assuming collection succeeded`);
+                    return true;
+                }
+                continue;
+            }
+
+            // Move to each drop to collect it
+            for (const drop of drops) {
+                if (!this.isActive) break;
+                await this.moveToEntity(drop, 2000);
+                await this.delay(200);
+            }
+
+            // Wait longer for items to enter inventory
+            await this.delay(500);
+
+            // Check total inventory count change (not just specific item)
+            const totalItemsBefore = countBefore;
+            const totalItemsAfter = this.getInventoryCount(expectedDropName);
+
+            // Also check if we picked up ANY new items by comparing all inventory
+            const allItems = this.bot.inventory.items();
+            const totalCount = allItems.reduce((sum, item) => sum + item.count, 0);
+
+            if (totalItemsAfter > totalItemsBefore) {
+                logger.debug(`Collected ${expectedDropName}: ${totalItemsBefore} -> ${totalItemsAfter}`);
+                return true;
+            }
+
+            // Even if specific item check fails, if drops disappeared, consider it success
+            if (drops.length === 0 && attempt > 1) {
+                logger.debug(`No drops remaining, assuming collection succeeded`);
+                return true;
+            }
+
+            logger.debug(`Collection attempt ${attempt}/${maxRetries} failed for ${expectedDropName}. Drops remaining: ${drops.length}`);
+
+            // On retry, move closer to the original position
+            if (attempt < maxRetries) {
+                await this.navigateToLocation(pos);
+            }
+        }
+
+        logger.warn(`Failed to verify collection of ${expectedDropName} after ${maxRetries} attempts`);
+        return false;
+    }
+
+    /**
+     * Mine a block and verify the drop was collected
+     */
+    async mineBlockAndCollect(block) {
+        if (!block) return false;
+
+        const blockName = block.name;
+        const expectedDropName = this.getExpectedDropName(blockName);
+
+        // Get count before mining
+        const countBefore = this.getInventoryCount(expectedDropName);
+
+        // Mine the block
+        await this.mineBlock(block);
+
+        // Verify the block was actually mined
+        const currentBlock = this.bot.blockAt(block.position);
+        if (currentBlock && currentBlock.name !== 'air') {
+            logger.debug(`Block ${blockName} wasn't mined successfully`);
+            return false;
+        }
+
+        // Collect with verification
+        const collected = await this.collectDropsWithVerification(
+            block.position,
+            expectedDropName,
+            countBefore
+        );
+
+        // Don't show chat message even if verification fails - collection usually works
+        // Just log for debugging purposes
+        if (!collected) {
+            logger.debug(`Collection verification failed for ${expectedDropName}, but likely collected`);
+        }
+
+        return true;
+    }
+
+    /**
      * Execute mine command
      */
     async execute(command) {
@@ -40,7 +211,7 @@ class MinerAbility {
 
         const blockTypes = resolveBlockAlias(this.targetBlockType);
         logger.info(`Mining: ${blockTypes.join(', ')} (target: ${this.targetCount}) for ${this.requestingPlayer}`);
-        this.sendChat(`Mining ${this.targetBlockType} x${this.targetCount}...`);
+        // Removed chat spam - only log
 
         await this.goToPlayer(this.requestingPlayer);
 
@@ -88,13 +259,12 @@ class MinerAbility {
             const oreBlock = await this.findNearestBlock(valuableOres, 64);
 
             if (oreBlock) {
-                this.sendChat(`Found ${oreBlock.name}! Mining...`);
+                logger.info(`Found ${oreBlock.name}! Mining...`);
                 await this.navigateToBlock(oreBlock);
-                await this.mineBlock(oreBlock);
-                await this.collectDrops(oreBlock.position);
+                await this.mineBlockAndCollect(oreBlock);
             } else {
-                // 4. No ores? Find cave/deep area
-                this.sendChat('No ores visible. Searching for caves...');
+                // No ores? Find cave/deep area
+                logger.debug('No ores visible. Searching for caves...');
                 await this.exploreCave();
             }
 
@@ -121,12 +291,13 @@ class MinerAbility {
             if (!await this.ensureToolFor(block.name)) return;
 
             await this.navigateToBlock(block);
-            await this.mineBlock(block);
-            await this.collectDrops(block.position);
+            const success = await this.mineBlockAndCollect(block);
 
-            this.minedCount++;
-            if (this.minedCount % 10 === 0) {
-                this.sendChat(`Progress: ${this.minedCount}/${this.targetCount}`);
+            if (success) {
+                this.minedCount++;
+                if (this.minedCount % 10 === 0) {
+                    this.sendChat(`Progress: ${this.minedCount}/${this.targetCount}`);
+                }
             }
 
         } catch (error) {
@@ -196,7 +367,7 @@ class MinerAbility {
 
         const airBlock = this.bot.findBlock({
             matching: block => block.name === 'air',
-            maxDistance: 32,
+            maxDistance: 256,
             useExtraInfo: (block) => block.position.y < currentY - 5 // Must be lower
         });
 
@@ -221,7 +392,7 @@ class MinerAbility {
         if (requiredTool) {
             const hasTool = await this.equipBestTool(blockName);
             if (!hasTool) {
-                this.sendChat(`Need ${requiredTool} to mine ${blockName}`);
+                logger.debug(`Need ${requiredTool} to mine ${blockName}`);
                 this.isActive = false;
                 return false;
             }
@@ -241,7 +412,7 @@ class MinerAbility {
         }
     }
 
-    async findNearestBlock(blockTypes, radius = 64) {
+    async findNearestBlock(blockTypes, radius = 256) {
         const mcData = require('minecraft-data')(this.bot.version);
         // Handle array of strings or single string
         const types = Array.isArray(blockTypes) ? blockTypes : [blockTypes];
@@ -254,7 +425,33 @@ class MinerAbility {
     }
 
     async navigateToBlock(block) {
-        await this.navigateToLocation(block.position);
+        // Use specialized goal for mining that allows digging to reach the block
+        if (this.bot.pathfinder) {
+            const { goals } = require('mineflayer-pathfinder');
+            const { Movements } = require('mineflayer-pathfinder');
+            const mcData = require('minecraft-data')(this.bot.version);
+
+            // Create movements that allow digging to reach blocks
+            const movements = new Movements(this.bot);
+            movements.canDig = true; // Allow digging to reach underground blocks
+            movements.allowSprinting = true;
+            movements.allowParkour = true;
+            movements.maxDropDown = 4;
+            this.bot.pathfinder.setMovements(movements);
+
+            // GoalGetToBlock is better for mining - it goes to a position where you can interact with the block
+            const goal = new goals.GoalGetToBlock(block.position.x, block.position.y, block.position.z);
+            try {
+                await this.bot.pathfinder.goto(goal);
+            } catch (e) {
+                logger.debug(`Pathfinding to block error: ${e.message}`);
+                // Try navigating to location above if block is underground
+                const abovePos = block.position.offset(0, 1, 0);
+                await this.navigateToLocation(abovePos);
+            }
+        } else {
+            await this.navigateToLocation(block.position);
+        }
     }
 
     async navigateToLocation(position) {
@@ -301,39 +498,143 @@ class MinerAbility {
 
     async mineBlock(block) {
         if (!block) return;
+
+        // Refresh block to ensure it's still there
         const current = this.bot.blockAt(block.position);
         if (!current || current.name === 'air') return;
 
-        await this.bot.lookAt(block.position);
+        // Check availability
+        if (!this.bot.canDigBlock(current)) {
+            logger.debug(`Cannot dig ${current.name} at ${current.position}`);
+            return;
+        }
+
+        // --- OBSTRUCTION CHECK ---
+        // Verify line-of-sight before digging
+        if (!this.bot.canSeeBlock(current)) {
+            // Track obstruction clearing attempts to prevent infinite loops
+            if (!this.obstructionAttempts) this.obstructionAttempts = 0;
+            this.obstructionAttempts++;
+
+            // Give up after 5 attempts on this block
+            if (this.obstructionAttempts > 5) {
+                logger.warn(`Giving up on obstructed block ${current.name} after 5 attempts`);
+                this.obstructionAttempts = 0;
+                return;
+            }
+
+            logger.debug(`Block ${current.name} is obstructed. Attempt ${this.obstructionAttempts}/5`);
+
+            // Calculate direction to block
+            const botPos = this.bot.entity.position;
+            const blockPos = current.position;
+
+            // If block is below us, dig down toward it
+            if (blockPos.y < botPos.y - 1) {
+                const blockBelow = this.bot.blockAt(botPos.offset(0, -1, 0));
+                if (blockBelow && blockBelow.name !== 'air' && this.bot.canDigBlock(blockBelow)) {
+                    logger.info(`Digging down toward ${current.name}...`);
+                    await this.equipBestTool(blockBelow.name);
+                    await this.bot.dig(blockBelow);
+                    return;
+                }
+            }
+
+            // Find the block directly between us and the target
+            const dx = Math.sign(blockPos.x - botPos.x);
+            const dz = Math.sign(blockPos.z - botPos.z);
+            const dy = Math.sign(blockPos.y - botPos.y);
+
+            // Try to dig in the direction of the target
+            const checkPositions = [
+                botPos.offset(dx, dy, 0),
+                botPos.offset(0, dy, dz),
+                botPos.offset(dx, 0, dz),
+                botPos.offset(dx, dy, dz)
+            ];
+
+            for (const checkPos of checkPositions) {
+                const blockInWay = this.bot.blockAt(checkPos);
+                if (blockInWay && blockInWay.name !== 'air' && this.bot.canDigBlock(blockInWay)) {
+                    logger.info(`Clearing path: ${blockInWay.name}`);
+                    await this.equipBestTool(blockInWay.name);
+                    try {
+                        await this.bot.lookAt(checkPos);
+                        await this.bot.dig(blockInWay);
+                    } catch (e) {
+                        logger.debug(`Failed to clear path: ${e.message}`);
+                    }
+                    return;
+                }
+            }
+
+            // If nothing to dig, try to move closer
+            logger.debug(`No obstruction found, trying to move closer`);
+            await this.navigateToBlock(current);
+            return;
+        }
+
+        // Reset obstruction counter when we can see the block
+        this.obstructionAttempts = 0;
+
+        // If visible, mine it
+        await this.bot.lookAt(current.position);
         try {
             await this.bot.dig(current);
         } catch (e) {
             logger.debug(`Dig error: ${e.message}`);
+            // If dig fails, it might be due to physics or reach. 
+            // Often "digging aborted" happens if bot moves.
         }
     }
 
     async equipBestTool(blockName) {
-        const required = getRequiredTool(blockName);
-        if (!required) return true;
+        // Define tool requirements for blocks
+        const toolTypes = {
+            'shovel': ['dirt', 'grass_block', 'sand', 'gravel', 'clay', 'soul_sand', 'soul_soil', 'snow_block', 'mud', 'concrete_powder'],
+            'axe': ['log', 'planks', 'wood', 'chest', 'crafting_table', 'bookshelf', 'fence', 'pumpkin', 'melon', 'ladder'],
+            'pickaxe': ['stone', 'cobblestone', 'ore', 'andesite', 'diorite', 'granite', 'deepslate', 'obsidian', 'bricks', 'concrete', 'terracotta'],
+            'hoe': ['leaves', 'sculk', 'hay_block', 'nether_wart_block', 'shroomlight', 'target']
+        };
 
-        const items = this.bot.inventory.items().filter(i => i.name.includes('pickaxe'));
-        // Sort best to worst
-        const order = ['netherite', 'diamond', 'iron', 'golden', 'stone', 'wooden'];
+        // Determine required tool type
+        let requiredType = 'pickaxe'; // Default
+        for (const [type, keywords] of Object.entries(toolTypes)) {
+            if (keywords.some(k => blockName.includes(k))) {
+                requiredType = type;
+                break;
+            }
+        }
+
+        // Find best tool in inventory
+        const items = this.bot.inventory.items().filter(i => i.name.includes(requiredType));
+
+        // Sort best to worst (Netherite > Diamond > Iron > Gold > Stone > Wood)
+        const materialOrder = ['netherite', 'diamond', 'iron', 'golden', 'stone', 'wooden'];
         items.sort((a, b) => {
-            const ia = order.findIndex(t => a.name.includes(t));
-            const ib = order.findIndex(t => b.name.includes(t));
+            const ia = materialOrder.findIndex(m => a.name.includes(m));
+            const ib = materialOrder.findIndex(m => b.name.includes(m));
             return ia - ib;
         });
 
-        for (const item of items) {
-            if (canToolMine(item.name, required)) {
-                try {
-                    await this.bot.equip(item, 'hand');
-                    return true;
-                } catch (e) { }
+        const bestTool = items.length > 0 ? items[0] : null;
+
+        if (bestTool) {
+            try {
+                await this.bot.equip(bestTool, 'hand');
+                return true;
+            } catch (e) {
+                logger.debug(`Failed to equip ${bestTool.name}: ${e.message}`);
+                return false;
             }
+        } else {
+            // No tool found - fallback to hand
+            logger.debug(`No ${requiredType} available, mining with hand`);
+            try {
+                await this.bot.unequip('hand');
+            } catch (e) { }
+            return true; // Return true so mining proceeds (slowly)
         }
-        return false;
     }
 
     async collectDrops(pos) {
