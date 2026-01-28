@@ -1,3 +1,31 @@
 2026-01-23 20:22:30 [ERROR]: ❌ AI Bot error: read ECONNRESET
 2026-01-23 21:36:01 [ERROR]: ❌ AI Bot error: client timed out after 30000 milliseconds
 2026-01-24 16:50:32 [ERROR]: ❌ AI Bot error: read ECONNRESET
+2026-01-25 12:27:00 [ERROR]: Unhandled Rejection at:
+2026-01-25 12:35:34 [ERROR]: Ability execution error: this.bot.physics.raycast is not a function
+2026-01-25 12:44:30 [ERROR]: Command execution error: The goal was changed before it could be completed!
+2026-01-25 12:48:38 [ERROR]: Command execution error: The goal was changed before it could be completed!
+2026-01-25 14:22:14 [ERROR]: Unhandled Rejection at:
+2026-01-25 14:32:16 [ERROR]: Unhandled Rejection at:
+2026-01-25 14:32:18 [ERROR]: Unhandled Rejection at:
+2026-01-25 14:32:19 [ERROR]: Unhandled Rejection at:
+2026-01-25 14:32:19 [ERROR]: Unhandled Rejection at:
+2026-01-25 14:32:20 [ERROR]: Unhandled Rejection at:
+2026-01-25 14:32:21 [ERROR]: Unhandled Rejection at:
+2026-01-25 14:37:15 [ERROR]: ❌ AI Bot error: client timed out after 30000 milliseconds
+2026-01-26 14:40:31 [ERROR]: ❌ AI Bot error: read ECONNRESET
+2026-01-26 14:53:59 [ERROR]: ❌ AI Bot error: read ECONNRESET
+2026-01-27 14:33:09 [ERROR]: Build error: pos.floored is not a function
+2026-01-27 14:36:04 [ERROR]: Build error: pos.floored is not a function
+2026-01-27 17:51:38 [ERROR]: ❌ AI Bot error: This server is version 1.21.1, you are using version 1.20.1, please specify the correct version in the options.
+2026-01-27 17:51:43 [ERROR]: ❌ AI Bot error: This server is version 1.21.1, you are using version 1.20.1, please specify the correct version in the options.
+2026-01-27 17:51:43 [ERROR]: ❌ AI Bot error: read ECONNRESET
+2026-01-27 17:52:43 [ERROR]: ❌ AI Bot error: This server is version 1.21.1, you are using version 1.20.1, please specify the correct version in the options.
+2026-01-27 19:19:23 [ERROR]: ❌ AI Bot error: 
+2026-01-27 19:19:23 [ERROR]: ❌ AI Bot error: 
+2026-01-27 20:51:10 [ERROR]: ❌ AI Bot error: 
+2026-01-27 20:51:10 [ERROR]: ❌ AI Bot error: 
+2026-01-27 20:55:17 [ERROR]: ❌ AI Bot error: read ECONNRESET
+2026-01-27 20:55:22 [ERROR]: Error during reconnection: bot.quit is not a function
+2026-01-27 20:55:46 [ERROR]: ❌ AI Bot error: read ECONNRESET
+2026-01-28 16:19:32 [ERROR]: Structure Finder error: No permission to use /locate command

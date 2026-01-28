@@ -88,9 +88,10 @@ class NavigationAbility {
     }
 
     /**
-     * Navigate to a target position
-     */
-    async navigateTo(position, followTarget = null) {
+ * Navigate to a target position
+ * @param {boolean} silent - If true, don't send chat messages (for batch operations)
+ */
+    async navigateTo(position, followTarget = null, silent = false) {
         const maxTime = 120000; // 2 minutes max for distant locations
         const startTime = Date.now();
 
@@ -129,7 +130,7 @@ class NavigationAbility {
                 }
 
                 await this.bot.pathfinder.goto(goal);
-                this.sendChat(`Arrived!`);
+                if (!silent) this.sendChat(`Arrived!`);
                 logger.info(`[Navigation] Pathfinder finished successfully`);
                 return;
             } catch (error) {
@@ -157,11 +158,10 @@ class NavigationAbility {
             // Check if arrived (more lenient for long distances)
             if (distance <= 5) {
                 this.stopMovement();
-                this.sendChat(`Arrived!`);
+                if (!silent) this.sendChat(`Arrived!`);
                 logger.info(`[Navigation] Arrived at target (distance: ${distance})`);
                 return;
             }
-
             await this.simpleMoveTo(position);
             await this.delay(100);
         }
@@ -294,7 +294,7 @@ class NavigationAbility {
                     continue;
                 }
 
-                this.sendChat(`Found ${drops.length} items. Collecting...`);
+                this.sendChat(`Found ${drops.length} items nearby. Collecting...`);
 
                 // Sort by distance (closest first)
                 drops.sort((a, b) =>
@@ -314,9 +314,8 @@ class NavigationAbility {
                         if (distance > 1.5) {
                             logger.info(`[Navigation] Collecting ${drop.name || 'item'} at ${Math.floor(distance)}m`);
 
-                            // Use navigateTo for smarter movement, but with a timeout
-                            // Pass false for followTarget since this is a static position
-                            await this.navigateTo(drop.position, false);
+                            // Use navigateTo with silent=true to prevent chat spam
+                            await this.navigateTo(drop.position, false, true);
                         }
 
                         // Wait a moment to ensure pickup
@@ -328,9 +327,12 @@ class NavigationAbility {
                     }
                 }
 
-                this.sendChat(`Collection run complete. Waiting for more items...`);
-                // break; // REMOVED break for 24/7 mode
-                await this.delay(1000);
+                // Only send summary message after collecting all items in this batch
+                if (collected > 0) {
+                    logger.info(`[Navigation] Collected ${collected} items this run`);
+                }
+                // Wait before next scan
+                await this.delay(2000);
             }
         } finally {
             // Remove event listener

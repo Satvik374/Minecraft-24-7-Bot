@@ -203,6 +203,12 @@ class MinerAbility {
             return;
         }
 
+        // Handle continuous strip mining mode (for cobblestone command)
+        if (command.continuous && command.target === 'cobblestone') {
+            await this.stripMine();
+            return;
+        }
+
         // Standard single block mining
         this.targetBlockType = command.target;
         this.targetCount = command.count || 64;
@@ -224,6 +230,235 @@ class MinerAbility {
             this.sendChat(`Mining done! Got ${this.minedCount}/${this.targetCount} ${this.targetBlockType}`);
         }
         this.isActive = false;
+    }
+
+    /**
+     * Strip Mining Mode: Mine forward in a straight line continuously
+     * Used for cobblestone generators or strip mining tunnels
+     * Mines ANY block in the way, reverses and goes down when water is detected
+     * Has defensive combat - only attacks mobs that hurt the bot
+     */
+    async stripMine() {
+        this.sendChat('⛏️ Strip mining! Mining forward continuously...');
+        this.minedCount = 0;
+
+        // Get the initial direction the bot is facing
+        let yaw = this.bot.entity.yaw;
+        let direction = {
+            x: -Math.sin(yaw),
+            z: -Math.cos(yaw)
+        };
+
+        logger.info(`Strip mining started. Direction: ${direction.x.toFixed(2)}, ${direction.z.toFixed(2)}`);
+
+        // Track the entity that hurt us for defensive combat
+        let attacker = null;
+
+        // Set up hurt detection listener
+        const onHurt = () => {
+            logger.info('Bot was hurt! Looking for attacker...');
+
+            // Find the nearest entity that could have hurt us (more inclusive check)
+            const nearbyMob = this.bot.nearestEntity(e => {
+                if (!e || !e.position) return false;
+                const dist = e.position.distanceTo(this.bot.entity.position);
+
+                // Include mobs and hostile entities within 8 blocks
+                const isMob = e.type === 'mob' || e.type === 'hostile' || e.mobType;
+                const isHostile = ['zombie', 'skeleton', 'creeper', 'spider', 'enderman', 'witch',
+                    'pillager', 'vindicator', 'ravager', 'drowned', 'husk', 'stray', 'phantom',
+                    'blaze', 'ghast', 'wither_skeleton', 'piglin_brute', 'hoglin', 'zoglin',
+                    'cave_spider', 'silverfish', 'endermite', 'slime', 'magma_cube', 'warden'
+                ].some(name => (e.name || '').toLowerCase().includes(name));
+
+                const isNotItem = e.name !== 'armor_stand' && e.name !== 'item' && e.type !== 'object';
+
+                return (isMob || isHostile) && isNotItem && dist < 8;
+            });
+
+            if (nearbyMob) {
+                attacker = nearbyMob;
+                logger.info(`Attacker identified: ${nearbyMob.name || nearbyMob.mobType || 'unknown mob'} at distance ${nearbyMob.position.distanceTo(this.bot.entity.position).toFixed(1)}`);
+            } else {
+                logger.info('No nearby mob found as attacker');
+            }
+        };
+
+        this.bot.on('hurt', onHurt);
+
+        try {
+
+            while (this.isActive) {
+                // Check for pickaxe
+                if (!await this.ensureToolFor('cobblestone')) {
+                    this.sendChat('⚠️ No pickaxe! Strip mining stopped.');
+                    break;
+                }
+
+                // DEFENSIVE COMBAT: If we were hurt, fight back!
+                if (attacker && attacker.isValid) {
+                    this.sendChat(`⚔️ Fighting back against ${attacker.name || 'mob'}!`);
+
+                    // Equip weapon
+                    await this.equipBestWeapon();
+
+                    // Attack until dead or escaped
+                    while (attacker && attacker.isValid && this.isActive) {
+                        const dist = attacker.position.distanceTo(this.bot.entity.position);
+                        if (dist > 16) {
+                            // Mob ran away
+                            break;
+                        }
+
+                        // Move towards and attack
+                        if (dist > 3) {
+                            await this.bot.lookAt(attacker.position);
+                            this.bot.setControlState('forward', true);
+                            await this.delay(100);
+                        } else {
+                            this.bot.setControlState('forward', false);
+                            await this.bot.lookAt(attacker.position.offset(0, attacker.height * 0.5, 0));
+                            this.bot.attack(attacker);
+                            await this.delay(500);
+                        }
+                    }
+
+                    this.bot.clearControlStates();
+                    attacker = null; // Reset attacker
+                    this.sendChat('🛡️ Threat neutralized! Continuing strip mining...');
+                    await this.delay(500);
+                    continue;
+                }
+
+                const botPos = this.bot.entity.position;
+
+                // Check for water/lava ahead (danger blocks)
+                const aheadPositions = [
+                    botPos.offset(direction.x, 0, direction.z),
+                    botPos.offset(direction.x, 1, direction.z),
+                    botPos.offset(direction.x * 2, 0, direction.z * 2),
+                    botPos.offset(direction.x * 2, 1, direction.z * 2),
+                ];
+
+                let waterDetected = false;
+                for (const pos of aheadPositions) {
+                    const block = this.bot.blockAt(pos);
+                    if (block && (block.name.includes('water') || block.name.includes('lava'))) {
+                        waterDetected = true;
+                        break;
+                    }
+                }
+
+                if (waterDetected) {
+                    this.sendChat('💧 Water/lava detected! Reversing direction and going down 2 blocks...');
+
+                    // Reverse direction
+                    direction.x = -direction.x;
+                    direction.z = -direction.z;
+
+                    // Dig down TWO blocks
+                    for (let i = 1; i <= 2; i++) {
+                        const blockBelow = this.bot.blockAt(botPos.offset(0, -i, 0));
+                        if (blockBelow && blockBelow.name !== 'air' && this.bot.canDigBlock(blockBelow)) {
+                            await this.equipBestTool(blockBelow.name);
+                            await this.bot.lookAt(blockBelow.position.offset(0.5, 0.5, 0.5));
+                            try {
+                                await this.bot.dig(blockBelow);
+                            } catch (e) {
+                                logger.debug(`Failed to dig down: ${e.message}`);
+                            }
+                        }
+                        await this.delay(100);
+                    }
+
+                    await this.delay(300);
+                    continue;
+                }
+
+                // Calculate blocks in front (at feet and head level)
+                const blockPositions = [
+                    botPos.offset(direction.x, 0, direction.z),   // Feet level
+                    botPos.offset(direction.x, 1, direction.z),   // Head level
+                ];
+
+                let minedThisStep = false;
+
+                for (const pos of blockPositions) {
+                    if (!this.isActive) break;
+
+                    const block = this.bot.blockAt(pos);
+                    if (block && block.name !== 'air') {
+                        // Skip bedrock
+                        if (block.name === 'bedrock') {
+                            this.sendChat('⚠️ Hit bedrock! Reversing direction...');
+                            direction.x = -direction.x;
+                            direction.z = -direction.z;
+                            break;
+                        }
+
+                        // Mine ANY solid block (not just stone types)
+                        if (this.bot.canDigBlock(block)) {
+                            try {
+                                // Equip appropriate tool
+                                await this.equipBestTool(block.name);
+                                await this.bot.lookAt(block.position.offset(0.5, 0.5, 0.5));
+                                await this.bot.dig(block);
+                                this.minedCount++;
+                                minedThisStep = true;
+                            } catch (e) {
+                                logger.debug(`Strip mine dig error: ${e.message}`);
+                            }
+                        }
+                    }
+                }
+
+                // If we mined something, collect drops quickly
+                if (minedThisStep) {
+                    await this.delay(100);
+                }
+
+                // Move forward one block
+                const targetPos = botPos.offset(direction.x, 0, direction.z);
+                await this.bot.lookAt(targetPos.offset(0, 1, 0));
+                this.bot.setControlState('forward', true);
+                await this.delay(250);
+                this.bot.setControlState('forward', false);
+
+                // Progress update every 50 blocks
+                if (this.minedCount > 0 && this.minedCount % 50 === 0) {
+                    this.sendChat(`Strip mining progress: ${this.minedCount} blocks mined`);
+                }
+
+                await this.delay(50);
+            }
+
+        } finally {
+            // Clean up event listener
+            this.bot.removeListener('hurt', onHurt);
+            this.bot.clearControlStates();
+            this.sendChat(`Strip mining stopped! Mined ${this.minedCount} blocks.`);
+            this.isActive = false;
+        }
+    }
+
+    /**
+     * Equip the best weapon for combat
+     */
+    async equipBestWeapon() {
+        const weapons = ['netherite_sword', 'diamond_sword', 'iron_sword', 'golden_sword', 'stone_sword', 'wooden_sword', 'netherite_axe', 'diamond_axe', 'iron_axe'];
+
+        for (const weaponName of weapons) {
+            const weapon = this.bot.inventory.items().find(item => item.name === weaponName);
+            if (weapon) {
+                try {
+                    await this.bot.equip(weapon, 'hand');
+                    return true;
+                } catch (e) {
+                    logger.debug(`Failed to equip ${weaponName}: ${e.message}`);
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -412,7 +647,7 @@ class MinerAbility {
         }
     }
 
-    async findNearestBlock(blockTypes, radius = 256) {
+    async findNearestBlock(blockTypes, radius = 32) {
         const mcData = require('minecraft-data')(this.bot.version);
         // Handle array of strings or single string
         const types = Array.isArray(blockTypes) ? blockTypes : [blockTypes];
@@ -420,23 +655,54 @@ class MinerAbility {
         const blockIds = types.map(t => mcData.blocksByName[t]?.id).filter(id => id);
         if (blockIds.length === 0) return null;
 
-        const blocks = this.bot.findBlocks({ matching: blockIds, maxDistance: radius, count: 1 });
-        return blocks.length > 0 ? this.bot.blockAt(blocks[0]) : null;
-    }
+        // Find multiple blocks and prioritize by accessibility
+        const blocks = this.bot.findBlocks({ matching: blockIds, maxDistance: radius, count: 20 });
+        if (blocks.length === 0) return null;
 
+        const botPos = this.bot.entity.position;
+        const botY = Math.floor(botPos.y);
+
+        // Sort blocks by priority: same Y level first, then by distance
+        blocks.sort((a, b) => {
+            const aYDiff = Math.abs(a.y - botY);
+            const bYDiff = Math.abs(b.y - botY);
+
+            // Strongly prefer blocks at same level or slightly below (no jumping needed)
+            const aAccessible = aYDiff <= 2 ? 0 : aYDiff;
+            const bAccessible = bYDiff <= 2 ? 0 : bYDiff;
+
+            if (aAccessible !== bAccessible) return aAccessible - bAccessible;
+
+            // Then sort by horizontal distance
+            const aDist = Math.sqrt(Math.pow(a.x - botPos.x, 2) + Math.pow(a.z - botPos.z, 2));
+            const bDist = Math.sqrt(Math.pow(b.x - botPos.x, 2) + Math.pow(b.z - botPos.z, 2));
+            return aDist - bDist;
+        });
+
+        return this.bot.blockAt(blocks[0]);
+    }
     async navigateToBlock(block) {
+        // Check if block is within reach (no navigation needed)
+        const distance = this.bot.entity.position.distanceTo(block.position);
+        if (distance <= 4) {
+            // Already in range, just look at the block
+            await this.bot.lookAt(block.position.offset(0.5, 0.5, 0.5));
+            return;
+        }
+
         // Use specialized goal for mining that allows digging to reach the block
         if (this.bot.pathfinder) {
             const { goals } = require('mineflayer-pathfinder');
             const { Movements } = require('mineflayer-pathfinder');
             const mcData = require('minecraft-data')(this.bot.version);
 
-            // Create movements that allow digging to reach blocks
+            // Create movements optimized for quick mining
             const movements = new Movements(this.bot);
             movements.canDig = true; // Allow digging to reach underground blocks
             movements.allowSprinting = true;
             movements.allowParkour = true;
             movements.maxDropDown = 4;
+            movements.allow1by1towers = false; // DISABLE pillaring - too slow!
             this.bot.pathfinder.setMovements(movements);
 
             // GoalGetToBlock is better for mining - it goes to a position where you can interact with the block
@@ -577,6 +843,9 @@ class MinerAbility {
         // Reset obstruction counter when we can see the block
         this.obstructionAttempts = 0;
 
+        // ALWAYS equip the best tool before mining (fixes issue where block placement changes equipped item)
+        await this.equipBestTool(current.name);
+
         // If visible, mine it
         await this.bot.lookAt(current.position);
         try {
@@ -606,7 +875,7 @@ class MinerAbility {
             }
         }
 
-        // Find best tool in inventory
+        // Find ALL tools of required type in inventory (not just one)
         const items = this.bot.inventory.items().filter(i => i.name.includes(requiredType));
 
         // Sort best to worst (Netherite > Diamond > Iron > Gold > Stone > Wood)
@@ -622,18 +891,34 @@ class MinerAbility {
         if (bestTool) {
             try {
                 await this.bot.equip(bestTool, 'hand');
+                // Reset the warning flag when we successfully equip a tool
+                this.noToolWarningShown = false;
                 return true;
             } catch (e) {
                 logger.debug(`Failed to equip ${bestTool.name}: ${e.message}`);
                 return false;
             }
         } else {
-            // No tool found - fallback to hand
-            logger.debug(`No ${requiredType} available, mining with hand`);
+            // No tool found - inform the player!
+            logger.warn(`No ${requiredType} found in inventory!`);
+
+            // Only show warning once to avoid chat spam
+            if (!this.noToolWarningShown) {
+                this.noToolWarningShown = true;
+                this.sendChat(`⚠️ My ${requiredType} broke and I don't have another one! Please give me a ${requiredType} to continue mining.`);
+            }
+
+            // Stop mining - don't try with hand for blocks that need tools
+            if (requiredType === 'pickaxe') {
+                this.isActive = false;
+                return false;
+            }
+
+            // For non-essential tools (like hoe for leaves), continue with hand
             try {
                 await this.bot.unequip('hand');
             } catch (e) { }
-            return true; // Return true so mining proceeds (slowly)
+            return true;
         }
     }
 

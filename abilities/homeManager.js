@@ -55,6 +55,10 @@ class HomeManager {
      */
     async execute(command) {
         if (command.action === 'sethome') {
+            // Use server's /sethome command
+            this.bot.chat('/sethome');
+
+            // Also save locally for reference
             const pos = this.bot.entity.position;
             const location = {
                 x: pos.x,
@@ -62,26 +66,29 @@ class HomeManager {
                 z: pos.z,
                 dimension: this.bot.game.dimension
             };
+            this.saveHome(location);
 
-            if (this.saveHome(location)) {
-                this.sendChat(`Home set to ${Math.floor(pos.x)}, ${Math.floor(pos.y)}, ${Math.floor(pos.z)}`);
-            } else {
-                this.sendChat('Failed to save home location');
-            }
+            // Confirm in regular chat after a short delay
+            setTimeout(() => {
+                this.bot.chat(`Home set at ${Math.floor(pos.x)}, ${Math.floor(pos.y)}, ${Math.floor(pos.z)}!`);
+            }, 500);
             return;
         }
 
         if (command.action === 'home') {
-            if (!this.homeLocation) {
-                this.sendChat('No home set! Use -bot sethome first.');
-                return;
-            }
-
             if (command.target === 'deposit') {
-                await this.goHomeAndDeposit();
+                // For deposit, teleport home first then deposit
+                this.bot.chat('/home');
+
+                // Wait for teleport then deposit
+                setTimeout(async () => {
+                    await this.findNearbyChestAndDeposit(10);
+                }, 2000);
             } else {
-                await this.goHome();
+                // Just teleport home using server command
+                this.bot.chat('/home');
             }
+            return;
         }
 
         if (command.action === 'sort') {

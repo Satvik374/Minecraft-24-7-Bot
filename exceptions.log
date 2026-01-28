@@ -64,3 +64,346 @@ ReferenceError: ExplorationAbility is not defined
     at FullPacketParser.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\client.js:114:9)
     at FullPacketParser.emit (node:events:518:28)
     at addChunk (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\readable-stream\lib\internal\streams\readable.js:323:12)
+2026-01-25 11:38:55 [ERROR]: uncaughtException: Cannot read properties of undefined (reading 'yaw')
+TypeError: Cannot read properties of undefined (reading 'yaw')
+    at C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:677:42
+    at Timeout.intelligentMovement [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:709:5)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+TypeError: Cannot read properties of undefined (reading 'yaw')
+    at C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:677:42
+    at Timeout.intelligentMovement [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:709:5)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+2026-01-25 13:11:20 [ERROR]: uncaughtException: Unexpected token '.'
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\commands\commandParser.js:350
+    if(args.length === 0) {
+           ^
+
+SyntaxError: Unexpected token '.'
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:8:23)
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\commands\commandParser.js:350
+    if(args.length === 0) {
+           ^
+
+SyntaxError: Unexpected token '.'
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:8:23)
+2026-01-25 13:11:27 [ERROR]: uncaughtException: Unexpected token '.'
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\commands\commandParser.js:350
+    if(args.length === 0) {
+           ^
+
+SyntaxError: Unexpected token '.'
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:8:23)
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\commands\commandParser.js:350
+    if(args.length === 0) {
+           ^
+
+SyntaxError: Unexpected token '.'
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:8:23)
+2026-01-25 13:11:31 [ERROR]: uncaughtException: Unexpected token '.'
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\commands\commandParser.js:350
+    if(args.length === 0) {
+           ^
+
+SyntaxError: Unexpected token '.'
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:8:23)
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\commands\commandParser.js:350
+    if(args.length === 0) {
+           ^
+
+SyntaxError: Unexpected token '.'
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:8:23)
+2026-01-25 13:11:32 [ERROR]: uncaughtException: Unexpected token '.'
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\commands\commandParser.js:350
+    if(args.length === 0) {
+           ^
+
+SyntaxError: Unexpected token '.'
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:8:23)
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\commands\commandParser.js:350
+    if(args.length === 0) {
+           ^
+
+SyntaxError: Unexpected token '.'
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:8:23)
+2026-01-25 13:14:10 [ERROR]: uncaughtException: Unexpected identifier 'follow'
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\abilities\navigation.js:336
+    async follow(playerName) {
+          ^^^^^^
+
+SyntaxError: Unexpected identifier 'follow'
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:12:27)
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\abilities\navigation.js:336
+    async follow(playerName) {
+          ^^^^^^
+
+SyntaxError: Unexpected identifier 'follow'
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:12:27)
+2026-01-25 13:19:09 [ERROR]: uncaughtException: Unexpected token '}'
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\abilities\navigation.js:382
+}
+^
+
+SyntaxError: Unexpected token '}'
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:12:27)
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\abilities\navigation.js:382
+}
+^
+
+SyntaxError: Unexpected token '}'
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:12:27)
+2026-01-25 14:39:35 [ERROR]: uncaughtException: Cannot read properties of undefined (reading 'yaw')
+TypeError: Cannot read properties of undefined (reading 'yaw')
+    at C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:690:42
+    at Timeout.intelligentMovement [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:722:5)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+TypeError: Cannot read properties of undefined (reading 'yaw')
+    at C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:690:42
+    at Timeout.intelligentMovement [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:722:5)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+2026-01-26 14:54:06 [ERROR]: uncaughtException: bot.setControlState is not a function
+TypeError: bot.setControlState is not a function
+    at Timeout._onTimeout (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:668:21)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+TypeError: bot.setControlState is not a function
+    at Timeout._onTimeout (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:668:21)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+2026-01-27 19:16:07 [ERROR]: uncaughtException: Unexpected string
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\abilities\building.js:365
+            'survival_house': {
+            ^^^^^^^^^^^^^^^^
+
+SyntaxError: Unexpected string
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:22:25)
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\abilities\building.js:365
+            'survival_house': {
+            ^^^^^^^^^^^^^^^^
+
+SyntaxError: Unexpected string
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:22:25)
+2026-01-27 19:16:54 [ERROR]: uncaughtException: Unexpected string
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\abilities\building.js:365
+            'survival_house': {
+            ^^^^^^^^^^^^^^^^
+
+SyntaxError: Unexpected string
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:22:25)
+C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\abilities\building.js:365
+            'survival_house': {
+            ^^^^^^^^^^^^^^^^
+
+SyntaxError: Unexpected string
+    at wrapSafe (node:internal/modules/cjs/loader:1486:18)
+    at Module._compile (node:internal/modules/cjs/loader:1528:20)
+    at Object..js (node:internal/modules/cjs/loader:1706:10)
+    at Module.load (node:internal/modules/cjs/loader:1289:32)
+    at Function._load (node:internal/modules/cjs/loader:1108:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+    at Module.require (node:internal/modules/cjs/loader:1311:12)
+    at require (node:internal/modules/helpers:136:16)
+    at Object.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:22:25)
+2026-01-27 19:19:29 [ERROR]: uncaughtException: Cannot read properties of undefined (reading 'items')
+TypeError: Cannot read properties of undefined (reading 'items')
+    at Timeout.manageInventory [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1215:37)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+TypeError: Cannot read properties of undefined (reading 'items')
+    at Timeout.manageInventory [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1215:37)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+2026-01-27 20:51:19 [ERROR]: uncaughtException: Cannot read properties of undefined (reading 'items')
+TypeError: Cannot read properties of undefined (reading 'items')
+    at Timeout.manageInventory [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1215:37)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+TypeError: Cannot read properties of undefined (reading 'items')
+    at Timeout.manageInventory [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1215:37)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+2026-01-28 16:30:23 [ERROR]: uncaughtException: reason.toLowerCase is not a function
+TypeError: reason.toLowerCase is not a function
+    at C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:283:20
+    at Array.some (<anonymous>)
+    at EventEmitter.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:282:38)
+    at EventEmitter.emit (node:events:518:28)
+    at Client.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\mineflayer\lib\plugins\kick.js:5:9)
+    at Client.emit (node:events:518:28)
+    at emitPacket (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\client.js:85:12)
+    at FullPacketParser.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\client.js:114:9)
+    at FullPacketParser.emit (node:events:518:28)
+    at addChunk (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\readable-stream\lib\internal\streams\readable.js:323:12)
+TypeError: reason.toLowerCase is not a function
+    at C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:283:20
+    at Array.some (<anonymous>)
+    at EventEmitter.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:282:38)
+    at EventEmitter.emit (node:events:518:28)
+    at Client.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\mineflayer\lib\plugins\kick.js:5:9)
+    at Client.emit (node:events:518:28)
+    at emitPacket (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\client.js:85:12)
+    at FullPacketParser.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\client.js:114:9)
+    at FullPacketParser.emit (node:events:518:28)
+    at addChunk (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\readable-stream\lib\internal\streams\readable.js:323:12)
+2026-01-28 16:45:08 [ERROR]: uncaughtException: reason.toLowerCase is not a function
+TypeError: reason.toLowerCase is not a function
+    at C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:283:20
+    at Array.some (<anonymous>)
+    at EventEmitter.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:282:38)
+    at EventEmitter.emit (node:events:518:28)
+    at Client.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\mineflayer\lib\plugins\kick.js:5:9)
+    at Client.emit (node:events:518:28)
+    at emitPacket (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\client.js:85:12)
+    at FullPacketParser.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\client.js:114:9)
+    at FullPacketParser.emit (node:events:518:28)
+    at addChunk (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\readable-stream\lib\internal\streams\readable.js:323:12)
+TypeError: reason.toLowerCase is not a function
+    at C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:283:20
+    at Array.some (<anonymous>)
+    at EventEmitter.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:282:38)
+    at EventEmitter.emit (node:events:518:28)
+    at Client.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\mineflayer\lib\plugins\kick.js:5:9)
+    at Client.emit (node:events:518:28)
+    at emitPacket (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\client.js:85:12)
+    at FullPacketParser.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\client.js:114:9)
+    at FullPacketParser.emit (node:events:518:28)
+    at addChunk (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\readable-stream\lib\internal\streams\readable.js:323:12)

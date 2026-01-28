@@ -181,6 +181,47 @@ class CommandHandler {
                         this.sendChat('Combat ability not initialized');
                     }
                     break;
+                case 'sleep':
+                    const sleepAbility = this.abilities['sleeper'];
+                    if (sleepAbility) {
+                        await sleepAbility.execute(command);
+                    } else {
+                        this.sendChat('Sleep ability not initialized');
+                    }
+                    break;
+                case 'build':
+                    const buildAbility = this.abilities['build'];
+                    if (buildAbility) {
+                        if (command.target === 'list') {
+                            const builds = buildAbility.getAvailableBuilds();
+                            this.sendChat('Available builds: ' + builds.map(b => b.id).join(', '));
+                        } else {
+                            await buildAbility.execute(command);
+                        }
+                    } else {
+                        this.sendChat('Building ability not initialized');
+                    }
+                    break;
+                case 'find':
+                    const findAbility = this.abilities['find'];
+                    if (findAbility) {
+                        await findAbility.execute(command);
+                    } else {
+                        this.sendChat('Structure finder ability not initialized');
+                    }
+                    break;
+                case 'cobblestone':
+                    if (this.abilities['mine']) {
+                        // Set up continuous cobblestone mining mode
+                        command.action = 'mine'; // Important: route to 'mine' ability
+                        command.target = 'cobblestone';
+                        command.count = 999999; // Mine indefinitely until stopped
+                        command.continuous = true;
+                        await this.executeAbility(command);
+                    } else {
+                        this.sendChat('Mining ability not initialized');
+                    }
+                    break;
                 default:
                     await this.executeAbility(command);
             }
@@ -493,8 +534,8 @@ class CommandHandler {
      */
     async handleHelp(command) {
         const helpLines = [
-            'Commands: mine, kill, come, go, make, start farm, stop farm, stop, status',
-            'Example: -bot mine iron_ore | -bot come | -bot start farm | -bot drop dirt 32'
+            'Commands: mine, kill, come, go, make, find, start farm, stop farm, stop, status',
+            'Example: -bot mine iron_ore | -bot come | -bot find village | -bot drop dirt 32'
         ];
 
         for (const line of helpLines) {

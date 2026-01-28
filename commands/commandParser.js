@@ -8,7 +8,7 @@ const logger = require('../utils/logger');
 class CommandParser {
     constructor() {
         this.prefix = '-bot';
-        this.validActions = ['mine', 'kill', 'come', 'go', 'make', 'drop', 'stop', 'start', 'status', 'help', 'sethome', 'home', 'mine_all', 'collect', 'sort', 'equip', 'set', 'enable', 'disable', 'follow', 'location', 'loc', 'pos', 'where', 'inventory', 'inv', 'nether'];
+        this.validActions = ['mine', 'kill', 'come', 'go', 'make', 'drop', 'stop', 'start', 'status', 'help', 'sethome', 'home', 'mine_all', 'collect', 'sort', 'equip', 'set', 'enable', 'disable', 'follow', 'location', 'loc', 'pos', 'where', 'inventory', 'inv', 'nether', 'sleep', 'build', 'find', 'cobblestone'];
     }
 
     /**
@@ -86,6 +86,10 @@ class CommandParser {
                 return this.parseDisableCommand(args, username);
             case 'follow':
                 return this.parseFollowCommand(args, username);
+            case 'build':
+                return this.parseBuildCommand(args, username);
+            case 'find':
+                return this.parseFindCommand(args, username);
             case 'sethome':
                 return { valid: true, action: 'sethome', username };
             case 'home':
@@ -109,6 +113,10 @@ class CommandParser {
                 return { valid: true, action: 'show_inventory', username };
             case 'nether':
                 return { valid: true, action: 'nether', username };
+            case 'sleep':
+                return { valid: true, action: 'sleep', username };
+            case 'cobblestone':
+                return { valid: true, action: 'cobblestone', username };
             case 'help':
                 return { valid: true, action: 'help', username };
             default:
@@ -340,6 +348,112 @@ class CommandParser {
             username
         };
     }
+
+    /**
+     * Parse build command: -bot build <type> [gather|creative]
+     * Types: small_house, survival_house, modern_house, vintage_house, large_house, farm, xp_farm, tiny_shelter, watchtower
+     * Custom sizes: -bot build 15x20 [creative] - builds a custom house of any size up to 50x50
+     * Options: gather (mine materials), creative (use /give commands)
+     */
+    parseBuildCommand(args, username) {
+        if (args.length === 0) {
+            return {
+                valid: true,
+                action: 'build',
+                target: 'list', // Show available builds
+                gather: false,
+                creative: false,
+                username
+            };
+        }
+
+        const buildType = args[0].toLowerCase().replace(/-/g, '_');
+
+        // Check for mode options (gather or creative)
+        let gather = false;
+        let creative = false;
+
+        if (args.length > 1) {
+            const option = args[1].toLowerCase();
+            if (option === 'gather') {
+                gather = true;
+            } else if (option === 'creative') {
+                creative = true;
+            }
+        }
+
+        // Check if buildType is a custom size format like "15x20" or "50x50"
+        const customSizeMatch = buildType.match(/^(\d+)x(\d+)$/);
+        if (customSizeMatch) {
+            const customWidth = parseInt(customSizeMatch[1]);
+            const customLength = parseInt(customSizeMatch[2]);
+
+            // Validate dimensions (5-50)
+            if (customWidth < 5 || customWidth > 50 || customLength < 5 || customLength > 50) {
+                return {
+                    valid: false,
+                    error: `Custom house size must be between 5x5 and 50x50. You specified: ${customWidth}x${customLength}`,
+                    username
+                };
+            }
+
+            return {
+                valid: true,
+                action: 'build',
+                target: 'custom',
+                customWidth: customWidth,
+                customLength: customLength,
+                gather: false, // Custom builds don't support gather mode yet
+                creative: creative,
+                username
+            };
+        }
+
+        // Valid build types
+        const validTypes = ['small_house', 'survival_house', 'modern_house', 'modern_mansion', 'vintage_house', 'expanded_house', 'large_house', 'farm', 'xp_farm', 'tiny_shelter', 'watchtower', 'reinforced_outpost', 'list'];
+
+        if (!validTypes.includes(buildType)) {
+            return {
+                valid: false,
+                error: `Unknown build type: ${buildType}. Available: ${validTypes.join(', ')}, or use custom size like 15x20 (5-50 range)`,
+                username
+            };
+        }
+
+        return {
+            valid: true,
+            action: 'build',
+            target: buildType,
+            gather: gather,
+            creative: creative,
+            username
+        };
+    }
+
+    /**
+     * Parse find command: -bot find <structure_type>
+     * Locates and navigates to Minecraft structures
+     */
+    parseFindCommand(args, username) {
+        if (args.length === 0) {
+            return {
+                valid: false,
+                error: 'Specify a structure to find. Example: -bot find village, -bot find fortress',
+                username
+            };
+        }
+
+        // Join args in case structure name has underscores
+        const structureType = args.join('_').replace(/-/g, '_').toLowerCase();
+
+        return {
+            valid: true,
+            action: 'find',
+            target: structureType,
+            username
+        };
+    }
+
     parseDisableCommand(args, username) {
         if (args.length === 0) {
             return {
@@ -501,6 +615,10 @@ class CommandParser {
             '-bot come [player] - Come to player (e.g., -bot come)',
             '-bot go <x> <y> <z> - Go to coordinates',
             '-bot make <item> [count] - Craft item (e.g., -bot make diamond_pickaxe)',
+            '-bot find <structure> - Find structure (e.g., -bot find village, -bot find fortress)',
+            '-bot build <type|WxL> [creative] - Build houses (types or custom 5x5 to 50x50)',
+            '-bot sort chests - Sort and organize nearest chest',
+            '-bot sleep - Find a bed and sleep through the night',
             '-bot nether - Find and enter nearest Nether portal safely',
             '-bot location - Show coordinates',
             '-bot inventory - List items',

@@ -18,7 +18,10 @@ const HomeManager = require('./abilities/homeManager');
 const Sleeper = require('./abilities/sleeper');
 const AutoEat = require('./abilities/autoEat');
 const InventoryManager = require('./abilities/inventoryManager');
+const ChestManager = require('./abilities/chestManager');
+const BuildingAbility = require('./abilities/building');
 const NetherAbility = require('./abilities/nether');
+const StructureFinder = require('./abilities/structureFinder');
 
 // Mind module for intelligent decision-making
 const BotMind = require('./mind/botMind');
@@ -74,7 +77,10 @@ let botState = {
     targetPlayer: null,
     isCreativeMode: true, // Creative mode enabled
     randomBehaviorsEnabled: true, // Random AI behaviors (moving, jumping, chatting)
-    goals: ['gather_wood', 'craft_table', 'craft_pickaxe', 'mine_stone']
+    goals: ['gather_wood', 'craft_table', 'craft_pickaxe', 'mine_stone'],
+    lastTpaAccept: 0, // Track last TPA accept time to prevent spam
+    lastLavaWarning: 0, // Track last lava warning to prevent log spam
+    lastLavaEscape: 0 // Track last lava escape action
 };
 
 // Make botState globally accessible for command handlers
@@ -114,7 +120,7 @@ function createBot() {
         host: serverHost,
         port: serverPort,
         username: username,
-        version: '1.20.1',
+        version: false, // Auto-detect server version (supports any version)
         auth: 'offline',
         checkTimeoutInterval: 30000,
         keepAlive: true
@@ -179,6 +185,44 @@ function createBot() {
         if (username === bot.username) return;
         logger.info(`<${username}> ${message}`);
         handlePlayerChat(username, message);
+    });
+
+    // Auto-accept TPA (teleport) requests
+    bot.on('message', (jsonMsg) => {
+        const message = jsonMsg.toString().toLowerCase();
+
+        // Common TPA request patterns from various plugins (EssentialsX, CMI, etc.)
+        const tpaPatterns = [
+            'has requested to teleport to you',
+            'has requested that you teleport to them',
+            'wants to teleport to you',
+            'is requesting to teleport',
+            'sent you a teleport request',
+            'teleport request from',
+            'tpa request from',
+            '/tpaccept to accept',
+            '/tpyes to accept',
+            'type /tpaccept',
+            'type /tpyes'
+        ];
+
+        const isTpaRequest = tpaPatterns.some(pattern => message.includes(pattern));
+
+        if (isTpaRequest) {
+            const currentTime = Date.now();
+            // Cooldown of 3 seconds to prevent spam
+            if (!botState.lastTpaAccept || currentTime - botState.lastTpaAccept > 3000) {
+                logger.info(`📍 TPA request detected! Auto-accepting...`);
+
+                // Try both common accept commands
+                setTimeout(() => {
+                    bot.chat('/tpaccept');
+                    logger.info('✅ Sent /tpaccept');
+                }, 500);
+
+                botState.lastTpaAccept = currentTime;
+            }
+        }
     });
 
     bot.on('playerJoined', (player) => {
@@ -326,6 +370,7 @@ function initializeCommandSystem() {
     const sleeper = new Sleeper(bot, pathfinderConfig);
     const inventoryManager = new InventoryManager(bot);
     const netherAbility = new NetherAbility(bot, pathfinderConfig);
+    const chestManager = new ChestManager(bot, pathfinderConfig);
 
     // Pass sleeper and homeManager to farming ability
     const farmingAbility = new FarmingAbility(bot, pathfinderConfig, sleeper, homeManager);
@@ -335,6 +380,9 @@ function initializeCommandSystem() {
     // Miner needs access to combat (defense) and home (inventory)
     const minerAbility = new MinerAbility(bot, pathfinderConfig, homeManager, combatAbility);
 
+    // Building ability with miner for material gathering
+    const buildingAbility = new BuildingAbility(bot, pathfinderConfig, minerAbility);
+
     // Register abilities with command handler
     commandHandler.registerAbility('mine', minerAbility);
     commandHandler.registerAbility('kill', combatAbility);
@@ -343,11 +391,16 @@ function initializeCommandSystem() {
     commandHandler.registerAbility('make', craftingAbility);
     commandHandler.registerAbility('farm', farmingAbility);
     commandHandler.registerAbility('home', homeManager);
-    commandHandler.registerAbility('sort', homeManager);
+    commandHandler.registerAbility('sort', chestManager); // Enhanced chest sorting
     commandHandler.registerAbility('inventory', inventoryManager);
     commandHandler.registerAbility('equip', inventoryManager);
     commandHandler.registerAbility('sleeper', sleeper);
     commandHandler.registerAbility('nether', netherAbility);
+    commandHandler.registerAbility('build', buildingAbility); // Building structures
+
+    // Structure Finder ability for locating structures
+    const structureFinder = new StructureFinder(bot, pathfinderConfig);
+    commandHandler.registerAbility('find', structureFinder);
 
     // Register abilities with task manager
     taskManager.registerAbilities(commandHandler.abilities);
@@ -375,7 +428,7 @@ function initializeCommandSystem() {
     logger.info('🧠 BotMind initialized - natural language understanding active');
 
     logger.info('✅ Command system ready! Use -bot <command> in chat');
-    logger.info('📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, stop, status');
+    logger.info('📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status');
     logger.info('💬 Or just tell me naturally what you need (e.g., "get me some iron")');
 
     // Announce in chat
@@ -402,7 +455,15 @@ function startAIBehaviors() {
     // Inventory management
     setInterval(manageInventory, 15000);
 
+    // 24/7 Lava danger detection - runs frequently for safety
+    setInterval(checkLavaDanger, 500);
+
+    // 24/7 Water safety - runs very frequently to prevent drowning
+    setInterval(checkWaterSafety, 250);
+
     logger.info('🎮 AI behaviors activated!');
+    logger.info('🌋 Lava danger detection enabled!');
+    logger.info('💧 Water safety system enabled!');
 }
 
 function aiDecisionLoop() {
@@ -648,6 +709,245 @@ function exploreWorld() {
     }
 }
 
+// 24/7 Lava Danger Detection and Avoidance System
+function checkLavaDanger() {
+    if (!bot || !bot.entity) return;
+
+    const pos = bot.entity.position;
+    const dangerRadius = 3; // Check 3 blocks around the bot
+    const warningRadius = 5; // Warn when lava is within 5 blocks
+
+    let nearestLavaDistance = Infinity;
+    let nearestLavaPos = null;
+    let isInImmediateDanger = false;
+
+    // Scan for lava blocks in a cube around the bot
+    for (let x = -warningRadius; x <= warningRadius; x++) {
+        for (let y = -2; y <= 2; y++) { // Check 2 blocks above and below
+            for (let z = -warningRadius; z <= warningRadius; z++) {
+                const checkPos = pos.offset(x, y, z);
+                const block = bot.blockAt(checkPos);
+
+                if (block && (block.name === 'lava' || block.name === 'flowing_lava')) {
+                    const distance = pos.distanceTo(checkPos);
+
+                    if (distance < nearestLavaDistance) {
+                        nearestLavaDistance = distance;
+                        nearestLavaPos = checkPos;
+                    }
+
+                    // Immediate danger if lava is very close
+                    if (distance <= dangerRadius) {
+                        isInImmediateDanger = true;
+                    }
+                }
+            }
+        }
+    }
+
+    // Check if bot is standing in or above lava
+    const blockBelow = bot.blockAt(pos.offset(0, -1, 0));
+    const blockAt = bot.blockAt(pos);
+    const isInLava = (blockAt && (blockAt.name === 'lava' || blockAt.name === 'flowing_lava')) ||
+        (blockBelow && (blockBelow.name === 'lava' || blockBelow.name === 'flowing_lava'));
+
+    if (isInLava) {
+        // EMERGENCY: Bot is in lava!
+        logger.warn('🔥🔥🔥 IN LAVA! Emergency escape!');
+        escapeLavaDanger(nearestLavaPos);
+        return;
+    }
+
+    if (isInImmediateDanger) {
+        // Stop all movement immediately
+        bot.setControlState('forward', false);
+        bot.setControlState('back', false);
+        bot.setControlState('left', false);
+        bot.setControlState('right', false);
+        bot.setControlState('sprint', false);
+
+        logger.warn(`🌋 LAVA DANGER! Lava at ${nearestLavaDistance.toFixed(1)} blocks away!`);
+
+        // Move away from lava
+        escapeLavaDanger(nearestLavaPos);
+    } else if (nearestLavaDistance <= warningRadius && nearestLavaDistance < Infinity) {
+        // Just a warning, lava is nearby but not immediately dangerous
+        if (!botState.lastLavaWarning || Date.now() - botState.lastLavaWarning > 10000) {
+            logger.info(`⚠️ Lava detected ${nearestLavaDistance.toFixed(1)} blocks away - proceeding with caution`);
+            botState.lastLavaWarning = Date.now();
+        }
+    }
+}
+
+// Escape from lava danger by moving in the opposite direction
+function escapeLavaDanger(lavaPos) {
+    if (!bot || !bot.entity || !lavaPos) return;
+
+    const pos = bot.entity.position;
+
+    // Calculate escape direction (opposite of lava)
+    const escapeX = pos.x - lavaPos.x;
+    const escapeZ = pos.z - lavaPos.z;
+
+    // Normalize and calculate escape angle
+    const escapeAngle = Math.atan2(-escapeX, -escapeZ);
+
+    // Look away from lava
+    bot.look(escapeAngle, 0);
+
+    // Jump (in case we're stuck or in lava)
+    if (bot.entity.onGround) {
+        bot.setControlState('jump', true);
+        setTimeout(() => bot.setControlState('jump', false), 100);
+    }
+
+    // Move away from lava
+    bot.setControlState('forward', true);
+    bot.setControlState('sprint', true);
+
+    // Stop after moving away
+    setTimeout(() => {
+        bot.setControlState('forward', false);
+        bot.setControlState('sprint', false);
+    }, 1500);
+
+    // Log escape attempt
+    if (!botState.lastLavaEscape || Date.now() - botState.lastLavaEscape > 5000) {
+        logger.info('🏃 Escaping from lava danger!');
+        botState.lastLavaEscape = Date.now();
+    }
+}
+
+// 24/7 Water Safety System - Prevents drowning
+function checkWaterSafety() {
+    if (!bot || !bot.entity) return;
+
+    const pos = bot.entity.position;
+
+    // Check if bot is in water
+    const blockAtHead = bot.blockAt(pos.offset(0, 1.6, 0)); // Head level
+    const blockAtBody = bot.blockAt(pos);
+    const blockAtFeet = bot.blockAt(pos.offset(0, -0.5, 0));
+
+    const isHeadInWater = blockAtHead && (blockAtHead.name === 'water' || blockAtHead.name === 'flowing_water');
+    const isBodyInWater = blockAtBody && (blockAtBody.name === 'water' || blockAtBody.name === 'flowing_water');
+    const isInWater = isHeadInWater || isBodyInWater;
+
+    if (!isInWater) {
+        // Not in water - reset drowning timer
+        botState.waterEntryTime = null;
+        botState.lastWaterWarning = null;
+        return;
+    }
+
+    // Bot is in water - track time submerged
+    if (!botState.waterEntryTime) {
+        botState.waterEntryTime = Date.now();
+        logger.debug('💧 Entered water');
+    }
+
+    const timeInWater = Date.now() - botState.waterEntryTime;
+
+    // Head submerged - start swimming up IMMEDIATELY
+    if (isHeadInWater) {
+        // Emergency swim up!
+        logger.warn('🌊 HEAD UNDERWATER! Swimming to surface!');
+        swimToSurface();
+        return;
+    }
+
+    // If just body in water (head above), swim towards land if we've been in water too long
+    if (timeInWater > 5000) { // 5 seconds in water
+        if (!botState.lastWaterWarning || Date.now() - botState.lastWaterWarning > 10000) {
+            logger.info('💧 In water for too long, swimming to safety...');
+            botState.lastWaterWarning = Date.now();
+        }
+        swimToSafety();
+    }
+}
+
+// Emergency swim to surface
+function swimToSurface() {
+    if (!bot || !bot.entity) return;
+
+    // Look up
+    bot.look(bot.entity.yaw, -0.8); // Look upward
+
+    // Swim up (jump repeatedly in water = swimming up)
+    bot.setControlState('jump', true);
+
+    // Also try to move forward in case we're under a block
+    bot.setControlState('forward', true);
+
+    // Keep swimming up for a bit
+    setTimeout(() => {
+        // Check if still underwater
+        const blockAtHead = bot.blockAt(bot.entity.position.offset(0, 1.6, 0));
+        if (blockAtHead && (blockAtHead.name === 'water' || blockAtHead.name === 'flowing_water')) {
+            // Still underwater, keep swimming
+            swimToSurface();
+        } else {
+            // Surfaced! Stop swimming up
+            bot.setControlState('jump', false);
+            bot.setControlState('forward', false);
+            logger.info('🏊 Surfaced successfully!');
+        }
+    }, 500);
+}
+
+// Swim towards the nearest land/shore
+function swimToSafety() {
+    if (!bot || !bot.entity) return;
+
+    const pos = bot.entity.position;
+    let nearestLandPos = null;
+    let nearestDistance = Infinity;
+
+    // Search for nearby solid ground
+    for (let x = -8; x <= 8; x++) {
+        for (let z = -8; z <= 8; z++) {
+            for (let y = -2; y <= 2; y++) {
+                const checkPos = pos.offset(x, y, z);
+                const block = bot.blockAt(checkPos);
+                const blockAbove = bot.blockAt(checkPos.offset(0, 1, 0));
+
+                // Looking for solid ground with air above (safe landing spot)
+                if (block && block.boundingBox === 'block' &&
+                    block.name !== 'water' && block.name !== 'flowing_water' &&
+                    blockAbove && blockAbove.name === 'air') {
+                    const distance = pos.distanceTo(checkPos);
+                    if (distance < nearestDistance) {
+                        nearestDistance = distance;
+                        nearestLandPos = checkPos;
+                    }
+                }
+            }
+        }
+    }
+
+    if (nearestLandPos) {
+        // Swim towards land
+        const dx = nearestLandPos.x - pos.x;
+        const dz = nearestLandPos.z - pos.z;
+        const swimAngle = Math.atan2(-dx, -dz);
+
+        bot.look(swimAngle, 0);
+        bot.setControlState('forward', true);
+        bot.setControlState('jump', true); // Keep head above water
+        bot.setControlState('sprint', true);
+
+        setTimeout(() => {
+            bot.setControlState('forward', false);
+            bot.setControlState('jump', false);
+            bot.setControlState('sprint', false);
+        }, 2000);
+
+        logger.debug(`🏊 Swimming towards land at ${nearestLandPos}`);
+    } else {
+        // No land found, just swim up
+        swimToSurface();
+    }
+}
 
 
 function intelligentMovement() {
@@ -762,206 +1062,31 @@ function handlePlayerChat(username, message) {
         'FriendlyAI', 'HelpBot', 'ChatBot', 'WorkBot', 'PlayBot',
         'SmartBot', 'QuickBot', 'FastBot', 'CoolBot', 'NiceBot'];
     const isBotMessage = botUsernames.some(name => username.startsWith(name));
-    logger.debug(`Username check: ${username}, isBotMessage: ${isBotMessage}`);
     if (isBotMessage) {
-        logger.info(`🚫 Skipping message from bot username: ${username}`);
+        logger.debug(`🚫 Skipping message from bot username: ${username}`);
         return;
     }
 
     const lowerMessage = message.toLowerCase();
-    const currentTime = Date.now();
 
     // Log all player messages for debugging
-    logger.info(`📢 Player message from ${username}: "${message}"`);
+    logger.debug(`📢 Player message from ${username}: "${message}"`);
 
-    // Check for bot commands first (-bot prefix)
+    // ONLY process -bot commands - ignore all other chat
     if (lowerMessage.startsWith('-bot') && commandParser && commandHandler) {
         const command = commandParser.parse(message, username);
         if (command) {
-            logger.info(`🎮 Command detected: ${JSON.stringify(command)}`);
+            logger.info(`🎮 Command detected from ${username}: ${JSON.stringify(command)}`);
             commandHandler.execute(command);
-            return; // Don't process as regular chat
-        }
-    }
-
-    // Try BotMind for natural language understanding
-    if (botMind) {
-        botMind.process(message, username).then(result => {
-            if (result.handled && result.message) {
-                logger.info(`🧠 BotMind handled: ${result.action} -> ${result.message}`);
-                sendIntelligentChat(result.message);
-                botState.lastChatTime = Date.now();
-            }
-        }).catch(error => {
-            logger.debug(`BotMind error: ${error.message}`);
-        });
-
-        // If BotMind will handle this, skip ALL other responses to prevent spam
-        const intent = botMind.understand(message, username);
-        if (intent && intent.confidence >= 0.5) {
-            return; // BotMind will handle this, don't do keyword responses
-        }
-    }
-
-    // Skip responses entirely if we're currently executing a command
-    if (commandHandler && commandHandler.isTaskRunning()) {
-        logger.debug('Task running, skipping chat responses');
-        return;
-    }
-
-    // Increased chat cooldown to prevent spam (3 seconds)
-    if (currentTime - botState.lastChatTime < 3000) {
-        logger.debug('Chat cooldown active, skipping response');
-        return;
-    }
-
-    // More natural and human-like responses
-    const responses = {
-        'hello': () => {
-            const greetings = [
-                `hey ${username}! good to see you!`,
-                `hello ${username}! how's it going?`,
-                `hi there ${username}! what's up?`,
-                `hey ${username}! nice to meet you!`
-            ];
-            return greetings[Math.floor(Math.random() * greetings.length)];
-        },
-        'hi': () => {
-            const replies = [
-                `hi ${username}! how are you doing today?`,
-                `hey ${username}! what brings you here?`,
-                `hello ${username}! having fun on the server?`,
-                `hi there! i'm ${bot.username}, nice to meet you ${username}!`
-            ];
-            return replies[Math.floor(Math.random() * replies.length)];
-        },
-        'great': () => {
-            const positiveReplies = [
-                `that's awesome ${username}!`,
-                `glad to hear that!`,
-                `nice! i'm doing pretty good too`,
-                `that's great to hear!`
-            ];
-            return positiveReplies[Math.floor(Math.random() * positiveReplies.length)];
-        },
-        'good': () => `that's good to hear ${username}! i'm having a great time too`,
-        'help': () => `what do you need help with ${username}? i'm always happy to help!`,
-        'what are you doing': () => getActivityResponse(),
-        'follow me': () => {
-            botState.targetPlayer = username;
-            botState.currentTask = 'follow_player';
-            return `sure thing ${username}! i'll follow you around`;
-        },
-        'stop following': () => {
-            botState.currentTask = 'exploring';
-            botState.targetPlayer = null;
-            return `alright ${username}, i'll go back to doing my own thing!`;
-        },
-        'stop': () => {
-            botState.currentTask = 'exploring';
-            botState.targetPlayer = null;
-            return 'okay! back to exploring and crafting';
-        },
-
-        'mine': () => {
-            botState.currentTask = 'mine_stone';
-            return `sure ${username}! let's go mining together!`;
-        },
-        'build': () => `sounds amazing ${username}! what kind of build are you working on?`,
-        'food': () => `i'm a bit hungry too ${username}! know any good food spots?`,
-        'creative': () => `yes ${username}! i love creative mode for building amazing things!`,
-        'dig': () => {
-            botState.currentTask = 'mine_stone';
-            return `alright ${username}! time to dig some blocks!`;
-        },
-        'explore': () => {
-            botState.currentTask = 'exploring';
-            return `great idea ${username}! let's explore the world together!`;
-        },
-        'come here': () => {
-            botState.targetPlayer = username;
-            botState.currentTask = 'follow_player';
-            return `coming ${username}! on my way!`;
-        },
-        'go': () => {
-            botState.currentTask = 'exploring';
-            return `going ${username}! adventure time!`;
-        },
-        'wood': () => {
-            botState.currentTask = 'gather_wood';
-            return `good thinking ${username}! let's get some wood!`;
-        },
-        'craft': () => {
-            botState.currentTask = 'craft_table';
-            return `yeah ${username}! crafting is so much fun. currently working on my tools`;
-        },
-        'jump': () => {
-            // Make bot jump when someone mentions it
-            if (bot.entity.onGround) {
-                bot.setControlState('jump', true);
-                setTimeout(() => bot.setControlState('jump', false), 100);
-            }
-            return `jumping for you ${username}! :)`;
-        },
-        'dance': () => {
-            // Make bot do a little dance
-            bot.setControlState('jump', true);
-            setTimeout(() => bot.setControlState('jump', false), 100);
+        } else {
+            // Invalid command format - show help
+            logger.info(`❓ Invalid command format from ${username}: "${message}"`);
             setTimeout(() => {
-                bot.look(bot.entity.yaw + Math.PI / 2, bot.entity.pitch);
-            }, 200);
-            return `dancing time! this is fun ${username}!`;
-        }
-    };
-
-    // Check if bot is mentioned by name
-    if (lowerMessage.includes(bot.username.toLowerCase())) {
-        setTimeout(() => {
-            const mentions = [
-                `yes ${username}? did you need something?`,
-                `hey ${username}! you called?`,
-                `what's up ${username}? how can i help?`,
-                `yes? i'm here ${username}!`
-            ];
-            sendIntelligentChat(mentions[Math.floor(Math.random() * mentions.length)]);
-        }, 800 + Math.random() * 1500);
-        return;
-    }
-
-    // Check for keyword responses with higher response rate
-    let foundKeywordResponse = false;
-    for (const [keyword, responseFunc] of Object.entries(responses)) {
-        if (lowerMessage.includes(keyword)) {
-            if (Math.random() < 0.50) { // 50% chance to respond to keyword messages (reduced for spam prevention)
-                setTimeout(() => {
-                    sendIntelligentChat(responseFunc());
-                    botState.lastChatTime = Date.now();
-                }, 500 + Math.random() * 1500);
-            }
-            foundKeywordResponse = true;
-            break;
+                bot.chat(`${username}, use -bot help to see available commands!`);
+            }, 500);
         }
     }
-
-    // If no keyword match, respond to player message (only 15% chance to reduce spam)
-    if (!foundKeywordResponse && Math.random() < 0.15) {
-        const genericReplies = [
-            `interesting ${username}! tell me more`,
-            `i see what you mean ${username}`,
-            `that sounds cool ${username}!`,
-            `nice one ${username}!`,
-            `what do you think about that ${username}?`,
-            `i agree with you ${username}`,
-            `that's a good point ${username}!`,
-            `yeah ${username}, exactly!`,
-            `cool ${username}! want to team up?`,
-            `awesome ${username}! how can i help?`
-        ];
-        setTimeout(() => {
-            sendIntelligentChat(genericReplies[Math.floor(Math.random() * genericReplies.length)]);
-            botState.lastChatTime = Date.now();
-        }, 800 + Math.random() * 2000);
-    }
+    // All other messages are ignored - bot only responds to -bot commands
 }
 
 function getActivityResponse() {
