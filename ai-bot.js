@@ -107,24 +107,91 @@ function getNextUsername() {
 const webServer = require('./web-server');
 
 // Start the dashboard
-webServer.start();
+// webServer.start();
 
-function createBot() {
+// Ping server to check if it's reachable before connecting
+async function pingServer() {
+    return new Promise((resolve) => {
+        const mcProtocol = require('minecraft-protocol');
+        const timeout = setTimeout(() => {
+            logger.debug('Ping timed out');
+            resolve(null); // Timeout - server unreachable
+        }, 10000);
+
+        try {
+            mcProtocol.ping({ host: serverHost, port: serverPort }, (err, result) => {
+                clearTimeout(timeout);
+                if (err) {
+                    logger.debug(`Ping error: ${err.message}`);
+                    resolve(null);
+                } else if (!result || !result.version) {
+                    logger.debug('Ping result invalid');
+                    resolve(null);
+                } else {
+                    resolve(result);
+                }
+            });
+        } catch (pingErr) {
+            clearTimeout(timeout);
+            logger.error(`Ping exception: ${pingErr.message}`);
+            resolve(null);
+        }
+    });
+}
+
+async function createBot() {
     const username = getNextUsername();
 
     // Update dashboard
     webServer.updateBotStatus(username, false, serverHost, serverPort);
     webServer.addLog(`Initializing bot as ${username}...`);
 
+    // Check if server is reachable first
+    // logger.info('🔍 Checking server availability...');
+    // const serverInfo = await pingServer();
+
+    // Bypass ping check since it causes crashes. Assume server is up or let bot fail naturally.
+    logger.info('⚠️ Skipping pre-connection ping check to avoid stability issues.');
+    const serverInfo = null; // Force null to use fallback logic
+
+    if (!serverInfo) {
+        logger.info(`ℹ️ Proceeding with connection to ${serverHost}:${serverPort}...`);
+    } else {
+        logger.info(`✅ Server reachable! Version: ${serverInfo.version?.name || 'unknown'}`);
+    }
+
+    let version = serverInfo?.version?.name || false;
+
+    // Fix for "Paper 1.21.11" or similar non-standard version strings
+    if (typeof version === 'string') {
+        // Remove branding prefixes
+        version = version.replace(/^(Paper|Spigot|Bukkit|Velocity|BungeeCord|Waterfall) /, '');
+
+        // Map 1.21.11 (Bedrock/Geyser?) to 1.21.1 (Java)
+        if (version.includes('1.21.11')) {
+            version = '1.21.1';
+            logger.info('⚠️ Detected non-standard version 1.21.11, forcing 1.21.1 for compatibility');
+        }
+    }
+
+    // Fallback if version detection failed or is weird
+    if (!version || version === 'false') {
+        version = '1.21.1'; // Default to 1.21.1 as it's a common target for this bot
+        logger.info('⚠️ Version detection failed, defaulting to 1.21.1');
+    }
+
     const botOptions = {
         host: serverHost,
         port: serverPort,
         username: username,
-        version: false, // Auto-detect server version (supports any version)
+        version: version,
         auth: 'offline',
         checkTimeoutInterval: 30000,
-        keepAlive: true
+        keepAlive: true,
+        hideErrors: false // Show detailed errors
     };
+
+    logger.info(`⚙️ Bot Options: Host=${serverHost}, Port=${serverPort}, Version=${version}, Auth=offline`);
 
     logger.info('Creating AI bot instance...');
     bot = mineflayer.createBot(botOptions);
@@ -132,6 +199,7 @@ function createBot() {
     bot.on('login', () => {
         webServer.updateBotStatus(bot.username, true, serverHost, serverPort);
         webServer.addLog('Bot successfully logged in');
+        webServer.setBotInstance(bot); // Enable dashboard commands
         logger.info(`✅ AI Bot logged in successfully!`);
         logger.info(`🌍 Connected to ${serverHost}:${serverPort}`);
         reconnectAttempts = 0;
@@ -259,6 +327,18 @@ function createBot() {
 
     bot.on('error', (err) => {
         logger.error(`❌ AI Bot error: ${err.message}`);
+
+        // Check if this is a protocol/connection error
+        const isConnectionError = err.message.includes('protocol version') ||
+            err.message.includes('ECONNREFUSED') ||
+            err.message.includes('ETIMEDOUT') ||
+            err.message.includes('ENOTFOUND') ||
+            err.message.includes('minecraftVersion');
+
+        if (isConnectionError) {
+            logger.warn('⚠️ Connection/protocol error - server may be offline or incompatible');
+        }
+
         scheduleReconnect();
     });
 
@@ -1268,8 +1348,17 @@ function scheduleReconnect() {
 
     setTimeout(() => {
         try {
+            // Safely clean up old bot instance
             if (bot) {
-                bot.quit();
+                try {
+                    if (typeof bot.quit === 'function') {
+                        bot.quit();
+                    } else if (typeof bot.end === 'function') {
+                        bot.end();
+                    }
+                } catch (cleanupErr) {
+                    logger.debug(`Bot cleanup skipped: ${cleanupErr.message}`);
+                }
                 bot = null;
             }
             isReconnecting = false; // Reset flag before creating new bot
@@ -1277,6 +1366,12 @@ function scheduleReconnect() {
         } catch (error) {
             isReconnecting = false; // Reset flag on error too
             logger.error(`Error during reconnection: ${error.message}`);
+            // Still try to reconnect after a delay
+            setTimeout(() => {
+                if (!isReconnecting) {
+                    scheduleReconnect();
+                }
+            }, 5000);
         }
     }, delay);
 }
@@ -1287,7 +1382,7 @@ process.on('SIGINT', () => {
     logger.info('🛑 Shutting down AI bot...');
     console.log('AI Bot shutting down gracefully...');
 
-    if (bot) {
+    if (bot && typeof bot.quit === 'function') {
         bot.quit();
     }
 
@@ -1299,7 +1394,7 @@ process.on('SIGINT', () => {
 
 process.on('SIGTERM', () => {
     logger.info('🛑 Received SIGTERM, shutting down gracefully...');
-    if (bot) {
+    if (bot && typeof bot.quit === 'function') {
         bot.quit();
     }
     process.exit(0);

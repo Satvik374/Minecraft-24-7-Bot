@@ -29,3 +29,21 @@
 2026-01-27 20:55:22 [ERROR]: Error during reconnection: bot.quit is not a function
 2026-01-27 20:55:46 [ERROR]: ❌ AI Bot error: read ECONNRESET
 2026-01-28 16:19:32 [ERROR]: Structure Finder error: No permission to use /locate command
+2026-01-28 20:08:31 [ERROR]: ❌ AI Bot error: client timed out after 30000 milliseconds
+2026-01-28 21:49:02 [ERROR]: ❌ AI Bot error: 
+2026-01-28 21:49:07 [ERROR]: Error during reconnection: bot.quit is not a function
+2026-01-28 21:52:08 [ERROR]: ❌ AI Bot error: connect ETIMEDOUT 185.107.192.133:50044
+2026-01-28 21:52:13 [ERROR]: Error during reconnection: bot.quit is not a function
+2026-01-28 21:54:23 [ERROR]: ❌ AI Bot error: read ECONNRESET
+2026-01-28 21:54:50 [ERROR]: ❌ AI Bot error: read ECONNRESET
+2026-01-28 21:56:42 [ERROR]: ❌ AI Bot error: client timed out after 30000 milliseconds
+2026-01-29 15:39:57 [ERROR]: ❌ AI Bot error: read ECONNRESET
+2026-01-29 15:40:26 [ERROR]: ❌ AI Bot error: read ECONNRESET
+2026-01-29 16:42:45 [ERROR]: Unhandled Rejection at:
+2026-01-29 16:46:18 [ERROR]: Unhandled Rejection at:
+2026-01-29 16:48:13 [ERROR]: Unhandled Rejection: Error: unsupported protocol version: Paper 1.21.11
+    at Object.createClient (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\createClient.js:30:22)
+    at Object.createBot (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\mineflayer\lib\loader.js:103:35)
+    at createBot (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:179:22)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-01-29 17:58:45 [ERROR]: ❌ AI Bot error: read ECONNRESET

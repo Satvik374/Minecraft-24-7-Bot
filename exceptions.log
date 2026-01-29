@@ -407,3 +407,115 @@ TypeError: reason.toLowerCase is not a function
     at FullPacketParser.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\client.js:114:9)
     at FullPacketParser.emit (node:events:518:28)
     at addChunk (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\readable-stream\lib\internal\streams\readable.js:323:12)
+2026-01-28 20:08:37 [ERROR]: uncaughtException: Cannot read properties of undefined (reading 'items')
+TypeError: Cannot read properties of undefined (reading 'items')
+    at Timeout.manageInventory [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1220:37)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+TypeError: Cannot read properties of undefined (reading 'items')
+    at Timeout.manageInventory [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1220:37)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+2026-01-28 21:51:39 [ERROR]: uncaughtException: bot.quit is not a function
+TypeError: bot.quit is not a function
+    at process.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1291:13)
+    at process.emit (node:events:518:28)
+TypeError: bot.quit is not a function
+    at process.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1291:13)
+    at process.emit (node:events:518:28)
+2026-01-28 21:54:17 [ERROR]: uncaughtException: bot.quit is not a function
+TypeError: bot.quit is not a function
+    at process.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1291:13)
+    at process.emit (node:events:518:28)
+TypeError: bot.quit is not a function
+    at process.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1291:13)
+    at process.emit (node:events:518:28)
+2026-01-28 21:56:49 [ERROR]: uncaughtException: Cannot read properties of undefined (reading 'onGround')
+TypeError: Cannot read properties of undefined (reading 'onGround')
+    at movements (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1004:28)
+    at Timeout.intelligentMovement [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1020:5)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+TypeError: Cannot read properties of undefined (reading 'onGround')
+    at movements (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1004:28)
+    at Timeout.intelligentMovement [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1020:5)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+2026-01-29 15:40:31 [ERROR]: uncaughtException: Cannot read properties of undefined (reading 'yaw')
+TypeError: Cannot read properties of undefined (reading 'yaw')
+    at C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:988:42
+    at Timeout.intelligentMovement [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1020:5)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+TypeError: Cannot read properties of undefined (reading 'yaw')
+    at C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:988:42
+    at Timeout.intelligentMovement [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1020:5)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+2026-01-29 17:58:51 [ERROR]: uncaughtException: Cannot read properties of undefined (reading 'yaw')
+TypeError: Cannot read properties of undefined (reading 'yaw')
+    at C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1061:42
+    at Timeout.intelligentMovement [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1093:5)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+TypeError: Cannot read properties of undefined (reading 'yaw')
+    at C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1061:42
+    at Timeout.intelligentMovement [as _onTimeout] (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:1093:5)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+2026-01-29 18:42:03 [ERROR]: uncaughtException: listen EADDRINUSE: address already in use 0.0.0.0:5000
+Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+    at listenInCluster (node:net:1994:12)
+    at node:net:2203:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+    at listenInCluster (node:net:1994:12)
+    at node:net:2203:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-01-29 18:43:16 [ERROR]: uncaughtException: listen EADDRINUSE: address already in use 0.0.0.0:5000
+Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+    at listenInCluster (node:net:1994:12)
+    at node:net:2203:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+    at listenInCluster (node:net:1994:12)
+    at node:net:2203:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-01-29 18:44:08 [ERROR]: uncaughtException: listen EADDRINUSE: address already in use 0.0.0.0:5000
+Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+    at listenInCluster (node:net:1994:12)
+    at node:net:2203:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Error: listen EADDRINUSE: address already in use 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1937:16)
+    at listenInCluster (node:net:1994:12)
+    at node:net:2203:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+2026-01-29 19:01:42 [ERROR]: uncaughtException: reason.toLowerCase is not a function
+TypeError: reason.toLowerCase is not a function
+    at C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:363:20
+    at Array.some (<anonymous>)
+    at EventEmitter.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:362:38)
+    at EventEmitter.emit (node:events:518:28)
+    at Client.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\mineflayer\lib\plugins\kick.js:5:9)
+    at Client.emit (node:events:518:28)
+    at emitPacket (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\client.js:85:12)
+    at FullPacketParser.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\client.js:114:9)
+    at FullPacketParser.emit (node:events:518:28)
+    at addChunk (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\readable-stream\lib\internal\streams\readable.js:323:12)
+TypeError: reason.toLowerCase is not a function
+    at C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:363:20
+    at Array.some (<anonymous>)
+    at EventEmitter.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:362:38)
+    at EventEmitter.emit (node:events:518:28)
+    at Client.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\mineflayer\lib\plugins\kick.js:5:9)
+    at Client.emit (node:events:518:28)
+    at emitPacket (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\client.js:85:12)
+    at FullPacketParser.<anonymous> (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\client.js:114:9)
+    at FullPacketParser.emit (node:events:518:28)
+    at addChunk (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\readable-stream\lib\internal\streams\readable.js:323:12)

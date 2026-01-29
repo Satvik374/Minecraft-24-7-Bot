@@ -28021,3 +28021,962 @@
 2026-01-28 19:37:47 [INFO]: 🛑 Shutting down AI bot...
 2026-01-28 19:37:47 [INFO]: Moralta_Gaming joined the game
 2026-01-28 19:37:47 [WARN]: 🔌 AI Bot disconnected: disconnect.quitting
+2026-01-28 19:53:17 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-28 19:53:17 [INFO]: Creating AI bot instance...
+2026-01-28 19:53:17 [INFO]: 🌐 Premium Dashboard running on port 5000
+2026-01-28 19:53:19 [INFO]: ✅ AI Bot logged in successfully!
+2026-01-28 19:53:19 [INFO]: 🌍 Connected to chiku99.aternos.me:50044
+2026-01-28 19:53:19 [INFO]: AIPlayer joined the game
+2026-01-28 19:53:19 [INFO]: BotHelper837 joined the game
+2026-01-28 19:53:19 [INFO]: Moralta_Gaming joined the game
+2026-01-28 19:53:19 [INFO]: AI Bot spawned at (-336.7, 74.0625, -453.49999897535326)
+2026-01-28 19:53:19 [INFO]: 🎮 Initializing command system...
+2026-01-28 19:53:19 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-28 19:53:19 [INFO]: Registered ability: mine
+2026-01-28 19:53:19 [INFO]: Registered ability: kill
+2026-01-28 19:53:19 [INFO]: Registered ability: come
+2026-01-28 19:53:19 [INFO]: Registered ability: go
+2026-01-28 19:53:19 [INFO]: Registered ability: make
+2026-01-28 19:53:19 [INFO]: Registered ability: farm
+2026-01-28 19:53:19 [INFO]: Registered ability: home
+2026-01-28 19:53:19 [INFO]: Registered ability: sort
+2026-01-28 19:53:19 [INFO]: Registered ability: inventory
+2026-01-28 19:53:19 [INFO]: Registered ability: equip
+2026-01-28 19:53:19 [INFO]: Registered ability: sleeper
+2026-01-28 19:53:19 [INFO]: Registered ability: nether
+2026-01-28 19:53:19 [INFO]: Registered ability: build
+2026-01-28 19:53:19 [INFO]: Registered ability: find
+2026-01-28 19:53:19 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-28 19:53:19 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-28 19:53:19 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-28 19:53:19 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-28 19:53:19 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-28 19:53:19 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-28 19:53:21 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-28 19:53:21 [INFO]: 🧠 Starting AI behaviors...
+2026-01-28 19:53:21 [INFO]: 🎮 AI behaviors activated!
+2026-01-28 19:53:21 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-28 19:53:21 [INFO]: 💧 Water safety system enabled!
+2026-01-28 19:53:29 [INFO]: <Moralta_Gaming> -bot stop random
+2026-01-28 19:53:29 [INFO]: 🎮 Command detected from Moralta_Gaming: {"valid":true,"action":"stop_random","username":"Moralta_Gaming"}
+2026-01-28 19:53:29 [INFO]: Executing command: stop_random from Moralta_Gaming
+2026-01-28 19:53:29 [INFO]: Bot: Random behaviors disabled (moving, jumping, chatting)
+2026-01-28 19:53:29 [INFO]: Random AI behaviors disabled by command
+2026-01-28 19:53:29 [INFO]: <BotHelper837> Random behaviors disabled (moving, jumping, chatting)
+2026-01-28 19:53:37 [INFO]: <Moralta_Gaming> -bot netheer
+2026-01-28 19:53:37 [INFO]: 🎮 Command detected from Moralta_Gaming: {"valid":false,"error":"Unknown command: netheer. Valid commands: mine, kill, come, go, make, drop, stop, start, status, help, sethome, home, mine_all, collect, sort, equip, set, enable, disable, follow, location, loc, pos, where, inventory, inv, nether, sleep, build, find, cobblestone","username":"Moralta_Gaming"}
+2026-01-28 19:53:37 [INFO]: Bot: Unknown command: netheer. Valid commands: mine, kill, come, go, make, drop, stop, start, status, help, sethome, home, mine_all, collect, sort, equip, set, enable, disable, follow, location, loc, pos, where, inventory, inv, nether, sleep, build, find, cobblestone
+2026-01-28 19:53:37 [INFO]: <BotHelper837> Unknown command: netheer. Valid commands: mine, kill, come, go, make, drop, stop, start, status, help, sethome, home, mine_all, collect, sort, equip, set, enable, disable, follow, location, loc, pos, where, inventory, inv, nether
+2026-01-28 19:53:40 [INFO]: <Moralta_Gaming> -bot nether
+2026-01-28 19:53:40 [INFO]: 🎮 Command detected from Moralta_Gaming: {"valid":true,"action":"nether","username":"Moralta_Gaming"}
+2026-01-28 19:53:40 [INFO]: Executing command: nether from Moralta_Gaming
+2026-01-28 19:53:40 [INFO]: Bot: Starting: nether undefined
+2026-01-28 19:53:40 [INFO]: Lava safety mode ENABLED
+2026-01-28 19:53:40 [INFO]: <BotHelper837> Starting: nether undefined
+2026-01-28 19:53:42 [WARN]: FALL DANGER DETECTED! Stopping!
+2026-01-28 19:53:42 [WARN]: FALL DANGER DETECTED! Stopping!
+2026-01-28 19:53:42 [WARN]: FALL DANGER DETECTED! Stopping!
+2026-01-28 19:53:43 [WARN]: FALL DANGER DETECTED! Stopping!
+2026-01-28 19:53:43 [WARN]: FALL DANGER DETECTED! Stopping!
+2026-01-28 19:53:43 [WARN]: FALL DANGER DETECTED! Stopping!
+2026-01-28 19:53:57 [INFO]: Reached portal location
+2026-01-28 19:54:01 [INFO]: AI Bot spawned at (-33.30000001192093, 54, -39.5)
+2026-01-28 19:54:01 [INFO]: 🎮 Initializing command system...
+2026-01-28 19:54:01 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-28 19:54:01 [INFO]: Registered ability: mine
+2026-01-28 19:54:01 [INFO]: Registered ability: kill
+2026-01-28 19:54:01 [INFO]: Registered ability: come
+2026-01-28 19:54:01 [INFO]: Registered ability: go
+2026-01-28 19:54:01 [INFO]: Registered ability: make
+2026-01-28 19:54:01 [INFO]: Registered ability: farm
+2026-01-28 19:54:01 [INFO]: Registered ability: home
+2026-01-28 19:54:01 [INFO]: Registered ability: sort
+2026-01-28 19:54:01 [INFO]: Registered ability: inventory
+2026-01-28 19:54:01 [INFO]: Registered ability: equip
+2026-01-28 19:54:01 [INFO]: Registered ability: sleeper
+2026-01-28 19:54:01 [INFO]: Registered ability: nether
+2026-01-28 19:54:01 [INFO]: Registered ability: build
+2026-01-28 19:54:01 [INFO]: Registered ability: find
+2026-01-28 19:54:01 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-28 19:54:01 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-28 19:54:01 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-28 19:54:01 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-28 19:54:01 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-28 19:54:01 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-28 19:54:03 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-28 19:54:03 [INFO]: 🧠 Starting AI behaviors...
+2026-01-28 19:54:03 [INFO]: 🎮 AI behaviors activated!
+2026-01-28 19:54:03 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-28 19:54:03 [INFO]: 💧 Water safety system enabled!
+2026-01-28 19:54:13 [INFO]: Current dimension: the_nether
+2026-01-28 19:54:13 [INFO]: Bot: Completed: nether
+2026-01-28 19:54:57 [INFO]: AutoCrafter30 joined the game
+2026-01-28 19:55:00 [INFO]: <AutoCrafter30> Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-28 19:56:13 [INFO]: AIPlayer2 joined the game
+2026-01-28 19:56:16 [INFO]: <AIPlayer2> Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-28 19:56:39 [INFO]: <Moralta_Gaming> -bot nether
+2026-01-28 19:56:39 [INFO]: 🎮 Command detected from Moralta_Gaming: {"valid":true,"action":"nether","username":"Moralta_Gaming"}
+2026-01-28 19:56:39 [INFO]: Executing command: nether from Moralta_Gaming
+2026-01-28 19:56:39 [INFO]: Bot: Starting: nether undefined
+2026-01-28 19:56:39 [INFO]: Lava safety mode ENABLED
+2026-01-28 19:56:40 [INFO]: <AutoCrafter30> Starting: nether undefined
+2026-01-28 19:56:40 [INFO]: <AIPlayer2> Starting: nether undefined
+2026-01-28 19:56:40 [INFO]: Reached portal location
+2026-01-28 19:56:45 [INFO]: Current dimension: the_nether
+2026-01-28 19:56:45 [INFO]: Bot: Completed: nether
+2026-01-28 19:56:49 [INFO]: <Moralta_Gaming> -bot nether
+2026-01-28 19:56:49 [INFO]: 🎮 Command detected from Moralta_Gaming: {"valid":true,"action":"nether","username":"Moralta_Gaming"}
+2026-01-28 19:56:49 [INFO]: Executing command: nether from Moralta_Gaming
+2026-01-28 19:56:49 [INFO]: Bot: Starting: nether undefined
+2026-01-28 19:56:50 [INFO]: Reached portal location
+2026-01-28 19:56:56 [INFO]: Current dimension: the_nether
+2026-01-28 19:56:56 [INFO]: Bot: Completed: nether
+2026-01-28 19:57:21 [INFO]: <Moralta_Gaming> -bot follow me
+2026-01-28 19:57:21 [INFO]: 🎮 Command detected from Moralta_Gaming: {"valid":true,"action":"follow","target":"Moralta_Gaming","username":"Moralta_Gaming"}
+2026-01-28 19:57:21 [INFO]: Executing command: follow from Moralta_Gaming
+2026-01-28 19:57:21 [INFO]: [Navigation] Started following Moralta_Gaming
+2026-01-28 19:57:48 [INFO]: <Moralta_Gaming> -bot follow me
+2026-01-28 19:57:48 [INFO]: 🎮 Command detected from Moralta_Gaming: {"valid":true,"action":"follow","target":"Moralta_Gaming","username":"Moralta_Gaming"}
+2026-01-28 19:57:48 [INFO]: Executing command: follow from Moralta_Gaming
+2026-01-28 19:57:48 [INFO]: [Navigation] Started following Moralta_Gaming
+2026-01-28 19:57:49 [WARN]: FALL DANGER DETECTED! Stopping!
+2026-01-28 19:57:49 [WARN]: FALL DANGER DETECTED! Stopping!
+2026-01-28 19:57:56 [INFO]: <Moralta_Gaming> -bot nether
+2026-01-28 19:57:56 [INFO]: 🎮 Command detected from Moralta_Gaming: {"valid":true,"action":"nether","username":"Moralta_Gaming"}
+2026-01-28 19:57:56 [INFO]: Executing command: nether from Moralta_Gaming
+2026-01-28 19:57:56 [INFO]: Bot: Starting: nether undefined
+2026-01-28 19:57:57 [INFO]: Reached portal location
+2026-01-28 19:58:03 [INFO]: Current dimension: the_nether
+2026-01-28 19:58:03 [INFO]: Bot: Completed: nether
+2026-01-28 19:58:27 [INFO]: <Moralta_Gaming> -bot follow ss
+2026-01-28 19:58:27 [INFO]: 🎮 Command detected from Moralta_Gaming: {"valid":true,"action":"follow","target":"ss","username":"Moralta_Gaming"}
+2026-01-28 19:58:27 [INFO]: Executing command: follow from Moralta_Gaming
+2026-01-28 19:58:30 [INFO]: <Moralta_Gaming> -bot nether
+2026-01-28 19:58:30 [INFO]: 🎮 Command detected from Moralta_Gaming: {"valid":true,"action":"nether","username":"Moralta_Gaming"}
+2026-01-28 19:58:30 [INFO]: Executing command: nether from Moralta_Gaming
+2026-01-28 19:58:30 [INFO]: Bot: Starting: nether undefined
+2026-01-28 19:58:31 [INFO]: Reached portal location
+2026-01-28 19:58:31 [INFO]: Auto Eat: Hungry (17/20). Eating bread...
+2026-01-28 19:58:33 [INFO]: Auto Eat: Finished eating. Food level: 20
+2026-01-28 19:58:33 [WARN]: FALL DANGER DETECTED! Stopping!
+2026-01-28 19:58:33 [WARN]: FALL DANGER DETECTED! Stopping!
+2026-01-28 19:58:34 [WARN]: FALL DANGER DETECTED! Stopping!
+2026-01-28 19:58:34 [WARN]: FALL DANGER DETECTED! Stopping!
+2026-01-28 19:58:34 [INFO]: ⚠️ Lava detected 4.9 blocks away - proceeding with caution
+2026-01-28 19:58:34 [WARN]: FALL DANGER DETECTED! Stopping!
+2026-01-28 19:58:34 [WARN]: FALL DANGER DETECTED! Stopping!
+2026-01-28 19:58:37 [INFO]: Current dimension: the_nether
+2026-01-28 19:58:37 [INFO]: Bot: Completed: nether
+2026-01-28 19:58:41 [INFO]: <Moralta_Gaming> -bot home
+2026-01-28 19:58:41 [INFO]: 🎮 Command detected from Moralta_Gaming: {"valid":true,"action":"home","username":"Moralta_Gaming"}
+2026-01-28 19:58:41 [INFO]: Executing command: home from Moralta_Gaming
+2026-01-28 19:58:42 [INFO]: AI Bot spawned at (-336.7, 74.0625, -453.49999897535326)
+2026-01-28 19:58:42 [INFO]: 🎮 Initializing command system...
+2026-01-28 19:58:42 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-28 19:58:42 [INFO]: Registered ability: mine
+2026-01-28 19:58:42 [INFO]: Registered ability: kill
+2026-01-28 19:58:42 [INFO]: Registered ability: come
+2026-01-28 19:58:42 [INFO]: Registered ability: go
+2026-01-28 19:58:42 [INFO]: Registered ability: make
+2026-01-28 19:58:42 [INFO]: Registered ability: farm
+2026-01-28 19:58:42 [INFO]: Registered ability: home
+2026-01-28 19:58:42 [INFO]: Registered ability: sort
+2026-01-28 19:58:42 [INFO]: Registered ability: inventory
+2026-01-28 19:58:42 [INFO]: Registered ability: equip
+2026-01-28 19:58:42 [INFO]: Registered ability: sleeper
+2026-01-28 19:58:42 [INFO]: Registered ability: nether
+2026-01-28 19:58:42 [INFO]: Registered ability: build
+2026-01-28 19:58:42 [INFO]: Registered ability: find
+2026-01-28 19:58:42 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-28 19:58:42 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-28 19:58:42 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-28 19:58:42 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-28 19:58:42 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-28 19:58:42 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-28 19:58:44 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-28 19:58:44 [INFO]: 🧠 Starting AI behaviors...
+2026-01-28 19:58:44 [INFO]: 🎮 AI behaviors activated!
+2026-01-28 19:58:44 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-28 19:58:44 [INFO]: 💧 Water safety system enabled!
+2026-01-28 19:59:03 [INFO]: AIPlayer2 joined the game
+2026-01-28 19:59:06 [INFO]: <AIPlayer2> Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-28 20:02:09 [INFO]: .Indiaadi joined the game
+2026-01-28 20:02:09 [INFO]: .Indiaadi joined the game
+2026-01-28 20:03:28 [INFO]: <AIPlayer2> Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-28 20:04:22 [INFO]: <AIPlayer2> Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-28 20:05:23 [INFO]: AIPlayer2 joined the game
+2026-01-28 20:05:27 [INFO]: <AIPlayer2> Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-28 20:05:29 [INFO]: BotHelper116 joined the game
+2026-01-28 20:05:31 [INFO]: <BotHelper116> Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-28 20:07:03 [INFO]: <Moralta_Gaming> hlo
+2026-01-28 20:07:09 [INFO]: <Indiaadi> hi
+2026-01-28 20:07:10 [INFO]: <AIPlayer2> hi Indiaadi! how are you doing today?
+2026-01-28 20:07:24 [INFO]: <Moralta_Gaming> -bot inv
+2026-01-28 20:07:24 [INFO]: 🎮 Command detected from Moralta_Gaming: {"valid":true,"action":"show_inventory","username":"Moralta_Gaming"}
+2026-01-28 20:07:24 [INFO]: Executing command: show_inventory from Moralta_Gaming
+2026-01-28 20:07:24 [INFO]: Bot: Inventory: 167x cobblestone, 20x bread, 16x granite, 6x coal, 2x dirt, 1x raw iron, 42x diorite, 18x andesite
+2026-01-28 20:07:24 [INFO]: <AIPlayer2> My inventory is empty
+2026-01-28 20:07:38 [INFO]: <Moralta_Gaming> -bot cobblestone
+2026-01-28 20:07:38 [INFO]: 🎮 Command detected from Moralta_Gaming: {"valid":true,"action":"cobblestone","username":"Moralta_Gaming"}
+2026-01-28 20:07:38 [INFO]: Executing command: cobblestone from Moralta_Gaming
+2026-01-28 20:07:38 [INFO]: Bot: Starting: mine cobblestone
+2026-01-28 20:07:38 [INFO]: Strip mining started. Direction: -1.00, 0.02
+2026-01-28 20:07:38 [WARN]: No pickaxe found in inventory!
+2026-01-28 20:07:38 [INFO]: Bot: Completed: mine
+2026-01-28 20:07:39 [INFO]: <AIPlayer2> Unknown command: cobblestone. Valid commands: mine, kill, come, go, make, drop, stop, start, status, help, sethome, home, mine_all, collect, sort, equip, set, enable, disable, follow, location, loc, pos, where, inventory, inv, nether
+2026-01-28 20:08:31 [ERROR]: ❌ AI Bot error: client timed out after 30000 milliseconds
+2026-01-28 20:08:31 [INFO]: 🔄 Quick reconnect in 5s (attempt 1/50)
+2026-01-28 20:08:36 [INFO]: 🔄 Using username: BotHelper381 (attempt 2)
+2026-01-28 20:08:36 [INFO]: Creating AI bot instance...
+2026-01-28 21:48:47 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-28 21:48:47 [INFO]: Creating AI bot instance...
+2026-01-28 21:48:47 [INFO]: 🌐 Premium Dashboard running on port 5000
+2026-01-28 21:49:02 [ERROR]: ❌ AI Bot error: 
+2026-01-28 21:49:02 [INFO]: 🔄 Quick reconnect in 5s (attempt 1/50)
+2026-01-28 21:49:07 [ERROR]: Error during reconnection: bot.quit is not a function
+2026-01-28 21:51:39 [INFO]: 🛑 Shutting down AI bot...
+2026-01-28 21:51:54 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-28 21:51:54 [INFO]: Creating AI bot instance...
+2026-01-28 21:51:54 [INFO]: 🌐 Premium Dashboard running on port 5000
+2026-01-28 21:52:08 [ERROR]: ❌ AI Bot error: connect ETIMEDOUT 185.107.192.133:50044
+2026-01-28 21:52:08 [INFO]: 🔄 Quick reconnect in 5s (attempt 1/50)
+2026-01-28 21:52:13 [ERROR]: Error during reconnection: bot.quit is not a function
+2026-01-28 21:54:17 [INFO]: 🛑 Shutting down AI bot...
+2026-01-28 21:54:20 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-28 21:54:20 [INFO]: Creating AI bot instance...
+2026-01-28 21:54:20 [INFO]: 🌐 Premium Dashboard running on port 5000
+2026-01-28 21:54:23 [ERROR]: ❌ AI Bot error: read ECONNRESET
+2026-01-28 21:54:23 [INFO]: 🔄 Quick reconnect in 5s (attempt 1/50)
+2026-01-28 21:54:28 [INFO]: 🔄 Using username: BotHelper639 (attempt 2)
+2026-01-28 21:54:28 [INFO]: Creating AI bot instance...
+2026-01-28 21:54:50 [ERROR]: ❌ AI Bot error: read ECONNRESET
+2026-01-28 21:54:50 [INFO]: 🔄 Reconnecting with new username in 60s (attempt 2/50)
+2026-01-28 21:54:50 [WARN]: 🔌 AI Bot disconnected: socketClosed
+2026-01-28 21:54:50 [WARN]: 🔌 AI Bot disconnected: socketClosed
+2026-01-28 21:55:07 [INFO]: 🛑 Shutting down AI bot...
+2026-01-28 21:55:10 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-28 21:55:10 [INFO]: Creating AI bot instance...
+2026-01-28 21:55:10 [INFO]: 🌐 Premium Dashboard running on port 5000
+2026-01-28 21:55:23 [INFO]: ✅ AI Bot logged in successfully!
+2026-01-28 21:55:23 [INFO]: 🌍 Connected to chiku99.aternos.me:50044
+2026-01-28 21:55:23 [INFO]: AIPlayer joined the game
+2026-01-28 21:55:23 [INFO]: AIPlayer2 joined the game
+2026-01-28 21:55:24 [INFO]: AI Bot spawned at (-336.7, 74.0625, -453.49999897535326)
+2026-01-28 21:55:24 [INFO]: 🎮 Initializing command system...
+2026-01-28 21:55:24 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-28 21:55:24 [INFO]: Registered ability: mine
+2026-01-28 21:55:24 [INFO]: Registered ability: kill
+2026-01-28 21:55:24 [INFO]: Registered ability: come
+2026-01-28 21:55:24 [INFO]: Registered ability: go
+2026-01-28 21:55:24 [INFO]: Registered ability: make
+2026-01-28 21:55:24 [INFO]: Registered ability: farm
+2026-01-28 21:55:24 [INFO]: Registered ability: home
+2026-01-28 21:55:24 [INFO]: Registered ability: sort
+2026-01-28 21:55:24 [INFO]: Registered ability: inventory
+2026-01-28 21:55:24 [INFO]: Registered ability: equip
+2026-01-28 21:55:24 [INFO]: Registered ability: sleeper
+2026-01-28 21:55:24 [INFO]: Registered ability: nether
+2026-01-28 21:55:24 [INFO]: Registered ability: build
+2026-01-28 21:55:24 [INFO]: Registered ability: find
+2026-01-28 21:55:24 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-28 21:55:24 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-28 21:55:24 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-28 21:55:24 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-28 21:55:24 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-28 21:55:24 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-28 21:55:26 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-28 21:55:26 [INFO]: 🧠 Starting AI behaviors...
+2026-01-28 21:55:26 [INFO]: 🎮 AI behaviors activated!
+2026-01-28 21:55:26 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-28 21:55:26 [INFO]: 💧 Water safety system enabled!
+2026-01-28 21:55:50 [INFO]: 🔨 Punching tree at (-339, 79, -455)
+2026-01-28 21:55:53 [INFO]: 🔨 Punching tree at (-339, 79, -455)
+2026-01-28 21:55:57 [INFO]: 🔨 Punching tree at (-339, 79, -455)
+2026-01-28 21:55:57 [INFO]: 💬 AI Bot: getting some wood for crafting
+2026-01-28 21:55:58 [INFO]: 🔨 Punching tree at (-339, 80, -455)
+2026-01-28 21:56:00 [INFO]: 🔨 Punching tree at (-339, 80, -455)
+2026-01-28 21:56:03 [INFO]: 🔨 Punching tree at (-339, 80, -455)
+2026-01-28 21:56:04 [INFO]: 🔨 Punching tree at (-339, 79, -460)
+2026-01-28 21:56:06 [INFO]: 🔨 Punching tree at (-339, 79, -460)
+2026-01-28 21:56:09 [INFO]: 🔨 Punching tree at (-339, 79, -460)
+2026-01-28 21:56:09 [INFO]: 💬 AI Bot: getting some wood for crafting
+2026-01-28 21:56:10 [INFO]: 🔨 Punching tree at (-339, 80, -460)
+2026-01-28 21:56:12 [INFO]: 🔨 Punching tree at (-339, 80, -460)
+2026-01-28 21:56:15 [INFO]: 🔨 Punching tree at (-339, 80, -460)
+2026-01-28 21:56:16 [INFO]: 🔨 Punching tree at (-339, 81, -460)
+2026-01-28 21:56:16 [INFO]: 🔨 Punching tree at (-339, 81, -460)
+2026-01-28 21:56:18 [INFO]: 🔨 Punching tree at (-339, 81, -460)
+2026-01-28 21:56:21 [INFO]: 🔨 Punching tree at (-339, 81, -460)
+2026-01-28 21:56:24 [INFO]: 🔨 Punching tree at (-339, 81, -460)
+2026-01-28 21:56:24 [INFO]: 💬 AI Bot: getting some wood for crafting
+2026-01-28 21:56:25 [INFO]: 🔨 Punching tree at (-339, 81, -455)
+2026-01-28 21:56:25 [INFO]: 🔨 Punching tree at (-339, 81, -455)
+2026-01-28 21:56:27 [INFO]: 🔨 Punching tree at (-339, 81, -455)
+2026-01-28 21:56:30 [INFO]: 🔨 Punching tree at (-339, 81, -455)
+2026-01-28 21:56:31 [INFO]: 🔨 Punching tree at (-322, 68, -459)
+2026-01-28 21:56:33 [INFO]: 🔨 Punching tree at (-322, 68, -459)
+2026-01-28 21:56:36 [INFO]: 🔨 Punching tree at (-322, 68, -459)
+2026-01-28 21:56:39 [INFO]: 🔨 Punching tree at (-322, 68, -459)
+2026-01-28 21:56:39 [INFO]: 💬 AI Bot: getting some wood for crafting
+2026-01-28 21:56:40 [INFO]: 🔨 Punching tree at (-322, 68, -461)
+2026-01-28 21:56:40 [INFO]: 🔨 Punching tree at (-322, 68, -461)
+2026-01-28 21:56:42 [INFO]: 🔨 Punching tree at (-322, 68, -461)
+2026-01-28 21:56:42 [ERROR]: ❌ AI Bot error: client timed out after 30000 milliseconds
+2026-01-28 21:56:42 [INFO]: 🔄 Quick reconnect in 5s (attempt 1/50)
+2026-01-28 21:56:45 [INFO]: 🔨 Punching tree at (-322, 68, -461)
+2026-01-28 21:56:47 [INFO]: 🔄 Using username: BotHelper964 (attempt 2)
+2026-01-28 21:56:47 [INFO]: Creating AI bot instance...
+2026-01-29 15:39:52 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-29 15:39:52 [INFO]: Creating AI bot instance...
+2026-01-29 15:39:54 [INFO]: 🌐 Premium Dashboard running on port 5000
+2026-01-29 15:39:57 [ERROR]: ❌ AI Bot error: read ECONNRESET
+2026-01-29 15:39:57 [INFO]: 🔄 Quick reconnect in 5s (attempt 1/50)
+2026-01-29 15:40:02 [INFO]: 🔄 Using username: BotHelper801 (attempt 2)
+2026-01-29 15:40:02 [INFO]: Creating AI bot instance...
+2026-01-29 15:40:07 [INFO]: ✅ AI Bot logged in successfully!
+2026-01-29 15:40:07 [INFO]: 🌍 Connected to chiku99.aternos.me:50044
+2026-01-29 15:40:07 [INFO]: BotHelper801 joined the game
+2026-01-29 15:40:07 [INFO]: AI Bot spawned at (-56.5, 64, -22.5)
+2026-01-29 15:40:07 [INFO]: 🎮 Initializing command system...
+2026-01-29 15:40:07 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-29 15:40:07 [INFO]: Registered ability: mine
+2026-01-29 15:40:07 [INFO]: Registered ability: kill
+2026-01-29 15:40:07 [INFO]: Registered ability: come
+2026-01-29 15:40:07 [INFO]: Registered ability: go
+2026-01-29 15:40:07 [INFO]: Registered ability: make
+2026-01-29 15:40:07 [INFO]: Registered ability: farm
+2026-01-29 15:40:07 [INFO]: Registered ability: home
+2026-01-29 15:40:07 [INFO]: Registered ability: sort
+2026-01-29 15:40:07 [INFO]: Registered ability: inventory
+2026-01-29 15:40:07 [INFO]: Registered ability: equip
+2026-01-29 15:40:07 [INFO]: Registered ability: sleeper
+2026-01-29 15:40:07 [INFO]: Registered ability: nether
+2026-01-29 15:40:07 [INFO]: Registered ability: build
+2026-01-29 15:40:07 [INFO]: Registered ability: find
+2026-01-29 15:40:07 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-29 15:40:07 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-29 15:40:07 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-29 15:40:07 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-29 15:40:07 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-29 15:40:07 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-29 15:40:09 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-29 15:40:09 [INFO]: 🧠 Starting AI behaviors...
+2026-01-29 15:40:09 [INFO]: 🎮 AI behaviors activated!
+2026-01-29 15:40:09 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-29 15:40:09 [INFO]: 💧 Water safety system enabled!
+2026-01-29 15:40:26 [ERROR]: ❌ AI Bot error: read ECONNRESET
+2026-01-29 15:40:26 [INFO]: 🔄 Quick reconnect in 5s (attempt 1/50)
+2026-01-29 15:40:26 [WARN]: 🔌 AI Bot disconnected: socketClosed
+2026-01-29 15:40:30 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:40:31 [INFO]: 🔄 Using username: AutoCrafter20 (attempt 2)
+2026-01-29 15:40:31 [INFO]: Creating AI bot instance...
+2026-01-29 15:41:03 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-29 15:41:03 [INFO]: Creating AI bot instance...
+2026-01-29 15:41:03 [INFO]: 🌐 Premium Dashboard running on port 5000
+2026-01-29 15:41:08 [INFO]: ✅ AI Bot logged in successfully!
+2026-01-29 15:41:08 [INFO]: 🌍 Connected to chiku99.aternos.me:50044
+2026-01-29 15:41:08 [INFO]: AIPlayer joined the game
+2026-01-29 15:41:08 [INFO]: AI Bot spawned at (-353.3, 66, -458.03063566994365)
+2026-01-29 15:41:08 [INFO]: 🎮 Initializing command system...
+2026-01-29 15:41:08 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-29 15:41:08 [INFO]: Registered ability: mine
+2026-01-29 15:41:08 [INFO]: Registered ability: kill
+2026-01-29 15:41:08 [INFO]: Registered ability: come
+2026-01-29 15:41:08 [INFO]: Registered ability: go
+2026-01-29 15:41:08 [INFO]: Registered ability: make
+2026-01-29 15:41:08 [INFO]: Registered ability: farm
+2026-01-29 15:41:08 [INFO]: Registered ability: home
+2026-01-29 15:41:08 [INFO]: Registered ability: sort
+2026-01-29 15:41:08 [INFO]: Registered ability: inventory
+2026-01-29 15:41:08 [INFO]: Registered ability: equip
+2026-01-29 15:41:08 [INFO]: Registered ability: sleeper
+2026-01-29 15:41:08 [INFO]: Registered ability: nether
+2026-01-29 15:41:08 [INFO]: Registered ability: build
+2026-01-29 15:41:08 [INFO]: Registered ability: find
+2026-01-29 15:41:08 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-29 15:41:08 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-29 15:41:08 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-29 15:41:08 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-29 15:41:08 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-29 15:41:08 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-29 15:41:10 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-29 15:41:10 [INFO]: 🧠 Starting AI behaviors...
+2026-01-29 15:41:10 [INFO]: 🎮 AI behaviors activated!
+2026-01-29 15:41:10 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-29 15:41:10 [INFO]: 💧 Water safety system enabled!
+2026-01-29 15:41:13 [INFO]: Auto Eat: Hungry (17/20). Eating bread...
+2026-01-29 15:41:18 [INFO]: Auto Eat: Hungry (17/20). Eating bread...
+2026-01-29 15:41:18 [INFO]: Auto Eat: Finished eating. Food level: 20
+2026-01-29 15:41:28 [INFO]: Auto Eat: Hungry (17/20). Eating bread...
+2026-01-29 15:41:30 [INFO]: Auto Eat: Finished eating. Food level: 20
+2026-01-29 15:41:56 [INFO]: ⛏️ Mined stone
+2026-01-29 15:42:40 [INFO]: ⛏️ Mined stone
+2026-01-29 15:43:51 [INFO]: ⛏️ Mined stone
+2026-01-29 15:46:33 [INFO]: 🔨 Punching tree at (-339, 79, -460)
+2026-01-29 15:46:37 [INFO]: 💬 AI Bot: getting some wood for crafting
+2026-01-29 15:46:38 [INFO]: 🔨 Punching tree at (-339, 79, -455)
+2026-01-29 15:46:39 [INFO]: 🔨 Punching tree at (-339, 79, -455)
+2026-01-29 15:46:44 [INFO]: 🔨 Punching tree at (-339, 79, -455)
+2026-01-29 15:46:47 [INFO]: 💬 AI Bot: getting some wood for crafting
+2026-01-29 15:46:48 [INFO]: 🔨 Punching tree at (-339, 80, -460)
+2026-01-29 15:46:50 [INFO]: 🔨 Punching tree at (-339, 80, -460)
+2026-01-29 15:46:54 [INFO]: 🔨 Punching tree at (-339, 80, -455)
+2026-01-29 15:46:55 [INFO]: 🔨 Punching tree at (-339, 80, -455)
+2026-01-29 15:46:58 [INFO]: 💬 AI Bot: getting some wood for crafting
+2026-01-29 15:46:59 [INFO]: 🔨 Punching tree at (-339, 81, -460)
+2026-01-29 15:47:01 [INFO]: 🔨 Punching tree at (-339, 81, -460)
+2026-01-29 15:47:05 [INFO]: 🔨 Punching tree at (-339, 81, -455)
+2026-01-29 15:47:06 [INFO]: 🔨 Punching tree at (-339, 81, -455)
+2026-01-29 15:47:09 [INFO]: 💬 AI Bot: getting some wood for crafting
+2026-01-29 15:47:12 [INFO]: 🔨 Punching tree at (-322, 68, -461)
+2026-01-29 15:47:16 [INFO]: 🔨 Punching tree at (-322, 68, -459)
+2026-01-29 15:47:17 [INFO]: 🔨 Punching tree at (-322, 68, -459)
+2026-01-29 15:47:20 [INFO]: 💬 AI Bot: getting some wood for crafting
+2026-01-29 15:47:21 [INFO]: 🔨 Punching tree at (-322, 69, -460)
+2026-01-29 15:47:23 [INFO]: 🔨 Punching tree at (-322, 69, -460)
+2026-01-29 15:47:27 [INFO]: 🔨 Punching tree at (-322, 69, -459)
+2026-01-29 15:47:29 [INFO]: 🔨 Punching tree at (-322, 69, -459)
+2026-01-29 15:47:33 [INFO]: 💬 AI Bot: getting some wood for crafting
+2026-01-29 15:47:34 [INFO]: 🔨 Punching tree at (-322, 69, -463)
+2026-01-29 15:47:35 [INFO]: 🔨 Punching tree at (-322, 69, -463)
+2026-01-29 15:47:40 [INFO]: 🔨 Punching tree at (-322, 70, -460)
+2026-01-29 15:47:44 [INFO]: 💬 AI Bot: getting some wood for crafting
+2026-01-29 15:47:45 [INFO]: 🔨 Punching tree at (-322, 70, -461)
+2026-01-29 15:47:46 [INFO]: 🔨 Punching tree at (-322, 70, -461)
+2026-01-29 15:47:50 [INFO]: 🔨 Punching tree at (-322, 70, -462)
+2026-01-29 15:47:51 [INFO]: 🔨 Punching tree at (-322, 70, -462)
+2026-01-29 15:47:54 [INFO]: 💬 AI Bot: getting some wood for crafting
+2026-01-29 15:47:56 [INFO]: 🔨 Punching tree at (-322, 70, -459)
+2026-01-29 15:47:57 [INFO]: 🔨 Punching tree at (-322, 70, -459)
+2026-01-29 15:48:01 [INFO]: 🔨 Punching tree at (-322, 71, -460)
+2026-01-29 15:48:02 [INFO]: 🔨 Punching tree at (-322, 71, -460)
+2026-01-29 15:48:05 [INFO]: 💬 AI Bot: getting some wood for crafting
+2026-01-29 15:48:06 [INFO]: 🔨 Punching tree at (-322, 71, -461)
+2026-01-29 15:48:08 [INFO]: 🔨 Punching tree at (-322, 71, -461)
+2026-01-29 15:48:13 [INFO]: 🔨 Punching tree at (-322, 71, -459)
+2026-01-29 15:48:16 [INFO]: 💬 AI Bot: getting some wood for crafting
+2026-01-29 15:48:17 [INFO]: 🔨 Punching tree at (-322, 71, -462)
+2026-01-29 15:48:19 [INFO]: 🔨 Punching tree at (-322, 71, -462)
+2026-01-29 15:48:23 [INFO]: 🔨 Punching tree at (-322, 71, -463)
+2026-01-29 15:48:23 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:48:24 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:48:24 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:48:24 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:48:24 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:48:25 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:48:26 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:48:26 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:48:26 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:48:27 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:48:27 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:48:27 [INFO]: 🔨 Punching tree at (-322, 72, -460)
+2026-01-29 15:48:27 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:48:28 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:48:28 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:48:28 [INFO]: <SimpleTpa> To teleport to your death location use /back
+2026-01-29 15:48:28 [INFO]: <SimpleTpa> Your death location is: X:-347 Y:66 Z:-459!
+2026-01-29 15:48:28 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:48:28 [WARN]: 🔴 Bot died! Auto-respawning...
+2026-01-29 15:48:29 [INFO]: AI Bot spawned at (-336.7, 74.0625, -453.49999897535326)
+2026-01-29 15:48:29 [INFO]: 🎮 Initializing command system...
+2026-01-29 15:48:29 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-29 15:48:29 [INFO]: Registered ability: mine
+2026-01-29 15:48:29 [INFO]: Registered ability: kill
+2026-01-29 15:48:29 [INFO]: Registered ability: come
+2026-01-29 15:48:29 [INFO]: Registered ability: go
+2026-01-29 15:48:29 [INFO]: Registered ability: make
+2026-01-29 15:48:29 [INFO]: Registered ability: farm
+2026-01-29 15:48:29 [INFO]: Registered ability: home
+2026-01-29 15:48:29 [INFO]: Registered ability: sort
+2026-01-29 15:48:29 [INFO]: Registered ability: inventory
+2026-01-29 15:48:29 [INFO]: Registered ability: equip
+2026-01-29 15:48:29 [INFO]: Registered ability: sleeper
+2026-01-29 15:48:29 [INFO]: Registered ability: nether
+2026-01-29 15:48:29 [INFO]: Registered ability: build
+2026-01-29 15:48:29 [INFO]: Registered ability: find
+2026-01-29 15:48:29 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-29 15:48:29 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-29 15:48:29 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-29 15:48:29 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-29 15:48:29 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-29 15:48:29 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-29 15:48:31 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-29 15:48:31 [INFO]: 🧠 Starting AI behaviors...
+2026-01-29 15:48:31 [INFO]: 🎮 AI behaviors activated!
+2026-01-29 15:48:31 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-29 15:48:31 [INFO]: 💧 Water safety system enabled!
+2026-01-29 15:48:48 [INFO]: 💧 In water for too long, swimming to safety...
+2026-01-29 15:49:05 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:49:06 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:49:06 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:49:06 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:49:06 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:49:06 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:49:08 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:49:09 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:49:10 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:49:10 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:49:10 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:49:12 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:49:13 [INFO]: <SimpleTpa> To teleport to your death location use /back
+2026-01-29 15:49:13 [INFO]: <SimpleTpa> Your death location is: X:-365 Y:64 Z:-451!
+2026-01-29 15:49:13 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:49:13 [WARN]: 🔴 Bot died! Auto-respawning...
+2026-01-29 15:49:13 [INFO]: AI Bot spawned at (-336.7, 74.0625, -453.49999897535326)
+2026-01-29 15:49:13 [INFO]: 🎮 Initializing command system...
+2026-01-29 15:49:13 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-29 15:49:13 [INFO]: Registered ability: mine
+2026-01-29 15:49:13 [INFO]: Registered ability: kill
+2026-01-29 15:49:13 [INFO]: Registered ability: come
+2026-01-29 15:49:13 [INFO]: Registered ability: go
+2026-01-29 15:49:13 [INFO]: Registered ability: make
+2026-01-29 15:49:13 [INFO]: Registered ability: farm
+2026-01-29 15:49:13 [INFO]: Registered ability: home
+2026-01-29 15:49:13 [INFO]: Registered ability: sort
+2026-01-29 15:49:13 [INFO]: Registered ability: inventory
+2026-01-29 15:49:13 [INFO]: Registered ability: equip
+2026-01-29 15:49:13 [INFO]: Registered ability: sleeper
+2026-01-29 15:49:13 [INFO]: Registered ability: nether
+2026-01-29 15:49:13 [INFO]: Registered ability: build
+2026-01-29 15:49:13 [INFO]: Registered ability: find
+2026-01-29 15:49:13 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-29 15:49:13 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-29 15:49:13 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-29 15:49:13 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-29 15:49:13 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-29 15:49:13 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-29 15:49:15 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-29 15:49:15 [INFO]: 🧠 Starting AI behaviors...
+2026-01-29 15:49:15 [INFO]: 🎮 AI behaviors activated!
+2026-01-29 15:49:15 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-29 15:49:15 [INFO]: 💧 Water safety system enabled!
+2026-01-29 15:50:12 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:50:12 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:50:12 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:50:12 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:50:13 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:50:14 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:50:15 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:50:16 [INFO]: <SimpleTpa> To teleport to your death location use /back
+2026-01-29 15:50:16 [INFO]: <SimpleTpa> Your death location is: X:-351 Y:65 Z:-460!
+2026-01-29 15:50:16 [WARN]: Low health detected, seeking food or safety
+2026-01-29 15:50:16 [WARN]: 🔴 Bot died! Auto-respawning...
+2026-01-29 15:50:17 [INFO]: AI Bot spawned at (-336.7, 74.0625, -453.49999897535326)
+2026-01-29 15:50:17 [INFO]: 🎮 Initializing command system...
+2026-01-29 15:50:17 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-29 15:50:17 [INFO]: Registered ability: mine
+2026-01-29 15:50:17 [INFO]: Registered ability: kill
+2026-01-29 15:50:17 [INFO]: Registered ability: come
+2026-01-29 15:50:17 [INFO]: Registered ability: go
+2026-01-29 15:50:17 [INFO]: Registered ability: make
+2026-01-29 15:50:17 [INFO]: Registered ability: farm
+2026-01-29 15:50:17 [INFO]: Registered ability: home
+2026-01-29 15:50:17 [INFO]: Registered ability: sort
+2026-01-29 15:50:17 [INFO]: Registered ability: inventory
+2026-01-29 15:50:17 [INFO]: Registered ability: equip
+2026-01-29 15:50:17 [INFO]: Registered ability: sleeper
+2026-01-29 15:50:17 [INFO]: Registered ability: nether
+2026-01-29 15:50:17 [INFO]: Registered ability: build
+2026-01-29 15:50:17 [INFO]: Registered ability: find
+2026-01-29 15:50:17 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-29 15:50:17 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-29 15:50:17 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-29 15:50:17 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-29 15:50:17 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-29 15:50:17 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-29 15:50:19 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-29 15:50:19 [INFO]: 🧠 Starting AI behaviors...
+2026-01-29 15:50:19 [INFO]: 🎮 AI behaviors activated!
+2026-01-29 15:50:19 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-29 15:50:19 [INFO]: 💧 Water safety system enabled!
+2026-01-29 15:50:45 [INFO]: 🛑 Shutting down AI bot...
+2026-01-29 15:50:45 [WARN]: 🔌 AI Bot disconnected: disconnect.quitting
+2026-01-29 16:42:43 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-29 16:42:43 [INFO]: 🔍 Checking server availability...
+2026-01-29 16:42:43 [INFO]: 🌐 Premium Dashboard running on port 5000
+2026-01-29 16:42:45 [INFO]: ✅ Server reachable! Version: Paper 1.21.11
+2026-01-29 16:42:45 [INFO]: Creating AI bot instance...
+2026-01-29 16:42:45 [ERROR]: Unhandled Rejection at:
+2026-01-29 16:46:13 [INFO]: 🛑 Shutting down AI bot...
+2026-01-29 16:46:16 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-29 16:46:16 [INFO]: 🔍 Checking server availability...
+2026-01-29 16:46:16 [INFO]: 🌐 Premium Dashboard running on port 5000
+2026-01-29 16:46:18 [INFO]: ✅ Server reachable! Version: Paper 1.21.11
+2026-01-29 16:46:18 [INFO]: Creating AI bot instance...
+2026-01-29 16:46:18 [ERROR]: Unhandled Rejection at:
+2026-01-29 16:48:04 [INFO]: 🛑 Shutting down AI bot...
+2026-01-29 16:48:11 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-29 16:48:11 [INFO]: 🔍 Checking server availability...
+2026-01-29 16:48:11 [INFO]: 🌐 Premium Dashboard running on port 5000
+2026-01-29 16:48:13 [INFO]: ✅ Server reachable! Version: Paper 1.21.11
+2026-01-29 16:48:13 [INFO]: Creating AI bot instance...
+2026-01-29 16:48:13 [ERROR]: Unhandled Rejection: Error: unsupported protocol version: Paper 1.21.11
+    at Object.createClient (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\minecraft-protocol\src\createClient.js:30:22)
+    at Object.createBot (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\node_modules\mineflayer\lib\loader.js:103:35)
+    at createBot (C:\Users\Satvik Singh\Downloads\My projects\Folders\Updated MC Bot (Aternos)\Minecraft-bot\ai-bot.js:179:22)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-01-29 16:58:50 [INFO]: 🛑 Shutting down AI bot...
+2026-01-29 16:58:54 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-29 16:58:55 [INFO]: 🔍 Checking server availability...
+2026-01-29 16:58:55 [INFO]: 🌐 Premium Dashboard running on port 5000
+2026-01-29 16:58:56 [INFO]: ✅ Server reachable! Version: Paper 1.21.11
+2026-01-29 16:58:56 [INFO]: Creating AI bot instance...
+2026-01-29 16:59:00 [INFO]: ✅ AI Bot logged in successfully!
+2026-01-29 16:59:00 [INFO]: 🌍 Connected to chiku99.aternos.me:50044
+2026-01-29 16:59:00 [INFO]: AIPlayer joined the game
+2026-01-29 16:59:00 [INFO]: .LiveBreak8749 joined the game
+2026-01-29 16:59:00 [INFO]: Moralta_Gaming joined the game
+2026-01-29 16:59:00 [INFO]: AI Bot spawned at (-332.3, 75, -452.3)
+2026-01-29 16:59:00 [INFO]: 🎮 Initializing command system...
+2026-01-29 16:59:00 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-29 16:59:00 [INFO]: Registered ability: mine
+2026-01-29 16:59:00 [INFO]: Registered ability: kill
+2026-01-29 16:59:00 [INFO]: Registered ability: come
+2026-01-29 16:59:00 [INFO]: Registered ability: go
+2026-01-29 16:59:00 [INFO]: Registered ability: make
+2026-01-29 16:59:00 [INFO]: Registered ability: farm
+2026-01-29 16:59:00 [INFO]: Registered ability: home
+2026-01-29 16:59:00 [INFO]: Registered ability: sort
+2026-01-29 16:59:00 [INFO]: Registered ability: inventory
+2026-01-29 16:59:00 [INFO]: Registered ability: equip
+2026-01-29 16:59:00 [INFO]: Registered ability: sleeper
+2026-01-29 16:59:00 [INFO]: Registered ability: nether
+2026-01-29 16:59:00 [INFO]: Registered ability: build
+2026-01-29 16:59:00 [INFO]: Registered ability: find
+2026-01-29 16:59:00 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-29 16:59:00 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-29 16:59:00 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-29 16:59:00 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-29 16:59:00 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-29 16:59:00 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-29 16:59:02 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-29 16:59:02 [INFO]: 🧠 Starting AI behaviors...
+2026-01-29 16:59:02 [INFO]: 🎮 AI behaviors activated!
+2026-01-29 16:59:02 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-29 16:59:02 [INFO]: 💧 Water safety system enabled!
+2026-01-29 16:59:12 [INFO]: <SimpleTpa> Moralta_Gaming has sent you a teleport here request!
+2026-01-29 16:59:12 [INFO]: <SimpleTpa> You have 60 seconds to accept or deny the request
+2026-01-29 16:59:12 [INFO]: 📍 TPA request detected! Auto-accepting...
+2026-01-29 16:59:12 [INFO]: <SimpleTpa> To accept the teleport request, type /tpaccept
+2026-01-29 16:59:12 [INFO]: <SimpleTpa> To deny the teleport request, type /tpdeny
+2026-01-29 16:59:12 [INFO]: ✅ Sent /tpaccept
+2026-01-29 16:59:13 [INFO]: <SimpleTpa> You will be teleported in 5 seconds!
+2026-01-29 16:59:13 [INFO]: <SimpleTpa> You accepted the teleport request!
+2026-01-29 16:59:14 [INFO]: <SimpleTpa> You have moved and the teleport request has been removed!
+2026-01-29 16:59:15 [INFO]: <Moralta_Gaming> -bot stop random
+2026-01-29 16:59:15 [INFO]: 🎮 Command detected from Moralta_Gaming: {"valid":true,"action":"stop_random","username":"Moralta_Gaming"}
+2026-01-29 16:59:15 [INFO]: Executing command: stop_random from Moralta_Gaming
+2026-01-29 16:59:15 [INFO]: Bot: Random behaviors disabled (moving, jumping, chatting)
+2026-01-29 16:59:15 [INFO]: Random AI behaviors disabled by command
+2026-01-29 16:59:25 [INFO]: <SimpleTpa> Moralta_Gaming has sent you a teleport here request!
+2026-01-29 16:59:25 [INFO]: <SimpleTpa> You have 60 seconds to accept or deny the request
+2026-01-29 16:59:25 [INFO]: 📍 TPA request detected! Auto-accepting...
+2026-01-29 16:59:25 [INFO]: <SimpleTpa> To accept the teleport request, type /tpaccept
+2026-01-29 16:59:25 [INFO]: <SimpleTpa> To deny the teleport request, type /tpdeny
+2026-01-29 16:59:26 [INFO]: ✅ Sent /tpaccept
+2026-01-29 16:59:26 [INFO]: <SimpleTpa> You will be teleported in 5 seconds!
+2026-01-29 16:59:26 [INFO]: <SimpleTpa> You accepted the teleport request!
+2026-01-29 16:59:31 [INFO]: <SimpleTpa> Teleported!
+2026-01-29 17:01:10 [INFO]: <SimpleTpa> Moralta_Gaming has sent you a teleport here request!
+2026-01-29 17:01:10 [INFO]: <SimpleTpa> You have 60 seconds to accept or deny the request
+2026-01-29 17:01:10 [INFO]: 📍 TPA request detected! Auto-accepting...
+2026-01-29 17:01:10 [INFO]: <SimpleTpa> To accept the teleport request, type /tpaccept
+2026-01-29 17:01:10 [INFO]: <SimpleTpa> To deny the teleport request, type /tpdeny
+2026-01-29 17:01:10 [INFO]: ✅ Sent /tpaccept
+2026-01-29 17:01:11 [INFO]: <SimpleTpa> You will be teleported in 5 seconds!
+2026-01-29 17:01:11 [INFO]: <SimpleTpa> You accepted the teleport request!
+2026-01-29 17:01:16 [INFO]: <SimpleTpa> Teleported!
+2026-01-29 17:01:27 [INFO]: <Moralta_Gaming> -bot start random
+2026-01-29 17:01:27 [INFO]: 🎮 Command detected from Moralta_Gaming: {"valid":true,"action":"start_random","username":"Moralta_Gaming"}
+2026-01-29 17:01:27 [INFO]: Executing command: start_random from Moralta_Gaming
+2026-01-29 17:01:27 [INFO]: Bot: Random behaviors enabled
+2026-01-29 17:01:27 [INFO]: Random AI behaviors enabled by command
+2026-01-29 17:34:36 [INFO]: .LiveBreak8749 joined the game
+2026-01-29 17:34:38 [INFO]: .LiveBreak8749 joined the game
+2026-01-29 17:35:17 [INFO]: Moralta_Gaming joined the game
+2026-01-29 17:36:09 [INFO]: <LiveBreak8749> axe
+2026-01-29 17:36:12 [INFO]: <Moralta_Gaming> de
+2026-01-29 17:36:29 [INFO]: <Moralta_Gaming> axe?
+2026-01-29 17:41:30 [INFO]: <Moralta_Gaming> ooye meri pickaxe terpe hai kya
+2026-01-29 17:47:18 [INFO]: <LiveBreak8749> inv me jagabnahi jai
+2026-01-29 17:47:21 [INFO]: <LiveBreak8749> bye.
+2026-01-29 17:47:27 [INFO]: <Moralta_Gaming> ??????????//
+2026-01-29 17:57:01 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-29 17:57:02 [INFO]: 🔍 Checking server availability...
+2026-01-29 17:57:02 [INFO]: 🌐 Premium Dashboard running on port 5000
+2026-01-29 17:57:06 [INFO]: ✅ Server reachable! Version: Paper 1.21.11
+2026-01-29 17:57:06 [INFO]: Creating AI bot instance...
+2026-01-29 17:57:11 [INFO]: ✅ AI Bot logged in successfully!
+2026-01-29 17:57:11 [INFO]: 🌍 Connected to chiku99.aternos.me:50044
+2026-01-29 17:57:12 [INFO]: AIPlayer joined the game
+2026-01-29 17:57:15 [INFO]: AI Bot spawned at (-308.7, 110.04319999694825, -502.7)
+2026-01-29 17:57:15 [INFO]: 🎮 Initializing command system...
+2026-01-29 17:57:15 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-29 17:57:15 [INFO]: Registered ability: mine
+2026-01-29 17:57:15 [INFO]: Registered ability: kill
+2026-01-29 17:57:15 [INFO]: Registered ability: come
+2026-01-29 17:57:15 [INFO]: Registered ability: go
+2026-01-29 17:57:15 [INFO]: Registered ability: make
+2026-01-29 17:57:15 [INFO]: Registered ability: farm
+2026-01-29 17:57:15 [INFO]: Registered ability: home
+2026-01-29 17:57:15 [INFO]: Registered ability: sort
+2026-01-29 17:57:15 [INFO]: Registered ability: inventory
+2026-01-29 17:57:15 [INFO]: Registered ability: equip
+2026-01-29 17:57:15 [INFO]: Registered ability: sleeper
+2026-01-29 17:57:15 [INFO]: Registered ability: nether
+2026-01-29 17:57:15 [INFO]: Registered ability: build
+2026-01-29 17:57:15 [INFO]: Registered ability: find
+2026-01-29 17:57:15 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-29 17:57:15 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-29 17:57:15 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-29 17:57:15 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-29 17:57:15 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-29 17:57:15 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-29 17:57:17 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-29 17:57:17 [INFO]: 🧠 Starting AI behaviors...
+2026-01-29 17:57:17 [INFO]: 🎮 AI behaviors activated!
+2026-01-29 17:57:17 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-29 17:57:17 [INFO]: 💧 Water safety system enabled!
+2026-01-29 17:58:44 [INFO]: ⛏️ Mined cobblestone
+2026-01-29 17:58:45 [ERROR]: ❌ AI Bot error: read ECONNRESET
+2026-01-29 17:58:45 [INFO]: 🔄 Quick reconnect in 5s (attempt 1/50)
+2026-01-29 17:58:45 [WARN]: 🔌 AI Bot disconnected: socketClosed
+2026-01-29 17:58:50 [INFO]: 🔄 Using username: BotHelper600 (attempt 2)
+2026-01-29 17:58:50 [INFO]: 🔍 Checking server availability...
+2026-01-29 17:58:51 [INFO]: ✅ Server reachable! Version: Paper 1.21.11
+2026-01-29 17:58:51 [INFO]: Creating AI bot instance...
+2026-01-29 18:35:56 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-29 18:35:56 [INFO]: 🔍 Checking server availability...
+2026-01-29 18:35:56 [INFO]: 🌐 Premium Dashboard running on port 5000
+2026-01-29 18:35:57 [WARN]: ⚠️ Server chiku99.aternos.me:50044 is not reachable or offline.
+2026-01-29 18:35:57 [INFO]: 🔄 Retrying in 15s...
+2026-01-29 18:36:12 [INFO]: 🔄 Using username: BotHelper837 (attempt 2)
+2026-01-29 18:36:12 [INFO]: 🔍 Checking server availability...
+2026-01-29 18:36:15 [INFO]: ✅ Server reachable! Version: Paper 1.21.11
+2026-01-29 18:36:15 [INFO]: Creating AI bot instance...
+2026-01-29 18:36:22 [INFO]: ✅ AI Bot logged in successfully!
+2026-01-29 18:36:22 [INFO]: 🌍 Connected to chiku99.aternos.me:50044
+2026-01-29 18:36:22 [INFO]: BotHelper837 joined the game
+2026-01-29 18:36:22 [INFO]: AI Bot spawned at (-40.3, 59, -4.7)
+2026-01-29 18:36:23 [INFO]: 🎮 Initializing command system...
+2026-01-29 18:36:23 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-29 18:36:23 [INFO]: Registered ability: mine
+2026-01-29 18:36:23 [INFO]: Registered ability: kill
+2026-01-29 18:36:23 [INFO]: Registered ability: come
+2026-01-29 18:36:23 [INFO]: Registered ability: go
+2026-01-29 18:36:23 [INFO]: Registered ability: make
+2026-01-29 18:36:23 [INFO]: Registered ability: farm
+2026-01-29 18:36:23 [INFO]: Registered ability: home
+2026-01-29 18:36:23 [INFO]: Registered ability: sort
+2026-01-29 18:36:23 [INFO]: Registered ability: inventory
+2026-01-29 18:36:23 [INFO]: Registered ability: equip
+2026-01-29 18:36:23 [INFO]: Registered ability: sleeper
+2026-01-29 18:36:23 [INFO]: Registered ability: nether
+2026-01-29 18:36:23 [INFO]: Registered ability: build
+2026-01-29 18:36:23 [INFO]: Registered ability: find
+2026-01-29 18:36:23 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-29 18:36:23 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-29 18:36:23 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-29 18:36:23 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-29 18:36:23 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-29 18:36:23 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-29 18:36:25 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-29 18:36:25 [INFO]: 🧠 Starting AI behaviors...
+2026-01-29 18:36:25 [INFO]: 🎮 AI behaviors activated!
+2026-01-29 18:36:25 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-29 18:36:25 [INFO]: 💧 Water safety system enabled!
+2026-01-29 18:36:30 [INFO]: 💧 In water for too long, swimming to safety...
+2026-01-29 18:36:38 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:36:42 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:36:43 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:36:45 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:36:48 [INFO]: <SimpleTpa> To teleport to your death location use /back
+2026-01-29 18:36:48 [INFO]: <SimpleTpa> Your death location is: X:-47 Y:61 Z:-2!
+2026-01-29 18:36:48 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:36:48 [WARN]: 🔴 Bot died! Auto-respawning...
+2026-01-29 18:36:49 [INFO]: AI Bot spawned at (-55.5, 67, -18.5)
+2026-01-29 18:36:49 [INFO]: 🎮 Initializing command system...
+2026-01-29 18:36:49 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-29 18:36:49 [INFO]: Registered ability: mine
+2026-01-29 18:36:49 [INFO]: Registered ability: kill
+2026-01-29 18:36:49 [INFO]: Registered ability: come
+2026-01-29 18:36:49 [INFO]: Registered ability: go
+2026-01-29 18:36:49 [INFO]: Registered ability: make
+2026-01-29 18:36:49 [INFO]: Registered ability: farm
+2026-01-29 18:36:49 [INFO]: Registered ability: home
+2026-01-29 18:36:49 [INFO]: Registered ability: sort
+2026-01-29 18:36:49 [INFO]: Registered ability: inventory
+2026-01-29 18:36:49 [INFO]: Registered ability: equip
+2026-01-29 18:36:49 [INFO]: Registered ability: sleeper
+2026-01-29 18:36:49 [INFO]: Registered ability: nether
+2026-01-29 18:36:49 [INFO]: Registered ability: build
+2026-01-29 18:36:49 [INFO]: Registered ability: find
+2026-01-29 18:36:49 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-29 18:36:49 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-29 18:36:49 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-29 18:36:49 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-29 18:36:49 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-29 18:36:49 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-29 18:36:51 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-29 18:36:51 [INFO]: 🧠 Starting AI behaviors...
+2026-01-29 18:36:51 [INFO]: 🎮 AI behaviors activated!
+2026-01-29 18:36:51 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-29 18:36:51 [INFO]: 💧 Water safety system enabled!
+2026-01-29 18:41:18 [INFO]: DebugBot joined the game
+2026-01-29 18:43:15 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-29 18:44:08 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-29 18:44:55 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-29 18:44:58 [INFO]: ⚠️ Skipping pre-connection ping check to avoid stability issues.
+2026-01-29 18:44:58 [INFO]: ℹ️ Proceeding with connection to chiku99.aternos.me:50044...
+2026-01-29 18:44:58 [INFO]: ⚠️ Version detection failed, defaulting to 1.21.1
+2026-01-29 18:44:58 [INFO]: ⚙️ Bot Options: Host=chiku99.aternos.me, Port=50044, Version=1.21.1, Auth=offline
+2026-01-29 18:44:58 [INFO]: Creating AI bot instance...
+2026-01-29 18:45:01 [INFO]: ✅ AI Bot logged in successfully!
+2026-01-29 18:45:01 [INFO]: 🌍 Connected to chiku99.aternos.me:50044
+2026-01-29 18:45:02 [INFO]: AIPlayer joined the game
+2026-01-29 18:45:02 [INFO]: BotHelper837 joined the game
+2026-01-29 18:45:02 [INFO]: AIPlayer joined the game
+2026-01-29 18:45:02 [INFO]: AI Bot spawned at (-308.7, 110, -502.7)
+2026-01-29 18:45:02 [INFO]: 🎮 Initializing command system...
+2026-01-29 18:45:02 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-29 18:45:02 [INFO]: Registered ability: mine
+2026-01-29 18:45:02 [INFO]: Registered ability: kill
+2026-01-29 18:45:02 [INFO]: Registered ability: come
+2026-01-29 18:45:02 [INFO]: Registered ability: go
+2026-01-29 18:45:02 [INFO]: Registered ability: make
+2026-01-29 18:45:02 [INFO]: Registered ability: farm
+2026-01-29 18:45:02 [INFO]: Registered ability: home
+2026-01-29 18:45:02 [INFO]: Registered ability: sort
+2026-01-29 18:45:02 [INFO]: Registered ability: inventory
+2026-01-29 18:45:02 [INFO]: Registered ability: equip
+2026-01-29 18:45:02 [INFO]: Registered ability: sleeper
+2026-01-29 18:45:02 [INFO]: Registered ability: nether
+2026-01-29 18:45:02 [INFO]: Registered ability: build
+2026-01-29 18:45:02 [INFO]: Registered ability: find
+2026-01-29 18:45:02 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-29 18:45:02 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-29 18:45:02 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-29 18:45:02 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-29 18:45:02 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-29 18:45:02 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-29 18:45:04 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-29 18:45:04 [INFO]: 🧠 Starting AI behaviors...
+2026-01-29 18:45:04 [INFO]: 🎮 AI behaviors activated!
+2026-01-29 18:45:04 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-29 18:45:04 [INFO]: 💧 Water safety system enabled!
+2026-01-29 18:45:05 [INFO]: <AIPlayer> Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-29 18:45:36 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:45:37 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:45:38 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:45:39 [INFO]: <SimpleTpa> To teleport to your death location use /back
+2026-01-29 18:45:39 [INFO]: <SimpleTpa> Your death location is: X:-53 Y:61 Z:0!
+2026-01-29 18:45:39 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:45:39 [WARN]: 🔴 Bot died! Auto-respawning...
+2026-01-29 18:45:40 [INFO]: AI Bot spawned at (-43.5, 66, -21.5)
+2026-01-29 18:45:40 [INFO]: 🎮 Initializing command system...
+2026-01-29 18:45:40 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-29 18:45:40 [INFO]: Registered ability: mine
+2026-01-29 18:45:40 [INFO]: Registered ability: kill
+2026-01-29 18:45:40 [INFO]: Registered ability: come
+2026-01-29 18:45:40 [INFO]: Registered ability: go
+2026-01-29 18:45:40 [INFO]: Registered ability: make
+2026-01-29 18:45:40 [INFO]: Registered ability: farm
+2026-01-29 18:45:40 [INFO]: Registered ability: home
+2026-01-29 18:45:40 [INFO]: Registered ability: sort
+2026-01-29 18:45:40 [INFO]: Registered ability: inventory
+2026-01-29 18:45:40 [INFO]: Registered ability: equip
+2026-01-29 18:45:40 [INFO]: Registered ability: sleeper
+2026-01-29 18:45:40 [INFO]: Registered ability: nether
+2026-01-29 18:45:40 [INFO]: Registered ability: build
+2026-01-29 18:45:40 [INFO]: Registered ability: find
+2026-01-29 18:45:40 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-29 18:45:40 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-29 18:45:40 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-29 18:45:40 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-29 18:45:40 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-29 18:45:40 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-29 18:45:42 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-29 18:45:42 [INFO]: 🧠 Starting AI behaviors...
+2026-01-29 18:45:42 [INFO]: 🎮 AI behaviors activated!
+2026-01-29 18:45:42 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-29 18:45:42 [INFO]: 💧 Water safety system enabled!
+2026-01-29 18:45:42 [INFO]: <BotHelper837> Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-29 18:47:26 [INFO]: 💧 In water for too long, swimming to safety...
+2026-01-29 18:47:50 [INFO]: 💧 In water for too long, swimming to safety...
+2026-01-29 18:48:16 [INFO]: 💧 In water for too long, swimming to safety...
+2026-01-29 18:48:26 [INFO]: 💧 In water for too long, swimming to safety...
+2026-01-29 18:48:58 [INFO]: 💧 In water for too long, swimming to safety...
+2026-01-29 18:49:34 [WARN]: 🌊 HEAD UNDERWATER! Swimming to surface!
+2026-01-29 18:49:34 [WARN]: 🌊 HEAD UNDERWATER! Swimming to surface!
+2026-01-29 18:49:34 [WARN]: 🌊 HEAD UNDERWATER! Swimming to surface!
+2026-01-29 18:49:34 [INFO]: 🏊 Surfaced successfully!
+2026-01-29 18:49:34 [INFO]: 🏊 Surfaced successfully!
+2026-01-29 18:49:34 [INFO]: 🏊 Surfaced successfully!
+2026-01-29 18:49:36 [INFO]: 💧 In water for too long, swimming to safety...
+2026-01-29 18:50:59 [INFO]: 💧 In water for too long, swimming to safety...
+2026-01-29 18:51:12 [INFO]: 💧 In water for too long, swimming to safety...
+2026-01-29 18:52:21 [INFO]: 💧 In water for too long, swimming to safety...
+2026-01-29 18:52:36 [INFO]: 💧 In water for too long, swimming to safety...
+2026-01-29 18:52:47 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:52:48 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:52:48 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:52:49 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:52:49 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:52:49 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:52:53 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:52:53 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:52:53 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:52:57 [INFO]: 💧 In water for too long, swimming to safety...
+2026-01-29 18:53:13 [WARN]: 🌊 HEAD UNDERWATER! Swimming to surface!
+2026-01-29 18:53:13 [WARN]: 🌊 HEAD UNDERWATER! Swimming to surface!
+2026-01-29 18:53:13 [WARN]: 🌊 HEAD UNDERWATER! Swimming to surface!
+2026-01-29 18:53:13 [INFO]: 🏊 Surfaced successfully!
+2026-01-29 18:53:13 [INFO]: 🏊 Surfaced successfully!
+2026-01-29 18:53:13 [INFO]: 🏊 Surfaced successfully!
+2026-01-29 18:53:16 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:53:17 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:53:18 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:53:21 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:53:22 [INFO]: <SimpleTpa> To teleport to your death location use /back
+2026-01-29 18:53:22 [INFO]: <SimpleTpa> Your death location is: X:-77 Y:-38 Z:15!
+2026-01-29 18:53:22 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:53:22 [WARN]: 🔴 Bot died! Auto-respawning...
+2026-01-29 18:53:22 [WARN]: Low health detected, seeking food or safety
+2026-01-29 18:53:23 [INFO]: AI Bot spawned at (-51.5, 75, -22.5)
+2026-01-29 18:53:23 [INFO]: 🎮 Initializing command system...
+2026-01-29 18:53:23 [INFO]: 🗺️ Pathfinder loaded with door/gate support
+2026-01-29 18:53:23 [INFO]: Registered ability: mine
+2026-01-29 18:53:23 [INFO]: Registered ability: kill
+2026-01-29 18:53:23 [INFO]: Registered ability: come
+2026-01-29 18:53:23 [INFO]: Registered ability: go
+2026-01-29 18:53:23 [INFO]: Registered ability: make
+2026-01-29 18:53:23 [INFO]: Registered ability: farm
+2026-01-29 18:53:23 [INFO]: Registered ability: home
+2026-01-29 18:53:23 [INFO]: Registered ability: sort
+2026-01-29 18:53:23 [INFO]: Registered ability: inventory
+2026-01-29 18:53:23 [INFO]: Registered ability: equip
+2026-01-29 18:53:23 [INFO]: Registered ability: sleeper
+2026-01-29 18:53:23 [INFO]: Registered ability: nether
+2026-01-29 18:53:23 [INFO]: Registered ability: build
+2026-01-29 18:53:23 [INFO]: Registered ability: find
+2026-01-29 18:53:23 [INFO]: 🍎 Auto Eat: Monitoring started
+2026-01-29 18:53:23 [INFO]: 🚪 Door handler active - will auto-open doors and gates
+2026-01-29 18:53:23 [INFO]: 🧠 BotMind initialized - natural language understanding active
+2026-01-29 18:53:23 [INFO]: ✅ Command system ready! Use -bot <command> in chat
+2026-01-29 18:53:23 [INFO]: 📝 Commands: mine, kill, come, go, make, farm, sethome, home, mine_all, find, stop, status
+2026-01-29 18:53:23 [INFO]: 💬 Or just tell me naturally what you need (e.g., "get me some iron")
+2026-01-29 18:53:25 [INFO]: 💬 AI Bot: Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-29 18:53:25 [INFO]: 🧠 Starting AI behaviors...
+2026-01-29 18:53:25 [INFO]: 🎮 AI behaviors activated!
+2026-01-29 18:53:25 [INFO]: 🌋 Lava danger detection enabled!
+2026-01-29 18:53:25 [INFO]: 💧 Water safety system enabled!
+2026-01-29 18:53:25 [INFO]: <BotHelper837> Ready! You can use -bot commands or just tell me what you need naturally
+2026-01-29 19:01:33 [INFO]: 🛑 Shutting down AI bot...
+2026-01-29 19:01:33 [WARN]: 🔌 AI Bot disconnected: disconnect.quitting
+2026-01-29 19:01:40 [INFO]: 🔄 Using username: AIPlayer (attempt 1)
+2026-01-29 19:01:40 [INFO]: ⚠️ Skipping pre-connection ping check to avoid stability issues.
+2026-01-29 19:01:40 [INFO]: ℹ️ Proceeding with connection to chiku99.aternos.me:50044...
+2026-01-29 19:01:40 [INFO]: ⚠️ Version detection failed, defaulting to 1.21.1
+2026-01-29 19:01:40 [INFO]: ⚙️ Bot Options: Host=chiku99.aternos.me, Port=50044, Version=1.21.1, Auth=offline
+2026-01-29 19:01:40 [INFO]: Creating AI bot instance...
+2026-01-29 19:01:42 [WARN]: 👢 AI Bot was kicked: [object Object]

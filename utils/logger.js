@@ -23,7 +23,7 @@ const logger = winston.createLogger({
                 winston.format.simple()
             )
         }),
-        
+
         // File output
         new winston.transports.File({
             filename: 'bot-error.log',
@@ -42,7 +42,8 @@ logger.exceptions.handle(
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (reason, promise) => {
-    logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    const errorMessage = reason instanceof Error ? reason.stack || reason.message : String(reason);
+    logger.error(`Unhandled Rejection: ${errorMessage}`);
 });
 
 module.exports = logger;
