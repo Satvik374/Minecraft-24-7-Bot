@@ -175,9 +175,10 @@ async function createBot() {
     }
 
     // Fallback if version detection failed or is weird
+    const config = require('./config');
     if (!version || version === 'false') {
-        version = '1.21.1'; // Default to 1.21.1 as it's a common target for this bot
-        logger.info('⚠️ Version detection failed, defaulting to 1.21.1');
+        version = config.bot.version || '1.20.1'; // Default to 1.20.1 from config.js
+        logger.info(`⚠️ Version detection failed, defaulting to ${version}`);
     }
 
     const botOptions = {

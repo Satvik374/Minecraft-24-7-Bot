@@ -231,11 +231,12 @@ function getNextUsername() {
 function createBot() {
     const username = getNextUsername();
 
+    const config = require('./config');
     const botOptions = {
         host: serverHost,
         port: serverPort,
         username: username,
-        version: '1.20.1',
+        version: config.bot.version || '1.20.1',
         auth: 'offline',
         connectTimeout: 60000, // Increased timeout for Render/Aternos
         checkTimeoutInterval: 60000, // Increased check timeout
