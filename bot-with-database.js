@@ -57,9 +57,10 @@ console.log('='.repeat(60));
 
 // Parse command line arguments
 const args = process.argv.slice(2);
-const serverHost = args[0] || process.env.MINECRAFT_HOST || 'localhost';
-const serverPort = parseInt(args[1]) || parseInt(process.env.MINECRAFT_PORT) || 25565;
-const baseUsername = args[2] || process.env.MINECRAFT_USERNAME || 'AIPlayer';
+const config = require('./config');
+const serverHost = args[0] || process.env.MINECRAFT_HOST || config.defaultServer.host;
+const serverPort = parseInt(args[1]) || parseInt(process.env.MINECRAFT_PORT) || config.defaultServer.port;
+const baseUsername = args[2] || process.env.MINECRAFT_USERNAME || config.bot.username;
 const webPort = process.env.PORT || 5000;
 
 // Username rotation system for ban evasion
@@ -694,13 +695,13 @@ function createBot() {
 
     const username = getNextUsername();
 
-    console.log(`🔧 Using Minecraft version 1.20.6 (tested and compatible)`);
+    console.log(`🔧 Using Minecraft version ${config.bot.version} (configured in config.js)`);
 
     const botOptions = {
         host: serverHost,
         port: serverPort,
         username: username,
-        version: '1.20.6',
+        version: config.bot.version,
         auth: 'offline',
         connectTimeout: 60000,
         hideErrors: false // Simplified configuration to match working test
