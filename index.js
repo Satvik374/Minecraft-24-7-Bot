@@ -2,6 +2,18 @@ const mineflayer = require('mineflayer');
 const MinecraftBot = require('./bot');
 const config = require('./config');
 const logger = require('./utils/logger');
+const http = require('http');
+
+// Simple health check server for Render/UptimeRobot
+const PORT = process.env.PORT || 10000;
+const healthServer = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Bot is alive!');
+});
+
+healthServer.listen(PORT, '0.0.0.0', () => {
+    logger.info(`🚀 Health check server running on port ${PORT}`);
+});
 
 // Parse command line arguments
 const args = process.argv.slice(2);
@@ -30,7 +42,7 @@ function createBot() {
 
     logger.info('Creating new bot instance...');
     bot = new MinecraftBot(botOptions);
-    
+
     bot.on('login', () => {
         logger.info(`Bot logged in successfully to ${serverHost}:${serverPort}`);
         reconnectAttempts = 0;
@@ -62,9 +74,9 @@ function scheduleReconnect() {
 
     reconnectAttempts++;
     const delay = Math.min(config.connection.reconnectDelay * reconnectAttempts, config.connection.maxReconnectDelay);
-    
+
     logger.info(`Reconnecting in ${delay}ms (attempt ${reconnectAttempts}/${maxReconnectAttempts})`);
-    
+
     setTimeout(() => {
         if (bot) {
             bot.quit();

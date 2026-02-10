@@ -3,6 +3,18 @@
 const MinecraftBot = require('./bot');
 const config = require('./config');
 const logger = require('./utils/logger');
+const http = require('http');
+
+// Simple health check server for Render/UptimeRobot
+const PORT = process.env.PORT || 10000;
+const healthServer = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Bot is alive!');
+});
+
+healthServer.listen(PORT, '0.0.0.0', () => {
+    logger.info(`🚀 Health check server running on port ${PORT}`);
+});
 
 console.log('='.repeat(60));
 console.log('🤖 Minecraft 24/7 Bot');
@@ -74,12 +86,12 @@ function createBot() {
 
     logger.info('Creating new bot instance...');
     bot = new MinecraftBot(botOptions);
-    
+
     bot.on('login', () => {
         logger.info(`✅ Bot logged in successfully!`);
         logger.info(`🌍 Connected to ${serverHost}:${serverPort}`);
         reconnectAttempts = 0;
-        
+
         console.log('');
         console.log('🤖 Bot is now active and running 24/7!');
         console.log('📊 Monitoring bot activity in logs...');
@@ -115,9 +127,9 @@ function scheduleReconnect() {
 
     reconnectAttempts++;
     const delay = Math.min(config.connection.reconnectDelay * reconnectAttempts, config.connection.maxReconnectDelay);
-    
-    logger.info(`🔄 Reconnecting in ${delay/1000}s (attempt ${reconnectAttempts}/${maxReconnectAttempts})`);
-    
+
+    logger.info(`🔄 Reconnecting in ${delay / 1000}s (attempt ${reconnectAttempts}/${maxReconnectAttempts})`);
+
     setTimeout(() => {
         try {
             if (bot) {
@@ -136,11 +148,11 @@ process.on('SIGINT', () => {
     console.log('\n');
     logger.info('🛑 Received shutdown signal...');
     console.log('Shutting down bot gracefully...');
-    
+
     if (bot) {
         bot.quit();
     }
-    
+
     setTimeout(() => {
         console.log('✅ Bot shutdown complete. Goodbye!');
         process.exit(0);
