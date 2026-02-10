@@ -116,7 +116,7 @@ async function pingServer() {
         const timeout = setTimeout(() => {
             logger.debug('Ping timed out');
             resolve(null); // Timeout - server unreachable
-        }, 10000);
+        }, 30000);
 
         try {
             mcProtocol.ping({ host: serverHost, port: serverPort }, (err, result) => {
