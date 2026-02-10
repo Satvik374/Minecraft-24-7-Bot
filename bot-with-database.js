@@ -648,7 +648,7 @@ async function testServerConnectivity(host, port) {
         const net = require('net');
         const socket = new net.Socket();
 
-        socket.setTimeout(30000);
+        socket.setTimeout(60000);
 
         socket.on('connect', () => {
             console.log(`✅ TCP connection test successful to ${host}:${port}`);
