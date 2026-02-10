@@ -193,6 +193,13 @@ async function createBot() {
         hideErrors: false // Show detailed errors
     };
 
+    const proxy = process.env.SOCKS_PROXY;
+    if (proxy) {
+        const [host, port, user, pass] = proxy.split(':');
+        botOptions.agent = new (require('proxy-agent'))(`socks5://${user && pass ? `${user}:${pass}@` : ''}${host}:${port}`);
+        logger.info(`🌐 Using Proxy: ${host}:${port}`);
+    }
+
     logger.info(`⚙️ Bot Options: Host=${serverHost}, Port=${serverPort}, Version=${version}, Auth=offline`);
 
     logger.info('Creating AI bot instance...');
