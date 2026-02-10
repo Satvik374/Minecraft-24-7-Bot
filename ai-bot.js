@@ -196,7 +196,8 @@ async function createBot() {
     const proxy = process.env.SOCKS_PROXY;
     if (proxy) {
         const [host, port, user, pass] = proxy.split(':');
-        botOptions.agent = new (require('proxy-agent'))(`socks5://${user && pass ? `${user}:${pass}@` : ''}${host}:${port}`);
+        const { ProxyAgent } = require('proxy-agent');
+        botOptions.agent = new ProxyAgent(`socks5://${user && pass ? `${user}:${pass}@` : ''}${host}:${port}`);
         logger.info(`🌐 Using Proxy: ${host}:${port}`);
     }
 
