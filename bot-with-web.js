@@ -68,7 +68,7 @@ const webServer = http.createServer((req, res) => {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('Keep-Alive', 'timeout=30, max=100');
-    
+
     if (req.method === 'OPTIONS') {
         res.writeHead(200);
         res.end();
@@ -77,10 +77,10 @@ const webServer = http.createServer((req, res) => {
 
     const url = req.url;
     const now = new Date();
-    
+
     // Main health check for UptimeRobot - ALWAYS returns OK to keep server alive
     if (url === '/health' || url === '/ping') {
-        res.writeHead(200, { 
+        res.writeHead(200, {
             'Content-Type': 'text/plain',
             'Cache-Control': 'no-cache, no-store, must-revalidate',
             'Pragma': 'no-cache',
@@ -89,14 +89,14 @@ const webServer = http.createServer((req, res) => {
         res.end('OK - Web Server Active');
         return;
     }
-    
+
     // Status endpoint
     if (url === '/' || url === '/status') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        
+
         const uptimeHours = Math.floor((Date.now() - botStatus.uptime) / (1000 * 60 * 60));
         const uptimeMinutes = Math.floor((Date.now() - botStatus.uptime) / (1000 * 60)) % 60;
-        
+
         const response = {
             status: "OK",
             webServer: "ACTIVE", // Web server is always active for UptimeRobot
@@ -109,21 +109,21 @@ const webServer = http.createServer((req, res) => {
                 reconnectAttempts: reconnectAttempts
             },
             timestamp: now.toISOString(),
-            message: botStatus.isRunning ? 
-                "Web server active - Minecraft bot online" : 
+            message: botStatus.isRunning ?
+                "Web server active - Minecraft bot online" :
                 `Web server active - Minecraft bot reconnecting (attempt ${reconnectAttempts})`
         };
-        
+
         res.end(JSON.stringify(response, null, 2));
         return;
     }
-    
+
     // Web dashboard
     if (url === '/dashboard') {
         res.writeHead(200, { 'Content-Type': 'text/html' });
         const uptimeHours = Math.floor((Date.now() - botStatus.uptime) / (1000 * 60 * 60));
         const uptimeMinutes = Math.floor((Date.now() - botStatus.uptime) / (1000 * 60)) % 60;
-        
+
         res.end(`
 <!DOCTYPE html>
 <html>
@@ -190,7 +190,7 @@ const webServer = http.createServer((req, res) => {
         `);
         return;
     }
-    
+
     // 404 for other routes
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not Found - Available endpoints: /health, /status, /dashboard');
@@ -223,21 +223,22 @@ function getNextUsername() {
         const randomSuffix = Math.floor(Math.random() * 999);
         currentUsername = `${currentUsername}${randomSuffix}`;
     }
-    
+
     logger.info(`🔄 Using username: ${currentUsername} (attempt ${reconnectAttempts + 1})`);
     return currentUsername;
 }
 
 function createBot() {
     const username = getNextUsername();
-    
+
     const botOptions = {
         host: serverHost,
         port: serverPort,
         username: username,
         version: '1.20.1',
         auth: 'offline',
-        checkTimeoutInterval: 60000, // Increased timeout
+        connectTimeout: 60000, // Increased timeout for Render/Aternos
+        checkTimeoutInterval: 60000, // Increased check timeout
         keepAlive: true,
         hideErrors: false,
         respawn: true,
@@ -249,13 +250,13 @@ function createBot() {
 
     logger.info('Creating AI bot instance...');
     bot = mineflayer.createBot(botOptions);
-    
+
     bot.on('login', () => {
         logger.info(`✅ AI Bot logged in successfully!`);
         logger.info(`🌍 Connected to ${serverHost}:${serverPort}`);
         reconnectAttempts = 0;
         updateBotStatus(true);
-        
+
         console.log('🤖 AI Bot is now online and ready to play!');
         console.log('🎮 Bot will behave like a real intelligent player...');
         console.log('Press Ctrl+C to stop the bot');
@@ -264,10 +265,10 @@ function createBot() {
 
     bot.on('spawn', () => {
         logger.info(`AI Bot spawned at ${bot.entity.position}`);
-        
+
         // Start keep-alive activities immediately
         startKeepAliveActivities();
-        
+
         setTimeout(() => {
             if (botState.isCreativeMode) {
                 try {
@@ -278,7 +279,7 @@ function createBot() {
                 }
             }
         }, 1000);
-        
+
         setTimeout(() => {
             startAIBehaviors();
         }, 2000);
@@ -318,17 +319,17 @@ function createBot() {
 
     bot.on('kicked', (reason) => {
         logger.warn(`👢 AI Bot was kicked: ${reason}`);
-        
+
         const banKeywords = ['ban', 'banned', 'blacklist', 'prohibited', 'blocked', 'suspended'];
-        const isBanned = banKeywords.some(keyword => 
+        const isBanned = banKeywords.some(keyword =>
             reason.toLowerCase().includes(keyword)
         );
-        
+
         if (isBanned) {
             logger.warn(`🚫 Detected ban! Reason: ${reason}`);
             logger.info(`🔄 Will reconnect with different username...`);
         }
-        
+
         updateBotStatus(false);
         scheduleReconnect();
     });
@@ -343,19 +344,19 @@ function scheduleReconnect() {
     }
 
     reconnectAttempts++;
-    
+
     let delay;
     if (reconnectAttempts <= 3) {
         delay = 5000; // Quick retries first
-        logger.info(`🔄 Quick reconnect in ${delay/1000}s (attempt ${reconnectAttempts})`);
+        logger.info(`🔄 Quick reconnect in ${delay / 1000}s (attempt ${reconnectAttempts})`);
     } else if (reconnectAttempts <= 10) {
         delay = 30000; // 30 second delays
-        logger.info(`🔄 Reconnecting in ${delay/1000}s (attempt ${reconnectAttempts}) - server may be down`);
+        logger.info(`🔄 Reconnecting in ${delay / 1000}s (attempt ${reconnectAttempts}) - server may be down`);
     } else {
         delay = Math.min(300000, 60000 + (reconnectAttempts * 10000)); // Up to 5 minute delays
-        logger.info(`🔄 Long reconnect in ${Math.floor(delay/60000)}min (attempt ${reconnectAttempts}) - waiting for server`);
+        logger.info(`🔄 Long reconnect in ${Math.floor(delay / 60000)}min (attempt ${reconnectAttempts}) - waiting for server`);
     }
-    
+
     setTimeout(() => {
         try {
             if (bot && typeof bot.quit === 'function') {
@@ -375,10 +376,10 @@ function scheduleReconnect() {
 // Simplified chat function for this version
 function sendIntelligentChat(message) {
     if (!bot || !message) return;
-    
+
     const currentTime = Date.now();
     if (currentTime - botState.lastChatTime < 3000) return;
-    
+
     try {
         bot.chat(message);
         botState.lastChatTime = currentTime;
@@ -391,14 +392,14 @@ function sendIntelligentChat(message) {
 // Keep-alive function to prevent disconnections
 function startKeepAliveActivities() {
     if (!bot) return;
-    
+
     // Movement to prevent idle kicks
     const moveInterval = setInterval(() => {
         if (!bot || !bot.entity) {
             clearInterval(moveInterval);
             return;
         }
-        
+
         try {
             // Small movements to stay active
             if (Math.random() < 0.5) {
@@ -425,7 +426,7 @@ function startKeepAliveActivities() {
             clearInterval(lookInterval);
             return;
         }
-        
+
         try {
             const yaw = Math.random() * Math.PI * 2;
             const pitch = (Math.random() - 0.5) * 0.5;
@@ -441,7 +442,7 @@ function startKeepAliveActivities() {
 // Simplified behavior functions
 function startAIBehaviors() {
     logger.info('🧠 Starting AI behaviors...');
-    
+
     setInterval(() => {
         if (bot && Math.random() < 0.3) {
             const messages = [
@@ -454,16 +455,16 @@ function startAIBehaviors() {
             sendIntelligentChat(messages[Math.floor(Math.random() * messages.length)]);
         }
     }, 60000 + Math.random() * 120000);
-    
+
     logger.info('🎮 AI behaviors activated!');
 }
 
 function handlePlayerChat(username, message) {
     if (username === bot.username) return;
-    
+
     const lowerMessage = message.toLowerCase();
     logger.info(`📢 Player message from ${username}: "${message}"`);
-    
+
     if (Math.random() < 0.7) {
         const replies = [
             `hi ${username}! how are you doing?`,
@@ -472,7 +473,7 @@ function handlePlayerChat(username, message) {
             `that sounds cool ${username}!`,
             `awesome ${username}! how can i help?`
         ];
-        
+
         setTimeout(() => {
             sendIntelligentChat(replies[Math.floor(Math.random() * replies.length)]);
         }, 1000 + Math.random() * 2000);

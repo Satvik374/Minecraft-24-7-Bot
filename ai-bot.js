@@ -107,7 +107,7 @@ function getNextUsername() {
 const webServer = require('./web-server');
 
 // Start the dashboard
-// webServer.start();
+webServer.start();
 
 // Ping server to check if it's reachable before connecting
 async function pingServer() {
@@ -187,6 +187,7 @@ async function createBot() {
         version: version,
         auth: 'offline',
         checkTimeoutInterval: 30000,
+        connectTimeout: 60000, // Wait up to 60s for connection (useful for Render/Aternos)
         keepAlive: true,
         hideErrors: false // Show detailed errors
     };
@@ -336,7 +337,12 @@ async function createBot() {
             err.message.includes('minecraftVersion');
 
         if (isConnectionError) {
-            logger.warn('⚠️ Connection/protocol error - server may be offline or incompatible');
+            if (err.message.includes('ETIMEDOUT')) {
+                logger.warn('⚠️ Connection TIMED OUT - Render needs more time or Aternos server is OFFLINE');
+                logger.info('💡 TIP: Make sure your Aternos server is actually started before running the bot!');
+            } else {
+                logger.warn('⚠️ Connection/protocol error - server may be offline or incompatible');
+            }
         }
 
         scheduleReconnect();

@@ -114,7 +114,7 @@ let sessionStats = {
 // Simplified database helper functions
 async function createBotSession() {
     if (!hasDatabase) return null;
-    
+
     try {
         // Use storage if available
         if (storage) {
@@ -138,7 +138,7 @@ async function createBotSession() {
 
 async function endBotSession(reason = 'disconnect') {
     if (!hasDatabase || !currentSessionId) return;
-    
+
     try {
         if (storage) {
             await storage.endCurrentSession(reason);
@@ -152,7 +152,7 @@ async function endBotSession(reason = 'disconnect') {
 
 async function logPlayerInteraction(playerName, messageType, message, botResponse = null) {
     if (!hasDatabase || !currentSessionId) return;
-    
+
     try {
         if (storage) {
             await storage.logPlayerInteraction({
@@ -173,7 +173,7 @@ async function logPlayerInteraction(playerName, messageType, message, botRespons
 
 async function updateServerStatus(isOnline, playerCount = 0, errorMessage = null) {
     if (!hasDatabase) return;
-    
+
     try {
         if (storage) {
             await storage.updateServerStatus({
@@ -192,7 +192,7 @@ async function updateServerStatus(isOnline, playerCount = 0, errorMessage = null
 
 async function logUsernameUsage(username, wasBanned = false, banReason = null) {
     if (!hasDatabase) return;
-    
+
     try {
         if (storage) {
             await storage.logUsernameUsage({
@@ -216,7 +216,7 @@ const webServer = http.createServer(async (req, res) => {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('Keep-Alive', 'timeout=30, max=100');
-    
+
     if (req.method === 'OPTIONS') {
         res.writeHead(200);
         res.end();
@@ -225,14 +225,14 @@ const webServer = http.createServer(async (req, res) => {
 
     const url = req.url;
     const now = new Date();
-    
+
     // Root route - redirect to health page for preview tab
     if (url === '/') {
         res.writeHead(302, { 'Location': '/health' });
         res.end();
         return;
     }
-    
+
     // Debug endpoint to check bot status
     if (url === '/debug') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -250,21 +250,21 @@ const webServer = http.createServer(async (req, res) => {
         res.end(JSON.stringify(debugInfo, null, 2));
         return;
     }
-    
+
     // Keep-alive endpoint for UptimeRobot - shows "Alive!" in preview
     if (url === '/health' || url === '/ping') {
-        res.writeHead(200, { 
+        res.writeHead(200, {
             'Content-Type': 'text/html',
             'Cache-Control': 'no-cache, no-store, must-revalidate',
             'Pragma': 'no-cache',
             'Expires': '0'
         });
-        
+
         // Movement patterns active status
         const keepAliveStatus = true;
         const uptimeHours = Math.floor((Date.now() - botStatus.uptime) / (1000 * 60 * 60));
         const uptimeMinutes = Math.floor((Date.now() - botStatus.uptime) / (1000 * 60)) % 60;
-        
+
         const response = `
 <!DOCTYPE html>
 <html>
@@ -364,10 +364,10 @@ const webServer = http.createServer(async (req, res) => {
     <div class="container">
         <div class="alive pulse">Alive!</div>
         
-        ${botStatus.hasArrived && botStatus.isRunning ? 
-            '<div class="bot-arrived">🎉 Bot Has Arrived! 🎉</div>' : 
-            ''
-        }
+        ${botStatus.hasArrived && botStatus.isRunning ?
+                '<div class="bot-arrived">🎉 Bot Has Arrived! 🎉</div>' :
+                ''
+            }
         
         <div class="status">
             ${botStatus.isRunning ? '🟢 Bot Active' : '🔴 Bot Connecting...'}
@@ -423,18 +423,18 @@ const webServer = http.createServer(async (req, res) => {
 </body>
 </html>
         `;
-        
+
         res.end(response);
         return;
     }
-    
+
     // Enhanced status endpoint with database stats
     if (url === '/' || url === '/status') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        
+
         const uptimeHours = Math.floor((Date.now() - botStatus.uptime) / (1000 * 60 * 60));
         const uptimeMinutes = Math.floor((Date.now() - botStatus.uptime) / (1000 * 60)) % 60;
-        
+
         // Get recent database stats if available
         let dbStats = null;
         if (db) {
@@ -446,13 +446,13 @@ const webServer = http.createServer(async (req, res) => {
                     FROM bot_sessions 
                     WHERE server_host = $1 AND server_port = $2
                 `, [serverHost, serverPort]);
-                
+
                 dbStats = result.rows[0];
             } catch (error) {
                 logger.debug(`Database stats query failed: ${error.message}`);
             }
         }
-        
+
         const response = {
             status: "OK",
             webServer: "ACTIVE",
@@ -474,21 +474,21 @@ const webServer = http.createServer(async (req, res) => {
                 lastSession: dbStats?.last_session
             },
             timestamp: now.toISOString(),
-            message: botStatus.isRunning ? 
-                "Bot online - All systems operational" : 
+            message: botStatus.isRunning ?
+                "Bot online - All systems operational" :
                 `Bot reconnecting (attempt ${reconnectAttempts}) - Web server active`
         };
-        
+
         res.end(JSON.stringify(response, null, 2));
         return;
     }
-    
+
     // Enhanced web dashboard with database stats
     if (url === '/dashboard') {
         res.writeHead(200, { 'Content-Type': 'text/html' });
         const uptimeHours = Math.floor((Date.now() - botStatus.uptime) / (1000 * 60 * 60));
         const uptimeMinutes = Math.floor((Date.now() - botStatus.uptime) / (1000 * 60)) % 60;
-        
+
         res.end(`
 <!DOCTYPE html>
 <html>
@@ -585,7 +585,7 @@ const webServer = http.createServer(async (req, res) => {
         `);
         return;
     }
-    
+
     // 404 for other routes
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not Found - Available endpoints: /health, /status, /dashboard');
@@ -606,7 +606,7 @@ function updateBotStatus(isConnected) {
     botStatus.isRunning = isConnected;
     botStatus.lastSeen = new Date().toISOString();
     botStatus.currentUsername = currentUsername;
-    
+
     if (isConnected) {
         console.log(`🟢 Status updated: Bot is ACTIVE - Preview will show "Bot Active"`);
         logger.info(`Bot status: ACTIVE`);
@@ -617,7 +617,7 @@ function updateBotStatus(isConnected) {
         botStatus.hasArrived = false;
         botStatus.arrivedAt = null;
     }
-    
+
     // Update server status in database
     updateServerStatus(isConnected, isConnected ? 1 : 0);
 }
@@ -632,12 +632,12 @@ function getNextUsername() {
         const randomSuffix = Math.floor(Math.random() * 999);
         currentUsername = `${currentUsername}${randomSuffix}`;
     }
-    
+
     logger.info(`🔄 Using username: ${currentUsername} (attempt ${reconnectAttempts + 1})`);
-    
+
     // Log username usage
     logUsernameUsage(currentUsername, false);
-    
+
     return currentUsername;
 }
 
@@ -646,27 +646,27 @@ async function testServerConnectivity(host, port) {
     return new Promise((resolve) => {
         const net = require('net');
         const socket = new net.Socket();
-        
+
         socket.setTimeout(5000);
-        
+
         socket.on('connect', () => {
             console.log(`✅ TCP connection test successful to ${host}:${port}`);
             socket.destroy();
             resolve(true);
         });
-        
+
         socket.on('timeout', () => {
             console.log(`❌ TCP connection timeout to ${host}:${port}`);
             socket.destroy();
             resolve(false);
         });
-        
+
         socket.on('error', (err) => {
             console.log(`❌ TCP connection failed: ${err.message}`);
             socket.destroy();
             resolve(false);
         });
-        
+
         socket.connect(port, host);
     });
 }
@@ -682,7 +682,7 @@ function createBot() {
         }
         bot = null;
     }
-    
+
     // Test server connectivity first
     console.log(`🔍 Testing server connectivity: ${serverHost}:${serverPort}`);
     testServerConnectivity(serverHost, serverPort).then(isConnectable => {
@@ -691,17 +691,18 @@ function createBot() {
             return;
         }
     });
-    
+
     const username = getNextUsername();
-    
+
     console.log(`🔧 Using Minecraft version 1.20.6 (tested and compatible)`);
-    
+
     const botOptions = {
         host: serverHost,
         port: serverPort,
         username: username,
         version: '1.20.6',
         auth: 'offline',
+        connectTimeout: 60000,
         hideErrors: false // Simplified configuration to match working test
     };
 
@@ -709,7 +710,7 @@ function createBot() {
     console.log(`🔗 Attempting connection to ${serverHost}:${serverPort} with username ${username}`);
     console.log(`🤖 Only 1 bot will connect at a time (current attempt: ${reconnectAttempts + 1})`);
     bot = mineflayer.createBot(botOptions);
-    
+
     // Backup movement activation - start after connection regardless of spawn event
     setTimeout(() => {
         if (bot && bot.entity) {
@@ -721,24 +722,24 @@ function createBot() {
             startKeepAliveActivities();
         }
     }, 10000); // Wait 10 seconds after bot creation
-    
+
     // Add comprehensive connection monitoring
     bot.on('connect', () => {
         console.log('🔗 TCP connection established');
         logger.info('TCP connection established to Minecraft server');
         console.log('⏳ Waiting for Minecraft login to complete...');
     });
-    
+
     // Add timeout for login with multiple fallback attempts
     let loginTimeout = setTimeout(() => {
         if (bot && !bot.entity) {
             console.log('❌ Login timeout - authentication failed after 30 seconds');
             logger.error('Login timeout - authentication handshake failed');
-            
+
             // Try more aggressive version/protocol combinations
             console.log('🔄 Trying fallback connection with different protocols...');
             bot.quit();
-            
+
             // Store attempt count to try different approaches
             reconnectAttempts++;
             if (reconnectAttempts < 3) {
@@ -749,13 +750,13 @@ function createBot() {
             }
         }
     }, 30000);
-    
+
     // Monitor authentication state changes
     bot.on('session', () => {
         console.log('🔐 Authentication session established');
         logger.info('Authentication session established');
     });
-    
+
     // Clear timeout when login succeeds
     bot.on('login', () => {
         clearTimeout(loginTimeout);
@@ -770,14 +771,14 @@ function createBot() {
         reconnectAttempts = 0;
         isReconnecting = false;
         updateBotStatus(true);
-        
+
         // Mark bot as arrived for preview display
         botStatus.hasArrived = true;
         botStatus.arrivedAt = new Date();
-        
+
         // Create database session
         await createBotSession();
-        
+
         // Reset session stats
         sessionStats = {
             chatMessagesSent: 0,
@@ -786,7 +787,7 @@ function createBot() {
             itemsCrafted: 0,
             startTime: Date.now()
         };
-        
+
         console.log('🤖 AI Bot is now online and ready to play!');
         console.log('🎮 Bot will behave like a real intelligent player...');
         console.log('📊 All activities will be logged to database');
@@ -796,22 +797,22 @@ function createBot() {
 
     bot.on('spawn', () => {
         logger.info(`AI Bot spawned at ${bot.entity.position}`);
-        
+
         // Log spawn position in database
         if (currentSessionId && db) {
             const position = bot.entity.position;
             db.execute(`
                 UPDATE bot_sessions SET position = $1 WHERE id = $2
-            `, [JSON.stringify(position), currentSessionId]).catch(err => 
+            `, [JSON.stringify(position), currentSessionId]).catch(err =>
                 logger.debug(`Failed to log spawn position: ${err.message}`)
             );
         }
-        
+
         // Start keep-alive activities immediately
         console.log('🎮 Starting movement patterns now...');
         logger.info('🎮 Bot spawned - activating movement patterns');
         startKeepAliveActivities();
-        
+
         // Immediate movement test to show it's working
         setTimeout(() => {
             if (bot && bot.entity) {
@@ -821,7 +822,7 @@ function createBot() {
                     if (bot) bot.setControlState('jump', false);
                     console.log('✅ Jump test completed');
                 }, 500);
-                
+
                 // Test movement
                 bot.setControlState('forward', true);
                 setTimeout(() => {
@@ -830,7 +831,7 @@ function createBot() {
                 }, 1000);
             }
         }, 500);
-        
+
         setTimeout(() => {
             if (bot) {
                 try {
@@ -841,7 +842,7 @@ function createBot() {
                 }
             }
         }, 2000);
-        
+
         setTimeout(() => {
             startAIBehaviors();
         }, 2000);
@@ -850,36 +851,36 @@ function createBot() {
     bot.on('chat', async (username, message) => {
         if (username === bot.username) return;
         logger.info(`<${username}> ${message}`);
-        
+
         // Log player interaction
         await logPlayerInteraction(username, 'chat', message);
-        
+
         // Test movement command
         if (message.toLowerCase().includes('move test')) {
             console.log('🧪 Manual movement test triggered by chat');
-            
+
             // Immediate jump
             bot.setControlState('jump', true);
             setTimeout(() => bot.setControlState('jump', false), 500);
-            
+
             // Forward movement for 2 seconds
             setTimeout(() => {
                 bot.setControlState('forward', true);
                 setTimeout(() => bot.setControlState('forward', false), 2000);
             }, 1000);
-            
+
             bot.chat('Testing movement patterns!');
         }
-        
+
         handlePlayerChat(username, message);
     });
 
     bot.on('playerJoined', async (player) => {
         logger.info(`${player.username} joined the game`);
-        
+
         // Log player join
         await logPlayerInteraction(player.username, 'join', null);
-        
+
         setTimeout(async () => {
             try {
                 // Use ChatGPT for personalized welcome message
@@ -894,13 +895,13 @@ function createBot() {
                     max_tokens: 50,
                     temperature: 0.8
                 });
-                
+
                 const welcomeMessage = response.choices[0].message.content.trim();
                 await sendIntelligentChat(welcomeMessage);
-                
+
                 // Log bot response
                 await logPlayerInteraction(player.username, 'welcome', null, welcomeMessage);
-                
+
             } catch (error) {
                 // Fallback welcome if ChatGPT fails
                 const fallbackWelcome = `welcome ${player.username}! nice to meet you!`;
@@ -912,7 +913,7 @@ function createBot() {
 
     bot.on('playerLeft', async (player) => {
         logger.info(`${player.username} left the game`);
-        
+
         // Log player leave
         await logPlayerInteraction(player.username, 'leave', null);
     });
@@ -921,7 +922,7 @@ function createBot() {
         clearTimeout(loginTimeout);
         logger.error(`❌ AI Bot error: ${err.message}`);
         logger.error(`Error code: ${err.code || 'N/A'}`);
-        
+
         // Log specific authentication errors
         if (err.message.includes('ECONNREFUSED')) {
             console.log('🔴 Server connection refused - server may be offline');
@@ -934,7 +935,7 @@ function createBot() {
         } else {
             console.log(`🔴 Authentication error: ${err.message}`);
         }
-        
+
         clearKeepAliveIntervals();
         updateBotStatus(false);
         await endBotSession(`error: ${err.message}`);
@@ -951,27 +952,27 @@ function createBot() {
 
     bot.on('kicked', async (reason) => {
         logger.warn(`👢 AI Bot was kicked: ${reason}`);
-        
+
         clearKeepAliveIntervals();
-        
+
         const banKeywords = ['ban', 'banned', 'blacklist', 'prohibited', 'blocked', 'suspended'];
-        const isBanned = banKeywords.some(keyword => 
+        const isBanned = banKeywords.some(keyword =>
             reason.toLowerCase().includes(keyword)
         );
-        
+
         if (isBanned) {
             logger.warn(`🚫 Detected ban! Reason: ${reason}`);
             logger.info(`🔄 Will reconnect with different username...`);
             console.log(`🚫 Bot ${currentUsername} was BANNED: ${reason}`);
             console.log(`🔄 Only 1 new bot will reconnect with different username`);
-            
+
             // Log banned username
             await logUsernameUsage(currentUsername, true, reason);
         } else {
             console.log(`👢 Bot ${currentUsername} was kicked (not banned): ${reason}`);
             console.log(`🔄 Only 1 bot will reconnect with same username pool`);
         }
-        
+
         updateBotStatus(false);
         await endBotSession(`kicked: ${reason}`);
         scheduleReconnect();
@@ -986,28 +987,28 @@ function scheduleReconnect() {
         logger.debug('⚠️  Reconnection already in progress, skipping duplicate attempt');
         return;
     }
-    
+
     isReconnecting = true;
-    
+
     if (reconnectAttempts >= maxReconnectAttempts) {
         logger.warn(`⚠️  Max reconnection attempts (${maxReconnectAttempts}) reached. Will keep trying with longer delays...`);
         reconnectAttempts = Math.floor(maxReconnectAttempts / 2);
     }
 
     reconnectAttempts++;
-    
+
     let delay;
     if (reconnectAttempts <= 3) {
         delay = 5000;
-        logger.info(`🔄 Quick reconnect in ${delay/1000}s (attempt ${reconnectAttempts})`);
+        logger.info(`🔄 Quick reconnect in ${delay / 1000}s (attempt ${reconnectAttempts})`);
     } else if (reconnectAttempts <= 10) {
         delay = 30000;
-        logger.info(`🔄 Reconnecting in ${delay/1000}s (attempt ${reconnectAttempts}) - server may be down`);
+        logger.info(`🔄 Reconnecting in ${delay / 1000}s (attempt ${reconnectAttempts}) - server may be down`);
     } else {
         delay = Math.min(300000, 60000 + (reconnectAttempts * 10000));
-        logger.info(`🔄 Long reconnect in ${Math.floor(delay/60000)}min (attempt ${reconnectAttempts}) - waiting for server`);
+        logger.info(`🔄 Long reconnect in ${Math.floor(delay / 60000)}min (attempt ${reconnectAttempts}) - waiting for server`);
     }
-    
+
     setTimeout(() => {
         try {
             // Ensure only one bot exists at a time
@@ -1015,7 +1016,7 @@ function scheduleReconnect() {
                 bot.quit();
             }
             bot = null;
-            
+
             // Reset reconnecting flag and create new bot
             isReconnecting = false;
             createBot();
@@ -1023,7 +1024,7 @@ function scheduleReconnect() {
             logger.error(`Error during reconnection: ${error.message}`);
             bot = null;
             isReconnecting = false;
-            
+
             // Wait before trying again, but don't create nested reconnection loop
             setTimeout(() => {
                 if (!isReconnecting) {
@@ -1047,23 +1048,23 @@ async function getChatGPTResponse(playerName, message) {
         ];
         return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
     }
-    
+
     try {
         // Get or create chat history for this player
         if (!chatHistory.has(playerName)) {
             chatHistory.set(playerName, []);
         }
-        
+
         const playerHistory = chatHistory.get(playerName);
-        
+
         // Add player message to history
         playerHistory.push({ role: 'user', content: `${playerName}: ${message}` });
-        
+
         // Keep only last 10 messages for context (to manage API costs)
         if (playerHistory.length > 10) {
             playerHistory.splice(0, playerHistory.length - 10);
         }
-        
+
         // Create messages array for ChatGPT
         const messages = [
             {
@@ -1079,21 +1080,21 @@ async function getChatGPTResponse(playerName, message) {
             },
             ...playerHistory
         ];
-        
+
         const response = await openai.chat.completions.create({
             model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
             messages: messages,
             max_tokens: 60,
             temperature: 0.8
         });
-        
+
         const aiResponse = response.choices[0].message.content.trim();
-        
+
         // Add AI response to history
         playerHistory.push({ role: 'assistant', content: aiResponse });
-        
+
         return aiResponse;
-        
+
     } catch (error) {
         logger.error(`ChatGPT API error: ${error.message}`);
         // Fallback to simple responses if ChatGPT fails
@@ -1111,21 +1112,21 @@ async function getChatGPTResponse(playerName, message) {
 // Enhanced chat function with ChatGPT and database logging
 async function sendIntelligentChat(message, isResponseTo = null) {
     if (!bot || !message) return;
-    
+
     const currentTime = Date.now();
     if (currentTime - (botStatus.lastChatTime || 0) < 3000) return;
-    
+
     try {
         bot.chat(message);
         botStatus.lastChatTime = currentTime;
         sessionStats.chatMessagesSent++;
         botStatus.totalChatMessages++;
-        
+
         // Log bot chat message
         if (currentSessionId) {
             await logPlayerInteraction(bot.username, 'bot_chat', message);
         }
-        
+
         logger.info(`💬 AI Bot: ${message}`);
     } catch (error) {
         logger.debug(`Failed to send chat: ${error.message}`);
@@ -1137,25 +1138,25 @@ let keepAliveIntervals = [];
 
 function startKeepAliveActivities() {
     if (!bot) return;
-    
+
     // Clear any existing intervals
     clearKeepAliveIntervals();
-    
+
     // Movement Pattern: 3 seconds random movement/sprint every 5 seconds
     const moveInterval = setInterval(() => {
         if (!bot || !bot.entity) {
             clearInterval(moveInterval);
             return;
         }
-        
+
         try {
             // Random movement direction
             const movements = ['forward', 'back', 'left', 'right'];
             const randomMovement = movements[Math.floor(Math.random() * movements.length)];
-            
+
             // Random sprint chance (50%)
             const shouldSprint = Math.random() > 0.5;
-            
+
             // Start movement
             bot.setControlState(randomMovement, true);
             if (shouldSprint) {
@@ -1166,7 +1167,7 @@ function startKeepAliveActivities() {
                 console.log(`🚶 Keep-alive: Move ${randomMovement} for 3 seconds`);
                 logger.info(`🚶 Keep-alive: Move ${randomMovement} for 3 seconds`);
             }
-            
+
             // Stop movement after 3 seconds
             setTimeout(() => {
                 if (bot) {
@@ -1176,7 +1177,7 @@ function startKeepAliveActivities() {
                     }
                 }
             }, 3000);
-            
+
         } catch (error) {
             logger.debug(`Keep-alive movement error: ${error.message}`);
         }
@@ -1189,7 +1190,7 @@ function startKeepAliveActivities() {
             clearInterval(jumpInterval);
             return;
         }
-        
+
         try {
             bot.setControlState('jump', true);
             setTimeout(() => {
@@ -1209,7 +1210,7 @@ function startKeepAliveActivities() {
             clearInterval(lookInterval);
             return;
         }
-        
+
         try {
             // Random camera movement
             const yaw = Math.random() * Math.PI * 2; // Random direction (0-360 degrees)
@@ -1222,14 +1223,14 @@ function startKeepAliveActivities() {
         }
     }, 2000); // Every 2 seconds
     keepAliveIntervals.push(lookInterval);
-    
+
     // Inventory keep-alive (every 60-120 seconds)
     const inventoryInterval = setInterval(() => {
         if (!bot || !bot.entity) {
             clearInterval(inventoryInterval);
             return;
         }
-        
+
         try {
             // Switch held item occasionally
             if (bot.inventory && bot.inventory.slots.length > 0) {
@@ -1241,14 +1242,14 @@ function startKeepAliveActivities() {
         }
     }, 60000 + Math.random() * 60000);
     keepAliveIntervals.push(inventoryInterval);
-    
+
     // Ping keep-alive using tab list (every 30 seconds)
     const pingInterval = setInterval(() => {
         if (!bot || !bot.entity) {
             clearInterval(pingInterval);
             return;
         }
-        
+
         try {
             // Send a harmless packet to keep connection alive
             if (bot.players && Object.keys(bot.players).length > 0) {
@@ -1261,22 +1262,22 @@ function startKeepAliveActivities() {
         }
     }, 30000);
     keepAliveIntervals.push(pingInterval);
-    
+
     // Connection health check (every 5 minutes)
     const healthInterval = setInterval(() => {
         if (!bot || !bot.entity) {
             clearInterval(healthInterval);
             return;
         }
-        
+
         try {
             const uptime = Math.floor((Date.now() - sessionStats.startTime) / 1000);
-            logger.info(`🔄 Keep-alive: Bot healthy, uptime ${Math.floor(uptime/60)}m`);
+            logger.info(`🔄 Keep-alive: Bot healthy, uptime ${Math.floor(uptime / 60)}m`);
             logger.info(`🎮 Movement patterns: 3s movement every 5s, jump every 15s, camera every 2s`);
-            
+
             // Update bot status
             updateBotStatus(true);
-            
+
         } catch (error) {
             logger.debug(`Keep-alive health check error: ${error.message}`);
         }
@@ -1301,7 +1302,7 @@ function clearKeepAliveIntervals() {
 // AI behaviors with ChatGPT-enhanced random chat
 function startAIBehaviors() {
     logger.info('🧠 Starting AI behaviors with ChatGPT...');
-    
+
     setInterval(async () => {
         if (bot && Math.random() < 0.3) {
             try {
@@ -1313,9 +1314,9 @@ function startAIBehaviors() {
                     'discussing server community',
                     'offering help to players'
                 ];
-                
+
                 const topic = randomTopics[Math.floor(Math.random() * randomTopics.length)];
-                
+
                 const response = await openai.chat.completions.create({
                     model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
                     messages: [
@@ -1327,10 +1328,10 @@ function startAIBehaviors() {
                     max_tokens: 50,
                     temperature: 0.9
                 });
-                
+
                 const aiMessage = response.choices[0].message.content.trim();
                 await sendIntelligentChat(aiMessage);
-                
+
             } catch (error) {
                 // Fallback to simple messages if ChatGPT fails
                 const fallbackMessages = [
@@ -1344,34 +1345,34 @@ function startAIBehaviors() {
             }
         }
     }, 60000 + Math.random() * 120000);
-    
+
     logger.info('🎮 AI behaviors activated with ChatGPT integration!');
 }
 
 async function handlePlayerChat(username, message) {
     if (username === bot.username) return;
-    
+
     const lowerMessage = message.toLowerCase();
     logger.info(`📢 Player message from ${username}: "${message}"`);
-    
+
     // Respond to 90% of messages with ChatGPT (increased from 70%)
     if (Math.random() < 0.9) {
         setTimeout(async () => {
             try {
                 // Get intelligent ChatGPT response
                 const chatGPTResponse = await getChatGPTResponse(username, message);
-                
+
                 // Send the response
                 await sendIntelligentChat(chatGPTResponse, username);
-                
+
                 // Log the interaction with bot response
                 await logPlayerInteraction(username, 'chat_response', message, chatGPTResponse);
-                
+
                 logger.info(`🤖 ChatGPT response to ${username}: "${chatGPTResponse}"`);
-                
+
             } catch (error) {
                 logger.error(`Failed to generate ChatGPT response: ${error.message}`);
-                
+
                 // Fallback to simple response if ChatGPT fails
                 const fallbackResponse = `hey ${username}! how's it going?`;
                 await sendIntelligentChat(fallbackResponse, username);
@@ -1387,33 +1388,33 @@ function forceStartMovement() {
         console.log('❌ No bot instance available');
         return false;
     }
-    
+
     if (!bot.entity) {
         console.log('❌ Bot not spawned yet');
         return false;
     }
-    
+
     console.log('🎮 Force starting movement patterns...');
-    
+
     // Clear any existing intervals first
     clearKeepAliveIntervals();
-    
+
     // Start movement patterns immediately
     startKeepAliveActivities();
-    
+
     // Immediate test movement
     setTimeout(() => {
         console.log('🧪 Force movement test - Jump');
         bot.setControlState('jump', true);
         setTimeout(() => bot.setControlState('jump', false), 500);
     }, 1000);
-    
+
     setTimeout(() => {
         console.log('🧪 Force movement test - Forward');
         bot.setControlState('forward', true);
         setTimeout(() => bot.setControlState('forward', false), 2000);
     }, 3000);
-    
+
     console.log('✅ Movement patterns force started');
     return true;
 }
