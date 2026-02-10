@@ -750,7 +750,7 @@ function createBot() {
                 scheduleReconnect();
             }
         }
-    }, 30000);
+    }, 60000);
 
     // Monitor authentication state changes
     bot.on('session', () => {

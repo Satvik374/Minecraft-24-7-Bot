@@ -187,7 +187,7 @@ async function createBot() {
         username: username,
         version: version,
         auth: 'offline',
-        checkTimeoutInterval: 30000,
+        checkTimeoutInterval: 60000,
         connectTimeout: 60000, // Wait up to 60s for connection (useful for Render/Aternos)
         keepAlive: true,
         hideErrors: false // Show detailed errors
